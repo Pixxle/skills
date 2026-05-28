@@ -26,7 +26,7 @@ If your draft does any of these, look harder for the judo move:
 - It adds a new boolean, mode, or flag that complicates an existing flow.
 - It introduces a wrapper or pass-through layer that adds indirection without deleting any.
 - It scatters feature-specific checks across shared or general-purpose code.
-- It pushes a file well past a healthy size instead of decomposing.
+- It pushes a file well past a healthy size instead of decomposing. (1000+ lines in a single file)
 - It rearranges complexity but the reader must still hold the same number of concepts in their head.
 - It duplicates a capability the codebase already has a canonical home for.
 

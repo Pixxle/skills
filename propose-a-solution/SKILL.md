@@ -28,10 +28,10 @@ Spawn `subagent_type=Explore` agents **in parallel** to investigate. Scale to th
 
 | Files tracked | Sub-agents |
 | --- | --- |
-| < 200 | 1–2 |
-| 200 – 2,000 | 2–4 |
-| 2,000 – 10,000 | 4–8 |
-| > 10,000 | 8+ (slice by context × concern) |
+| < 200 | 2-4 |
+| 200 – 2,000 | 4-6 |
+| 2,000 – 10,000 | 6–8 |
+| > 10,000 | 10+ (slice by context × concern) |
 
 Always spend at least one agent on **cross-cutting concerns** — this is the part a shallow proposal misses:
 
