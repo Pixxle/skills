@@ -12,11 +12,13 @@ Help Dennis draft a new gist for [vinterfjard.com](https://vinterfjard.com) in t
 
 The user will usually arrive with one of:
 
-1. **A rough idea or rant** — a few sentences about something they want to say. Your job is to draw out the specific story underneath it (asking 1–3 sharp questions if needed) and then draft.
-2. **A finished thought, badly written** — they want it tightened and reshaped into the house voice.
-3. **A topic and a request to draft cold** — least common; ask for at least one concrete anecdote or example before writing, because the voice depends on specifics.
+1. **A rough idea or rant** — a few sentences about something they want to say. → **Route A (full pipeline)** below.
+2. **A finished thought, badly written** — they want it tightened and reshaped into the house voice. → **Route B (shape only)** below.
+3. **A topic and a request to draft cold** — least common; ask for at least one concrete anecdote or example before writing, because the voice depends on specifics. → **Route C (one-shot fast path)** below.
 
 Don't draft on pure abstractions. The gist voice lives or dies on concrete detail (a real number, a real tool name, a real moment). If you don't have any, ask one direct question to get one.
+
+If the user explicitly says "fragments first", "shape this", "beat-by-beat", or "just draft it", that overrides the entry-point heuristic and forces the matching route.
 
 ## The voice in one paragraph
 
@@ -94,7 +96,57 @@ Either way: one specific anecdote is usually enough. Resist the urge to stack th
 
 For the full reference with examples and rationale, see `references/ai-tells.md`. Use it during the read-back-and-cut pass.
 
-## Drafting workflow
+## Working file lifecycle
+
+Routes A and B build the gist iteratively in a scratch file before promoting it to the published location:
+
+- **Scratch:** `gists/_drafts/<slug>.md` — uses the writing-fragments format (one H1 with the working title, no frontmatter). Create the `_drafts/` directory if it doesn't exist. The first time you create it, mention to the user that they may want to add `gists/_drafts/` to `.gitignore` so scratch never ships.
+- **Resume detection:** On entry, before doing anything else, check if `gists/_drafts/<slug>.md` already exists for the slug the user is implying. If yes, ask once: "Resume the existing draft, or start fresh?" Default to resume.
+- **Promotion:** When the route completes, transform the scratch file into the canonical gist (strip H1, prepend YAML frontmatter, save to `gists/<slug>.md`). See the **Promotion** section below.
+
+Route C (one-shot) skips `_drafts/` entirely and writes directly to `gists/<slug>.md` since there's no in-flight state to preserve.
+
+## Voice banner for sub-skill calls
+
+When invoking `writing-fragments`, `writing-shape`, or `writing-beats` via the `Skill` tool, the sub-skill won't have read this SKILL.md as its foreground instruction set. Pass the following banner as part of `args` on every call so voice constraints stay loud:
+
+```
+This document will become a vinterfjard.com gist:
+- Final length 250–450 words.
+- No headers, no bullet lists, no tables in the published body.
+- First-person, contractions, real names and numbers, one concrete anecdote.
+- AI-tells to suppress (ceiling 1 each per post): em-dashes, negative parallelism ("not X, but Y"), stacked triplets.
+- Banned vocabulary lives in ~/.claude/skills/write-gist/references/ai-tells.md.
+- Phase: <fragments | shape | beats>
+- Working file: gists/_drafts/<slug>.md
+```
+
+Substitute the phase label and working file path. Sub-skills may still produce headers/lists in their own scratch output (e.g. writing-fragments' `---` separators); those get stripped at promotion.
+
+## Route A — Full pipeline (rough idea / rant)
+
+Use when the user arrives with half-formed material that needs to be mined before it can be drafted.
+
+1. **Pick a working slug** from the user's framing (you can sharpen the title later). Check if `gists/_drafts/<slug>.md` exists; if yes, ask once and default to resume.
+2. **Invoke `writing-fragments`** via the `Skill` tool with the voice banner and working file path. Let the fragments session run until the user is satisfied with the pile.
+3. **Big-three lint silently.** Re-read the scratch file. Check for em-dash > 1, negative parallelism > 1, stacked triplets > 1 across the fragments. Self-correct in place. Do not surface these to the user mid-flow.
+4. **Pick shape or beats.** Read the fragments file. If the dominant material is a personal story, scene, or specific moment, propose `writing-beats`. If the dominant material is a claim or pattern with examples, propose `writing-shape`. Tell the user which one you picked and why in one sentence. Let them override.
+5. **Invoke the chosen sub-skill** (`writing-shape` or `writing-beats`) via the `Skill` tool with the same voice banner, updated phase label, and the same working file path.
+6. **Big-three lint silently again** after the sub-skill concludes.
+7. **Promote** (see Promotion below).
+
+## Route B — Shape only (finished thought, badly written)
+
+Use when the user hands in material that already has the substance but is in the wrong voice or shape.
+
+1. **Pick a slug.** Create `gists/_drafts/<slug>.md` in the writing-fragments format: a single H1 with the working title, then the user's material as one large fragment (or split into fragments at natural paragraph breaks). Skip resume detection unless the user explicitly mentions an existing draft.
+2. **Invoke `writing-shape`** via the `Skill` tool with the voice banner, phase label `shape`, and working file path.
+3. **Big-three lint silently** after shape concludes.
+4. **Promote.**
+
+## Route C — One-shot fast path (topic / cold draft)
+
+Use when the user wants a clean draft now and has already given you a concrete anchor. No scratch file. No sub-skills. This is the original write-gist workflow, preserved intact:
 
 1. **Get a concrete anchor.** If the user hasn't given one, ask: "What's the specific moment or example you want to build this around?" One question, not a battery.
 2. **Pick the shape.** Story-first (Shape A) or observation-first (Shape B). Default to A if the user led with a story.
@@ -111,6 +163,25 @@ For the full reference with examples and rationale, see `references/ai-tells.md`
 6. **Check the title.** Does it state a position or describe an observation? Is it short? Does it avoid colons and "How I…" / "Why I…" patterns?
 7. **Pick tags.** 1–3. Reuse existing ones where possible.
 8. **Save to `gists/<slug>.md`.** Confirm with the user before saving if you're unsure about the title or slug.
+
+## Promotion (Routes A and B only)
+
+When the sub-skill phase concludes and the working file at `gists/_drafts/<slug>.md` reads like a finished post:
+
+1. **Re-read** the working file from disk.
+2. **Run the full AI-tell scan** from `references/ai-tells.md` against the body. Apply the self-check in step 5 of Route C (em-dashes, negative parallelism, triplets, banned vocab, paragraph-opener variety, summary closers, time references). Rewrite any flagged sentences in place.
+3. **Check length.** Aim for 250–450 words. If over, cut. If under, look for thin or hedged sentences to flesh out — but never pad.
+4. **Propose title + slug + tags as one block.** Show the user. If the slug changed from the working slug, mention it. Wait for confirmation.
+5. **Transform the file.** Strip the H1 line. Prepend YAML frontmatter:
+   ```yaml
+   ---
+   title: '<confirmed title>'
+   date: '<today's date>'
+   tags: ['<tag1>', '<tag2>']
+   ---
+   ```
+6. **Write to `gists/<slug>.md`.**
+7. **Mention the scratch draft** at `gists/_drafts/<slug>.md` is preserved. Offer to delete it; default to keeping it until the user says otherwise.
 
 ## Examples of titles that fit the voice
 
@@ -146,7 +217,9 @@ See `why-i-switched-from-claude-code-to-codex.md` for the pattern.
 
 ## Final check before saving
 
-Before writing the file, mentally run through:
+Applies to all routes — run this just before writing `gists/<slug>.md`. For Routes A and B, this sits at the end of **Promotion**, after the title/tag confirmation. For Route C, this is step 8.
+
+Mentally run through:
 
 - Would this read like one of the existing six posts if dropped in among them?
 - Is there at least one specific, concrete detail (name, number, moment)?
