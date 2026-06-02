@@ -1,0 +1,30 @@
+{
+  "name": "pixxle-skills",
+  "skills": [
+    "./skills/engineering/bootstrap-context",
+    "./skills/engineering/bump-deps",
+    "./skills/engineering/design-an-interface",
+    "./skills/engineering/grill-with-docs",
+    "./skills/engineering/handoff",
+    "./skills/engineering/improve-codebase-architecture",
+    "./skills/engineering/map-system",
+    "./skills/engineering/propose-a-solution",
+    "./skills/engineering/prototype",
+    "./skills/engineering/tdd",
+    "./skills/engineering/tdd-backfill",
+    "./skills/engineering/thermo-nuclear-code-quality-review",
+    "./skills/productivity/review-adrs",
+    "./skills/productivity/to-issues",
+    "./skills/productivity/to-prd",
+    "./skills/productivity/triage",
+    "./skills/productivity/write-a-skill",
+    "./skills/productivity/grill-me",
+    "./skills/writing/write-gist",
+    "./skills/writing/writing-beats",
+    "./skills/writing/writing-fragments",
+    "./skills/writing/writing-shape",
+    "./skills/security/deep-review",
+    "./skills/security/red-team",
+    "./skills/misc/caveman"
+  ]
+}

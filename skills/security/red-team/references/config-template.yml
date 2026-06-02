@@ -1,0 +1,67 @@
+# red-team.config.yml — copy to a project's CWD and edit. No defaults are assumed; the skill
+# gathers these in Phase 0 (from you or by inspecting the project) if the file is absent.
+
+target:
+  # The application/gateway under test. Active exploitation hits this host. Phase 0 refuses to run
+  # until the user names this host in their acknowledgment and it is within allowed_hosts.
+  base_url: "http://localhost:8080"
+  # Optional: extra base URLs (microservices, admin panel, internal ports) to also attack.
+  services: {}            # e.g. { api: "http://localhost:3001", admin: "http://localhost:9000" }
+
+auth:
+  # How the target authenticates requests. One of: bearer_jwt | session_cookie | oauth | api_key
+  scheme: "bearer_jwt"
+  # Where the login endpoint is and what it expects, so the skill can mint real sessions.
+  login:
+    url: "/api/login"                  # relative to base_url, or absolute
+    method: "POST"
+    body_template: '{"email":"{email}","password":"{password}"}'
+    token_json_path: "accessToken"     # where the token/session lives in the login response
+  # If scheme is api_key / session_cookie, describe the header/cookie name instead.
+  header_name: "Authorization"
+  header_value_template: "Bearer {token}"
+
+# Optional token forging — only if you possess a dev/test signing key or HMAC secret for this app.
+# Lets you test whether the server re-validates authorization server-side or merely trusts claims.
+jwt:
+  enabled: false
+  algorithm: "RS256"                   # RS256/ES256 (key file) or HS256 (shared secret)
+  signing_key: ""                      # path to a PEM/PKCS12 private key, OR the HMAC secret string
+  key_password: ""                     # for an encrypted PKCS12/PEM, if any
+  issuer: ""                           # expected `iss`, if the server checks it
+  audience: ""                         # expected `aud`, if the server checks it
+  jwks_url: ""                         # .well-known/openid-configuration or JWKS, for key-confusion tests
+
+# Two attacker identities. For multi-tenant apps put them in DIFFERENT tenants/orgs (the core
+# cross-tenant test). For single-tenant apps, two ordinary users suffice (the BOLA test). Provide
+# either credentials (skill logs in) or a pre-captured token/cookie.
+identities:
+  user_a:
+    email:    "user-a@example.test"
+    password: "CHANGE_ME"
+    token:    ""        # optional: paste a captured token/cookie to skip login
+  user_b:
+    email:    "user-b@example.test"
+    password: "CHANGE_ME"
+    token:    ""
+  # Optional low-privilege user (same tenant as user_a) for privilege-escalation tests.
+  low_priv:
+    email:    ""
+    password: ""
+    token:    ""
+
+model:
+  # multi_tenant: data scoped by org/tenant/account → run cross-tenant attacks.
+  # single_tenant: objects owned per-user → run cross-user BOLA attacks.
+  tenancy: "multi_tenant"            # multi_tenant | single_tenant
+  # Names of the parameters that scope data to a tenant/owner, if known (helps target authz).
+  scope_params: []                   # e.g. ["companyId", "orgId", "tenantId", "userId"]
+
+scope:
+  # Phase 0 will not proceed unless base_url's host matches one of these. Keep it to systems you own.
+  allowed_hosts: ["localhost", "127.0.0.1"]
+  # If true, agents may send state-mutating requests (needed to prove escalation / cross-tenant
+  # writes). Every mutation is tagged per finding-format.md.
+  allow_writes: true
+
+output_dir: "red-team-output"
