@@ -1,6 +1,6 @@
 ---
 name: pr-comments
-description: Turn review findings you already have into concise, inline-first PR comments and submit them as one GitHub review. Use after a review pass (your own read, /code-review, or /security-review) when the user wants to "comment on the PR", "post these findings", "leave inline comments", or "write PR comments" locally. Brevity is the point — short comments get replies, walls of text get ignored; inline on the changed line beats a PR-level comment, and the review body stays empty unless a concept needs clarifying or a question doesn't fit on a line. The verdict (COMMENT / REQUEST_CHANGES / APPROVE) is human-provided and never inferred — ask if it's missing. Does not hunt for issues itself.
+description: Turn review findings you already have into concise, human-sounding, inline-first PR comments and submit them as one GitHub review. Use after a review pass (your own read, /code-review, or /security-review) when the user wants to "comment on the PR", "post these findings", "leave inline comments", or "write PR comments" locally. Brevity is the point — short comments get replies, walls of text get ignored; inline on the changed line beats a PR-level comment, and the review body stays empty unless a concept needs clarifying or a question doesn't fit on a line. The verdict (COMMENT / REQUEST_CHANGES / APPROVE) is human-provided and never inferred — ask if it's missing. Comments read like a teammate typing into the box, not a model narrating its analysis. Does not hunt for issues itself.
 ---
 
 # pr-comments — post a review well
@@ -10,13 +10,16 @@ review. This is a posting layer: it does **not** hunt for issues (that's `/code-
 `/security-review`, or your own read) and it does **not** decide the verdict (that's the human's).
 It authors, places, and submits.
 
-## Two rules that matter most
+## Three rules that matter most
 
 1. **Cut text.** A short comment gets a reply; a wall of text gets skimmed and ignored. One issue
    per comment, lead with the point, ≤ 2 lines for most. Need 3+ sentences? Make it two comments —
    or, only if it belongs to no single line, the body.
 2. **Inline beats PR-level — and the body is usually empty.** Lines that land on the diff go inline;
    the review body is *not* a recap of them. Leave it blank unless a concept or question fits no line.
+3. **Sound like a person.** Short isn't the same as human. A comment should read like a teammate
+   typing into the review box, not a model narrating its analysis: no self-labeled sign-offs
+   (`Judgment call.`), no stacked em-dashes, no tidy wrap-ups. The Voice section nails it down.
 
 ## Workflow
 
@@ -49,6 +52,35 @@ It authors, places, and submits.
   Never *raise* them — no `blocking:`, `critical:`, `must-fix:`. Escalation is the human's, and it's
   expressed through the verdict, not your label.
 - **Link instead of explain.** Point to `file:line` or a doc rather than reproducing context inline.
+
+## Voice — read like a teammate, not a bot
+
+The comments are short; they also have to sound like a person typing into the review box. Aim for a
+quick, slightly opinionated colleague who uses contractions. Four tells give the robot away — kill
+all four:
+
+- **Self-labeled sign-offs.** Never close on a meta-label that classifies your own comment:
+  `Judgment call.`, `Just a thought.`, `Food for thought.`, `Worth considering.` A person makes the
+  point or asks the question; they don't announce what kind of point it was. `optional:` already set
+  the stakes, so end on `wdyt?` or just stop.
+- **Doubled-up rationale.** Don't give the problem, the fix, *and* why the fix is better in one
+  breath — keep the half that lands. ("…would make the coupling explicit and revert that churn" →
+  "…that'd kill the churn".)
+- **Stacked em-dashes.** Two or three —em-dashes— chaining clauses into one line is the loudest tell
+  there is. Break it into short sentences; a period reads more human than a dash. (One dash is fine.)
+- **Tidy wrap-ups.** Stop where the point ends. Don't append a sentence that re-summarizes what you
+  just said.
+
+Contractions, fragments, and a light "feels like… / why not… / wdyt?" are good. A real question that
+invites a reply beats a confident closing statement.
+
+> **robot:** optional: password is only valid when credentialType == Password, yet it sits
+> mid-signature — which forced the BankId/Microsoft/OTP callers onto ct: … would make the coupling
+> explicit and revert that churn. Judgment call.
+>
+> **human:** optional: `password`'s only real when `credentialType == Password`, so having it
+> mid-signature is what forced BankId/Microsoft/OTP onto `ct:`. Feels like it wants its own
+> `AuthenticatePasswordAsync(identifier, password, ct)` — that'd kill the churn too. wdyt?
 
 ## The review body — empty by default
 
