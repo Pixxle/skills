@@ -81,17 +81,22 @@ Any further notes about the feature.
 
 ## Attaching Claude Design assets
 
-Claude Design serves mockups from URLs that expire within days, so pasting those links into Linear leaves broken images later. When the user wants designs in the PRD, re-host them on Linear first. The user provides the design as a downloaded **zip**.
+Claude Design exports a **handoff bundle** — a downloaded **zip** of HTML/CSS/JSX prototypes, *not* finished images — and its own hosted URLs expire within days, so pasting those links into Linear leaves broken images later. When the user wants designs in the PRD, **render each page to a PNG and re-host it on Linear first**. The bundle almost never ships a clean image of a page; the only rasters inside are usually debug/screenshot artifacts. You produce the page image yourself.
 
-1. **Locate the zip.** Use the path the user gives, otherwise the newest `*.zip` in `~/Downloads`. Confirm the file before extracting.
+> The bundle's `README.md` warns "don't render these files or take screenshots unless the user asks." Embedding a durable design preview in the PRD **is** that case — render it.
 
-2. **Extract and inventory.** Run `scripts/inspect-design-zip.sh [zip-path]`. It unzips to a temp dir and prints one tab-separated line per embeddable image — `<bytes>`, `<mime>`, `<path>` — the exact size and MIME the upload needs. It lists non-raster files (SVG, HTML, source) as `OTHER` on stderr; those don't embed inline, so offer to skip them or link one on the issue instead.
+1. **Extract and orient.** Use the zip path the user gives, otherwise the newest `*.zip` in `~/Downloads` (confirm first). Run `scripts/inspect-design-zip.sh [zip-path]`: it unzips to a temp dir (printed as `TMPDIR<tab><dir>`), lists embeddable rasters, and lists HTML/JSX/CSS as `OTHER`. Read the bundle's `README.md` — it names the primary file the user had open. Open the relevant HTML page(s) and follow their imports (JSX, CSS) so you know what each should look like.
 
-3. **Confirm the set.** Show the user the images found and agree a caption and order for each; drop any they don't want.
+2. **Confirm the set.** Agree with the user which page(s) to include and a caption for each; drop any they don't want.
 
-4. **Re-host each image on Linear.** Uploads must be anchored to an *issue* — use the PRD's issue, or any issue in the target team/project if the PRD is a document (the resulting asset is reusable workspace-wide). Per image, run these back-to-back so the signed URL stays valid:
-   - `prepare_attachment_upload` with `issue`, `filename`, `contentType`, and `size` (the bytes from the inventory — a wrong size returns HTTP 403).
-   - PUT the raw bytes within **60 seconds**, passing every header from `uploadRequest.headers` verbatim (casing matters): `curl -X PUT --data-binary @"<path>" -H "<k>: <v>" … "<uploadRequest.url>"`.
+3. **Render each page to a PNG.** The HTML loads React + Babel from a CDN and pulls in local JSX/CSS, so serve the bundle and screenshot it with a headless browser (needs network for the CDN + web fonts):
+   - Serve the project dir — the folder holding the target HTML plus its `src/`, `styles/`, `assets/`: `python3 -m http.server 8753 --bind 127.0.0.1 --directory "<project-dir>"` (run in the background).
+   - Screenshot with headless Chrome, allowing virtual time for Babel to transpile + React to render, at 2× for a crisp image: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars --window-size=1440,900 --force-device-scale-factor=2 --virtual-time-budget=12000 --screenshot=/tmp/<page>.png "http://127.0.0.1:8753/<Page>.html"`
+   - **Verify the render** by viewing the PNG — confirm the page actually drew (fonts loaded, no blank/placeholder), not merely that a file was written.
+
+4. **Re-host each PNG on Linear.** Uploads must be anchored to an *issue* — use the PRD's issue, or any issue in the target team/project if the PRD is a document (the resulting asset is reusable workspace-wide). Get the exact byte size (`stat -f%z /tmp/<page>.png`), then per image run these back-to-back so the signed URL stays valid:
+   - `prepare_attachment_upload` with `issue`, `filename`, `contentType: image/png`, and `size` (the exact bytes — a wrong size returns HTTP 403).
+   - PUT the raw bytes within **60 seconds**, passing every header from `uploadRequest.headers` verbatim (casing matters): `curl -X PUT --data-binary @"/tmp/<page>.png" -H "<k>: <v>" … "<uploadRequest.url>"`.
    - Keep the returned permanent `assetUrl` (`uploads.linear.app/…`). Don't base64-encode or transform the file. Inline embedding does NOT need `create_attachment_from_upload`.
 
-5. **Embed inline.** Put each design in the PRD's `## Designs` section as `![caption](assetUrl)` and `save_document`/`save_issue` to update the body. Use the Linear `assetUrl` only — never the original Claude Design link. Hand these `assetUrl`s to `/to-issues` so it can reuse them without re-uploading.
+5. **Embed inline.** Put each design in the PRD's `## Designs` section as `![caption](assetUrl)` and `save_document`/`save_issue` to update the body. Use the Linear `assetUrl` only — never the original Claude Design link. Hand these `assetUrl`s to `/to-issues` so it can reuse them without re-rendering or re-uploading.

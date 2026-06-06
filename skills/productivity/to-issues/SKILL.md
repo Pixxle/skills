@@ -90,18 +90,25 @@ Do NOT close or modify any parent issue.
 
 ## Attaching Claude Design assets
 
-If the source PRD or the user includes Claude Design mockups, embed the relevant ones in the issues. Claude Design's own URLs expire, so the images must be re-hosted on Linear. The user provides the design as a downloaded **zip**.
+If the source PRD or the user includes a Claude Design mockup, embed the relevant design in the issues. Claude Design exports a **handoff bundle** — a downloaded **zip** of HTML/CSS/JSX prototypes, *not* finished images — and its own hosted URLs expire. So the design has to be **rendered to a PNG and re-hosted on Linear**. The bundle almost never ships a clean image of the target page; the only rasters inside are usually debug/screenshot artifacts. You produce the page image yourself.
 
-1. **Reuse if already hosted.** If `/to-prd` already uploaded these designs, reuse its `uploads.linear.app` `assetUrl`s directly and skip to step 5. Otherwise continue.
+> The bundle's `README.md` warns "don't render these files or take screenshots unless the user asks." Embedding a durable design preview on an issue **is** that case — render it.
 
-2. **Locate and inventory.** Use the zip path the user gives, else the newest `*.zip` in `~/Downloads` (confirm first). Run `scripts/inspect-design-zip.sh [zip-path]`: it unzips to a temp dir and prints one tab-separated line per embeddable image — `<bytes>`, `<mime>`, `<path>` — and lists non-raster files (SVG, HTML, source) as `OTHER` on stderr.
+1. **Reuse if already hosted.** If `/to-prd` already rendered + uploaded these designs, reuse its `uploads.linear.app` `assetUrl`s directly and skip to step 6. Otherwise continue.
 
-3. **Map designs to slices.** Agree with the user which mockup illustrates which slice; a design is embedded only in the issue(s) it belongs to. A whole-feature design belongs in the PRD — reference it rather than repeating it on every issue.
+2. **Extract and orient.** Use the zip path the user gives, else the newest `*.zip` in `~/Downloads` (confirm first). Run `scripts/inspect-design-zip.sh [zip-path]`: it unzips to a temp dir (printed as `TMPDIR<tab><dir>`), lists embeddable rasters, and lists HTML/JSX/CSS as `OTHER`. Read the bundle's `README.md` — it names the **primary file** the user had open (e.g. `Login.html`). Open that HTML and follow its imports (JSX components, CSS) so you know what the page should look like.
 
-4. **Re-host each image on Linear.** Anchored to the issue it belongs to, run these back-to-back per image so the signed URL stays valid:
-   - `prepare_attachment_upload` with `issue`, `filename`, `contentType`, and `size` (the bytes from the inventory — a wrong size returns HTTP 403).
-   - PUT the raw bytes within **60 seconds**, passing every header from `uploadRequest.headers` verbatim (casing matters): `curl -X PUT --data-binary @"<path>" -H "<k>: <v>" … "<uploadRequest.url>"`.
-   - Keep the returned permanent `assetUrl`. Don't base64-encode or transform the file; inline embedding does NOT need `create_attachment_from_upload`.
+3. **Map designs to slices.** Agree with the user which page illustrates which slice; a design is embedded only in the issue(s) it belongs to. A whole-feature design belongs in the PRD — reference it rather than repeating it on every issue.
 
-5. **Embed inline.** Add the mapped design(s) to that issue's `## Designs` section as `![caption](assetUrl)` via `save_issue`, using the Linear `assetUrl` only — never the original Claude Design link.
+4. **Render each needed page to a PNG.** The HTML loads React + Babel from a CDN and pulls in local JSX/CSS, so serve the bundle and screenshot it with a headless browser (needs network for the CDN + web fonts):
+   - Serve the project dir — the folder holding the target HTML plus its `src/`, `styles/`, `assets/`: `python3 -m http.server 8753 --bind 127.0.0.1 --directory "<project-dir>"` (run in the background).
+   - Screenshot with headless Chrome, allowing virtual time for Babel to transpile + React to render, at 2× for a crisp image: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars --window-size=1440,900 --force-device-scale-factor=2 --virtual-time-budget=12000 --screenshot=/tmp/<page>.png "http://127.0.0.1:8753/<Page>.html"`
+   - **Verify the render** by viewing the PNG — confirm the page actually drew (fonts loaded, no blank/placeholder card), not merely that a file was written.
+
+5. **Re-host the PNG on Linear.** Get its exact byte size (`stat -f%z /tmp/<page>.png`), then, anchored to the issue it belongs to, run these back-to-back so the signed URL stays valid:
+   - `prepare_attachment_upload` with `issue`, `filename`, `contentType: image/png`, and `size` (the exact bytes — a wrong size returns HTTP 403).
+   - PUT the raw bytes within **60 seconds**, passing every header from `uploadRequest.headers` verbatim (casing matters): `curl -X PUT --data-binary @"/tmp/<page>.png" -H "<k>: <v>" … "<uploadRequest.url>"`.
+   - Keep the returned permanent `assetUrl`. Don't base64-encode or transform the file; inline embedding does NOT need `create_attachment_from_upload`. The same `assetUrl` can be embedded in more than one issue.
+
+6. **Embed inline.** Add the mapped design to each issue's `## Designs` section as `![caption](assetUrl)` via `save_issue`, using the Linear `assetUrl` only — never the original Claude Design link. If the prototype shows elements the slice drops (placeholders, deferred features), note that in the caption.
 
