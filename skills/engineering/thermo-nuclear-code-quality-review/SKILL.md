@@ -1,6 +1,6 @@
 ---
 name: thermo-nuclear-code-quality-review
-description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Use for a thermo-nuclear code quality review, thermonuclear review, deep code quality audit, or especially harsh maintainability review.
+description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. First fans out agents to map what the PR actually does, then runs the deep review primed by that map. Use for a thermo-nuclear code quality review, thermonuclear review, deep code quality audit, or especially harsh maintainability review.
 disable-model-invocation: true
 ---
 
@@ -9,6 +9,35 @@ disable-model-invocation: true
 Use this skill for an unusually strict review focused on implementation quality, maintainability, abstraction quality, and codebase health.
 
 Above all, this skill should push the reviewer to be **ambitious** about code structure. Do not merely identify local cleanup opportunities. Actively search for "code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.
+
+## How this review runs
+
+Two phases, in a single uninterrupted pass:
+
+1. **Phase 0 — Map the PR.** Fan out sub-agents to build an accurate, shared picture of what the change actually does, delivered as a report.
+2. **Phase 1 — Deep quality review.** Run the strict maintainability review, primed by the Phase 0 map.
+
+Do not skip Phase 0, and do not stop between the phases — present the map, then continue straight into the review in the same pass. Everything below the Phase 0 section (Core Prompt, Standards, Questions, Approval Bar, …) is Phase 1.
+
+## Phase 0 — Map the PR first
+
+Before applying any quality judgement, build an accurate picture of what the change actually does. Use sub-agents so the mapping is broad and parallel and your own review context stays uncluttered.
+
+1. **Scope the diff.** Get the full changeset for the current branch (e.g. `git diff` against the merge base, plus changed-file list and line counts). Note total files, net lines, and which areas/packages are touched.
+
+2. **Fan out understanding agents.** Partition the changed files into coherent groups (by package / layer / feature, not arbitrarily) and spawn one read-only exploration sub-agent per group (e.g. the `Explore` agent), in parallel, in a single batch. Their job is to **understand and report, not to judge**. Each returns:
+   - **What changed** in its slice, in plain terms.
+   - **Behavior delta** — what the system does differently now (new / changed / removed behavior, new entry points, changed contracts).
+   - **Why** — the apparent intent, inferred from the code and any PR/commit context.
+   - **Review-priming flags** — strictly factual signals for Phase 1: files pushed near or over 1000 lines, new conditionals bolted into existing flows, logic crossing layer boundaries, new abstractions / wrappers, casts / `any` / optionality added, duplicated logic, serialized work. Flag the fact; do not yet judge it.
+
+3. **Synthesize the report** and present it as the opening section of your output, in two parts:
+
+   **A. What this PR does** — a tight narrative of the change and its intent across the whole diff (not a file-by-file dump). A reader should understand the PR from this section alone.
+
+   **B. Review map** — the consolidated risk / architecture hotspots: touched layers, oversized files, concentrations of new branching, boundary crossings, and anything structurally load-bearing. This is the hit-list Phase 1 works from.
+
+Then continue directly into Phase 1 — do not pause for confirmation. Carry the Review map forward: the deep review must visit every hotspot it names and explicitly resolve each one (problem or clean).
 
 ## Core Prompt
 
