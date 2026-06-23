@@ -28,7 +28,7 @@ Before applying any quality judgement, build an accurate picture of what the cha
 2. **Fan out understanding agents.** Partition the changed files into coherent groups (by package / layer / feature, not arbitrarily) and spawn one read-only exploration sub-agent per group (e.g. the `Explore` agent), in parallel, in a single batch. Their job is to **understand and report, not to judge**. Each returns:
    - **What changed** in its slice, in plain terms.
    - **Behavior delta** — what the system does differently now (new / changed / removed behavior, new entry points, changed contracts).
-   - **Why** — the apparent intent, inferred from the code and any PR/commit context.
+   - **Why** — the apparent intent, inferred from the code and any PR/commit context. Record it as a *claim to be tested in Phase 1*, not as justification: a coherent intent never excuses a messy implementation.
    - **Review-priming flags** — strictly factual signals for Phase 1: files pushed near or over 1000 lines, new conditionals bolted into existing flows, logic crossing layer boundaries, new abstractions / wrappers, casts / `any` / optionality added, duplicated logic, serialized work. Flag the fact; do not yet judge it.
 
 3. **Synthesize the report** and present it as the opening section of your output, in two parts:
@@ -38,6 +38,8 @@ Before applying any quality judgement, build an accurate picture of what the cha
    **B. Review map** — the consolidated risk / architecture hotspots: touched layers, oversized files, concentrations of new branching, boundary crossings, and anything structurally load-bearing. This is the hit-list Phase 1 works from.
 
 Then continue directly into Phase 1 — do not pause for confirmation. Carry the Review map forward: the deep review must visit every hotspot it names and explicitly resolve each one (problem or clean).
+
+**Phase 0 exists to make the review accurate, not lenient.** Having written a clear, sympathetic account of what the PR is trying to do must not soften the review that follows. Judge the implementation you have, not the intention behind it. The Review map is a starting hit-list, not a closed checklist — Phase 1 stays suspicious of everything, including code no agent flagged.
 
 ## Core Prompt
 
@@ -198,6 +200,7 @@ Prefer a smaller number of high-conviction comments over a long list of cosmetic
 ## Approval Bar
 
 Do not approve merely because behavior seems correct.
+Understanding *why* a change was made is not a reason to accept *how* it was made — Phase 0 does not move this bar.
 The bar for approval is:
 
 - no clear structural regression
@@ -209,7 +212,7 @@ The bar for approval is:
 - no clear architecture-boundary leak or avoidable canonical-helper duplication
 - no missed opportunity for an obvious decomposition that would materially improve maintainability
 
-Treat these as presumptive blockers unless the author can justify them clearly:
+Treat these as presumptive blockers unless the author can justify them clearly. A coherent account of the PR's intent — including the Phase 0 map — is not such a justification; only a concrete structural reason is:
 
 - the PR preserves a lot of incidental complexity when there is a plausible code-judo move that would delete it
 - the PR pushes a file from below 1000 lines to above 1000 lines
