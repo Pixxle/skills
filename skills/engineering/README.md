@@ -15,3 +15,4 @@ Daily code work.
 - [tdd](tdd/SKILL.md) — test-driven development with the red-green-refactor loop.
 - [tdd-backfill](tdd-backfill/SKILL.md) — retrofit an existing change so it looks test-first: inventory missing behaviour tests, backfill them, then apply testability refactors.
 - [thermo-nuclear-code-quality-review](thermo-nuclear-code-quality-review/SKILL.md) — an extremely strict maintainability review for abstraction quality, giant files, and spaghetti conditions.
+- [workshop-findings](workshop-findings/SKILL.md) — walk review findings one at a time and decide the best fix for each, grill-me style, then hand a clean decision list to pr-comments.
