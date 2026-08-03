@@ -28,8 +28,10 @@ description: Create new agent skills with proper structure, progressive disclosu
 ```
 skill-name/
 ├── SKILL.md           # Main instructions (required)
-├── REFERENCE.md       # Detailed docs (if needed)
-├── EXAMPLES.md        # Usage examples (if needed)
+├── agents/
+│   └── openai.yaml    # Optional Codex UI metadata
+├── references/        # Detailed docs (if needed)
+├── assets/            # Templates or output resources (if needed)
 └── scripts/           # Utility scripts (if needed)
     └── helper.js
 ```
@@ -110,8 +112,12 @@ Split into separate files when:
 After drafting, verify:
 
 - [ ] Description includes triggers ("Use when...")
+- [ ] Frontmatter contains only `name` and `description`
 - [ ] SKILL.md under 100 lines
 - [ ] No time-sensitive info
 - [ ] Consistent terminology
 - [ ] Concrete examples included
 - [ ] References one level deep
+- [ ] Bundled-resource paths are relative to the skill directory
+- [ ] Tool instructions describe capabilities, not runtime-specific tool names
+- [ ] The skill passes the target runtime's validator

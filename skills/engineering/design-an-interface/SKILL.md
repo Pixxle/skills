@@ -1,7 +1,6 @@
 ---
 name: design-an-interface
 description: Generate multiple radically different interface designs for a module using parallel sub-agents. Use when user wants to design an API, explore interface options, compare module shapes, or mentions "design it twice".
-user_invocable: true
 ---
 
 # Design an Interface
@@ -24,7 +23,7 @@ Ask: "What does this module need to do? Who will use it?"
 
 ### 2. Generate Designs (Parallel Sub-Agents)
 
-Spawn 3+ sub-agents simultaneously using Task tool. Each must produce a **radically different** approach.
+Spawn 3+ sub-agents simultaneously using the runtime's native delegation mechanism. Each must produce a **radically different** approach.
 
 ```
 Prompt template for each sub-agent:

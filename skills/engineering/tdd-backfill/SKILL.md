@@ -1,14 +1,13 @@
 ---
 name: tdd-backfill
-description: The inverse of TDD — retrofit an existing change so it looks as if it had been built test-first. Investigate already-written code, inventory the behavior tests a TDD process would have produced but are missing, backfill them (verified by a mutation check, since you can't go RED first), then apply the same testability refactors /tdd does — under the safety net of the new tests. Use after a change has landed without tests, to bring a module up to TDD standard, when the user says "backfill tests", "retrofit TDD", "characterize this", or invokes /tdd-backfill.
-user_invocable: true
+description: The inverse of TDD — retrofit an existing change so it looks as if it had been built test-first. Investigate already-written code, inventory the behavior tests a TDD process would have produced but are missing, backfill them (verified by a mutation check, since you can't go RED first), then apply the same testability refactors as the tdd skill under the safety net of the new tests. Use after a change has landed without tests, to bring a module up to TDD standard, or when the user says "backfill tests", "retrofit TDD", or "characterize this".
 ---
 
 # TDD Backfill (inverse TDD)
 
-Same destination as [`/tdd`](../tdd/SKILL.md) — behavior tests through public interfaces, testable interfaces, deep modules — reached from the opposite direction. The code already exists; you reverse-engineer the tests and design it should have had.
+Same destination as the [`tdd` skill](../tdd/SKILL.md) — behavior tests through public interfaces, testable interfaces, deep modules — reached from the opposite direction. The code already exists; you reverse-engineer the tests and design it should have had.
 
-The canonical design vocabulary is the `/tdd` reference files. They apply unchanged and are the single source of truth — read them, don't restate them:
+The canonical design vocabulary is in the `tdd` skill's reference files. They apply unchanged and are the single source of truth — read them, don't restate them:
 
 - [../tdd/tests.md](../tdd/tests.md) — good vs bad tests (the bar your backfilled tests must clear)
 - [../tdd/mocking.md](../tdd/mocking.md) — mock only at boundaries; DI and SDK-style interfaces
@@ -31,12 +30,12 @@ Second rule, also inverted: in TDD, test precedes code. Here, **tests precede re
 Establish exactly what's in scope and how the repo tests.
 
 - [ ] Identify the change — default to the working diff vs the main branch (`git diff main...` / merge-base); or a named PR, commit range, or module if the user points at one
-- [ ] Find the **test command** and the repo's **test conventions** (framework, layout, naming, fixtures) — fan out `Explore` agents if the repo is unfamiliar
+- [ ] Find the **test command** and the repo's **test conventions** (framework, layout, naming, fixtures) — fan out read-only code-exploration sub-agents if the repo is unfamiliar
 - [ ] Separate the **public interface** the change exposes from its internals — tests and the gap inventory are scoped to the public surface only
 
 ### 2. Characterize the behaviors
 
-Read the changed code and list the observable behaviors it now provides — the same ordered behavior list a `/tdd` plan would have produced, recovered after the fact. Describe each as WHAT the system does, not HOW. Flag any behavior that is ambiguous or looks like a latent bug — **surface it to the user; do not silently codify it as "correct."**
+Read the changed code and list the observable behaviors it now provides — the same ordered behavior list a `tdd` plan would have produced, recovered after the fact. Describe each as WHAT the system does, not HOW. Flag any behavior that is ambiguous or looks like a latent bug — **surface it to the user; do not silently codify it as "correct."**
 
 ### 3. Inventory the gaps
 
@@ -50,7 +49,7 @@ Present the behavior list + gap inventory and **get the user's priorities** — 
 
 ### 4. Backfill tests — one behavior at a time (vertical, never horizontal)
 
-Same anti-horizontal-slicing rule as `/tdd`: do NOT write all the tests at once. For each prioritized behavior, run a full cycle before moving on:
+Use the same anti-horizontal-slicing rule as the `tdd` skill: do NOT write all the tests at once. For each prioritized behavior, run a full cycle before moving on:
 
 ```
 GREEN:    Write ONE behavior test through the public interface → run → passes
@@ -68,7 +67,7 @@ Rules:
 
 ### 5. Refactor for testability — under the net
 
-Only now, with behaviors pinned, apply the `/tdd` design principles that the original change skipped. Run the test command after every step; revert anything that breaks a test.
+Only now, with behaviors pinned, apply the `tdd` skill's design principles that the original change skipped. Run the test command after every step; revert anything that breaks a test.
 
 - [ ] Dependencies created internally (`new StripeGateway()`) → inject them
 - [ ] Side-effect-only functions that mutate inputs → return results instead
@@ -80,7 +79,7 @@ Behavior and public interface stay fixed; if you must change the interface, that
 
 ### 6. Review
 
-Adversarial pass with the `/tdd` review lenses — implementation-coupling, internal-mocking, verification-bypass, minimality — **plus the one this skill exists to catch**: tautological tests that lock in current output without expressing intent. The mutation check from step 4 is the evidence each test clears that bar; any test added without one is suspect.
+Adversarial pass with the `tdd` review lenses — implementation-coupling, internal-mocking, verification-bypass, minimality — **plus the one this skill exists to catch**: tautological tests that lock in current output without expressing intent. The mutation check from step 4 is the evidence each test clears that bar; any test added without one is suspect.
 
 ## Checklist per behavior
 
@@ -97,4 +96,4 @@ Adversarial pass with the `/tdd` review lenses — implementation-coupling, inte
 
 - **No change to scope against?** Point the skill at a module instead of a diff — same workflow, scope step names the module's public surface.
 - **The behavior looks wrong?** Stop and ask. Backfilling is for capturing *intended* behavior; a characterization test over a bug just makes the bug permanent.
-- **Many changed files?** This skill runs inline and sequential, like `/tdd`. For a large fan-out across files, that's the workflow shape `/tdd-flow` uses — raise it with the user rather than slicing horizontally here.
+- **Many changed files?** This skill runs inline and sequential, like `tdd`. For a large fan-out across files, raise the need for a broader orchestration workflow with the user rather than slicing horizontally here.

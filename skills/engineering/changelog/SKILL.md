@@ -1,6 +1,13 @@
 ---
 name: changelog
-description: Generate a user-facing changelog from git history AND flag every breaking API change a merged PR introduced. Scans a commit range for the changelog, then inspects each merged PR's diff for changes to a public contract (exported symbols, HTTP routes, CLI flags, config keys, schemas) that would break existing consumers, and writes a Breaking Changes section with before/after and migration steps. Use when preparing release notes, cutting a version, summarising changes since a tag or date, or when the user asks "what broke", "did anything break the API", "write the changelog", or "generate release notes". Language-agnostic: reasons about whatever public surface the repo exposes.
+description: >-
+  Generate a user-facing changelog from git history and flag every breaking API
+  change a merged PR introduced. Inspect public contracts such as exported
+  symbols, HTTP routes, CLI flags, config keys, and schemas, then write breaking
+  changes with before/after examples and migration steps. Use when preparing
+  release notes, cutting a version, summarising changes since a tag or date, or
+  when the user asks what broke, whether an API changed, or to write a changelog.
+  Language-agnostic; reasons about whatever public surface the repo exposes.
 ---
 
 # changelog

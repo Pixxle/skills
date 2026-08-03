@@ -16,7 +16,7 @@ Two non-negotiables separate a good proposal from a mediocre one:
 
 ### 1. Orient on what's already decided
 
-Read `CONTEXT.md` / `CONTEXT-MAP.md` and any ADRs in `docs/adr/` for the area in play. The glossary fixes your vocabulary; the ADRs are decisions you must not silently re-litigate. If none exist, note it and proceed — but suggest `/bootstrap-context` would make future proposals sharper.
+Read `CONTEXT.md` / `CONTEXT-MAP.md` and any ADRs in `docs/adr/` for the area in play. The glossary fixes your vocabulary; the ADRs are decisions you must not silently re-litigate. If none exist, note it and proceed — but suggest that the `bootstrap-context` skill would make future proposals sharper.
 
 ### 2. Frame the problem in domain language
 
@@ -24,7 +24,7 @@ State the problem crisply using `CONTEXT.md` terms. Then lay out the **decision 
 
 ### 3. Deep exploration via sub-agents
 
-Spawn `subagent_type=Explore` agents **in parallel** to investigate. Scale to the codebase (`git ls-files | wc -l`):
+Spawn read-only code-exploration sub-agents **in parallel** to investigate. Scale to the codebase (`git ls-files | wc -l`):
 
 | Files tracked | Sub-agents |
 | --- | --- |

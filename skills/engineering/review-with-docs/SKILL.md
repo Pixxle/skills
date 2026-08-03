@@ -1,7 +1,6 @@
 ---
 name: review-with-docs
-description: Review a change branch against the spec that produced it — the Linear issue (and its parent), CONTEXT.md glossary, and ADRs — verifying acceptance criteria with running evidence, then applying the thermo-nuclear code quality bar and an adversarial security-and-correctness pass. Scales from one slice to a whole release branch via agent fan-out. Use after a /tdd slice is built, when the user wants to review a branch against its issue(s), check a slice is done as planned, or mentions "review with docs", "spec review", or "did we build what we said".
-disable-model-invocation: true
+description: Review a change branch against the spec that produced it — the Linear issue (and its parent), CONTEXT.md glossary, and ADRs — verifying acceptance criteria with running evidence, then applying the thermo-nuclear code quality bar and an adversarial security-and-correctness pass. Scales from one slice to a whole release branch via agent fan-out. Use only when the user explicitly asks to review a branch against its issue(s), check a slice is done as planned, or mentions "review with docs", "spec review", or "did we build what we said".
 ---
 
 # Review With Docs
@@ -14,7 +13,7 @@ Three passes, in order. **Conformance first** (did we build the right thing?), *
 
 - Diff the current branch against the merge-base with the main branch: `git diff $(git merge-base main HEAD)`. If the user names a different branch or PR, use that.
 - Find the Linear issue: take it from the argument if given, otherwise extract the issue key from the branch name (e.g. `dennis/orc-71-...` → ORC-71). On a **release branch** that aggregates many issues, harvest the issue keys from the merge-commit log instead — the review then covers every issue the branch claims to deliver. If neither works, ask.
-- Fetch the issue(s) **and their comments** (comments often amend the spec), and fetch the **parent issue** if the `## Parent` section references one. Load the Linear tools via ToolSearch if needed. Note which issues in the harvested range are *not* part of the branch (still open/backlog) — they become scope checks: verify no partial implementation leaked in.
+- Fetch the issue(s) **and their comments** (comments often amend the spec), and fetch the **parent issue** if the `## Parent` section references one. Use the installed Linear connector or app tools; if they are unavailable, tell the user what integration is required. Note which issues in the harvested range are *not* part of the branch (still open/backlog) — they become scope checks: verify no partial implementation leaked in.
 
 ## 2. Assemble the spec
 
@@ -43,7 +42,7 @@ A single-issue slice is reviewed inline — no agents needed. A multi-issue bran
 **Acceptance criteria — verify, don't assume.** For each criterion, produce a verdict (PASS / FAIL / PARTIAL) with evidence. Evidence means observed behavior, not code that looks right:
 
 - Run the test suite; name the specific test(s) covering each criterion.
-- If a criterion is user-observable and no test covers it, run the app and observe it directly (the `/verify` approach). A criterion with no test and no observation is at best PARTIAL.
+- If a criterion is user-observable and no test covers it, run the app and observe it directly. A criterion with no test and no observation is at best PARTIAL.
 
 **Scope.** Flag work the issue didn't ask for (scope creep — especially work belonging to a sibling or blocked slice) and asked-for work that's missing. The slice should be exactly as thick as the ticket says.
 
@@ -51,7 +50,7 @@ A single-issue slice is reviewed inline — no agents needed. A multi-issue bran
 
 **ADR compliance.** The diff must not contradict an accepted decision. If a deviation was deliberate, the branch must carry the superseding/updated ADR — "we changed our mind silently" is a blocker. Conversely, if the implementation made a decision that meets the ADR bar (hard to reverse, surprising, real trade-off) and recorded nothing, flag the missing ADR.
 
-**Test quality (the `/tdd` contract).** Tests must verify behavior through public interfaces and read like the acceptance criteria. Flag tests that mock internal collaborators, assert implementation shape, or would break on a behavior-preserving refactor.
+**Test quality (the `tdd` skill contract).** Tests must verify behavior through public interfaces and read like the acceptance criteria. Flag tests that mock internal collaborators, assert implementation shape, or would break on a behavior-preserving refactor.
 
 ## 5. Quality review
 
@@ -80,4 +79,4 @@ Use the format in [REPORT-FORMAT.md](./REPORT-FORMAT.md). Verdict is **APPROVE**
 
 Prioritize findings: spec violations and security holes → ADR contradictions → structural quality / missed judo → test-quality problems → language drift → everything else. Few high-conviction findings beat a wall of nits.
 
-After reporting, offer (don't auto-run): post the report as a comment on the Linear issue, post inline PR comments via `/pr-comments`, or fix the findings directly on the branch.
+After reporting, offer (don't auto-run): post the report as a comment on the Linear issue, post inline PR comments with the `pr-comments` skill, or fix the findings directly on the branch.

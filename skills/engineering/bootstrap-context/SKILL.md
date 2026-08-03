@@ -19,7 +19,7 @@ The output format is fixed by [CONTEXT-FORMAT.md](../grill-with-docs/CONTEXT-FOR
 
 ### 2. Scaled exploration
 
-Spawn sub-agents **in parallel** with `subagent_type=Explore`. Missing a domain area is the failure mode here, so err on the high side.
+Spawn read-only code-exploration sub-agents **in parallel** using the runtime's native delegation mechanism. Missing a domain area is the failure mode here, so err on the high side.
 
 | Files tracked | Sub-agents |
 | --- | --- |

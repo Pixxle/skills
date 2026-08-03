@@ -1,13 +1,18 @@
 ---
 name: pr-comments
-description: Turn review findings you already have into concise, human-sounding, inline-first PR comments and submit them as one GitHub review. Use after a review pass (your own read, /code-review, or /security-review) when the user wants to "comment on the PR", "post these findings", "leave inline comments", or "write PR comments" locally. Brevity is the point: short comments get replies, walls of text get ignored; inline on the changed line beats a PR-level comment, and the review body stays empty unless a concept needs clarifying or a question doesn't fit on a line. The verdict (COMMENT / REQUEST_CHANGES / APPROVE) is human-provided and never inferred; ask if it's missing. Comments read like a teammate typing into the box, not a model narrating its analysis. Does not hunt for issues itself.
+description: >-
+  Turn existing review findings into concise, human-sounding, inline-first PR
+  comments and submit them as one GitHub review. Use after a review pass when
+  the user wants to comment on the PR, post findings, leave inline comments, or
+  write PR comments locally. The verdict is human-provided and never inferred.
+  Does not hunt for issues itself.
 ---
 
 # pr-comments: post a review well
 
 Turn findings you **already have** into a tight set of PR comments and submit them as one GitHub
-review. This is a posting layer: it does **not** hunt for issues (that's `/code-review`,
-`/security-review`, or your own read) and it does **not** decide the verdict (that's the human's).
+review. This is a posting layer: it does **not** hunt for issues (that's a code-review
+or security-review skill, or your own read) and it does **not** decide the verdict (that's the human's).
 It authors, places, and submits.
 
 ## Three rules that matter most

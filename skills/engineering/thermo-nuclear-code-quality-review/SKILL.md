@@ -1,7 +1,6 @@
 ---
 name: thermo-nuclear-code-quality-review
-description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. First fans out agents to map what the PR actually does, then runs the deep review primed by that map. Use for a thermo-nuclear code quality review, thermonuclear review, deep code quality audit, or especially harsh maintainability review.
-disable-model-invocation: true
+description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. First fans out agents to map what the PR actually does, then runs the deep review primed by that map. Use only when the user explicitly requests a thermo-nuclear code quality review, thermonuclear review, deep code quality audit, or especially harsh maintainability review.
 ---
 
 # Thermo-Nuclear Code Quality Review

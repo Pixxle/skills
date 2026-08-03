@@ -17,7 +17,7 @@ Run four parallel investigations across the repo and write the findings to `_map
 
 ### 2. Fan out four sub-agents in parallel
 
-Spawn all four with `subagent_type=Explore` **in a single message**. Each gets a tailored brief from [SUBAGENT-BRIEFS.md](SUBAGENT-BRIEFS.md):
+Start all four read-only code-exploration sub-agents together so they run concurrently. Each gets a tailored brief from [SUBAGENT-BRIEFS.md](SUBAGENT-BRIEFS.md):
 
 1. **Models** — tables, god objects, permissions
 2. **Workers** — async paths, queues, crons, inter-service messages

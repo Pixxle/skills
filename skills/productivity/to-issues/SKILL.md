@@ -7,7 +7,7 @@ description: Break a plan, spec, or PRD into independently-grabbable issues on t
 
 Break a plan into independently-grabbable issues using vertical slices (tracer bullets).
 
-The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
+The issue tracker and triage label vocabulary should already be available. If not, ask the user for the target tracker/project and its label/status mapping before publishing.
 
 ## Process
 
@@ -94,7 +94,7 @@ If the source PRD or the user includes a Claude Design mockup, embed the relevan
 
 > The bundle's `README.md` warns "don't render these files or take screenshots unless the user asks." Embedding a durable design preview on an issue **is** that case — render it.
 
-1. **Reuse if already hosted.** If `/to-prd` already rendered + uploaded these designs, reuse its `uploads.linear.app` `assetUrl`s directly and skip to step 6. Otherwise continue.
+1. **Reuse if already hosted.** If the `to-prd` skill already rendered + uploaded these designs, reuse its `uploads.linear.app` `assetUrl`s directly and skip to step 6. Otherwise continue.
 
 2. **Extract and orient.** Use the zip path the user gives, else the newest `*.zip` in `~/Downloads` (confirm first). Run `scripts/inspect-design-zip.sh [zip-path]`: it unzips to a temp dir (printed as `TMPDIR<tab><dir>`), lists embeddable rasters, and lists HTML/JSX/CSS as `OTHER`. Read the bundle's `README.md` — it names the **primary file** the user had open (e.g. `Login.html`). Open that HTML and follow its imports (JSX components, CSS) so you know what the page should look like.
 
@@ -111,4 +111,3 @@ If the source PRD or the user includes a Claude Design mockup, embed the relevan
    - Keep the returned permanent `assetUrl`. Don't base64-encode or transform the file; inline embedding does NOT need `create_attachment_from_upload`. The same `assetUrl` can be embedded in more than one issue.
 
 6. **Embed inline.** Add the mapped design to each issue's `## Designs` section as `![caption](assetUrl)` via `save_issue`, using the Linear `assetUrl` only — never the original Claude Design link. If the prototype shows elements the slice drops (placeholders, deferred features), note that in the caption.
-

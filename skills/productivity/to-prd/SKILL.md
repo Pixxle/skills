@@ -5,7 +5,7 @@ description: Turn the current conversation context into a PRD and publish it to 
 
 This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — just synthesize what you already know.
 
-The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
+The issue tracker and triage label vocabulary should already be available. If not, ask the user for the target tracker/project and its label/status mapping before publishing.
 
 ## Process
 
@@ -99,4 +99,4 @@ Claude Design exports a **handoff bundle** — a downloaded **zip** of HTML/CSS/
    - PUT the raw bytes within **60 seconds**, passing every header from `uploadRequest.headers` verbatim (casing matters): `curl -X PUT --data-binary @"/tmp/<page>.png" -H "<k>: <v>" … "<uploadRequest.url>"`.
    - Keep the returned permanent `assetUrl` (`uploads.linear.app/…`). Don't base64-encode or transform the file. Inline embedding does NOT need `create_attachment_from_upload`.
 
-5. **Embed inline.** Put each design in the PRD's `## Designs` section as `![caption](assetUrl)` and `save_document`/`save_issue` to update the body. Use the Linear `assetUrl` only — never the original Claude Design link. Hand these `assetUrl`s to `/to-issues` so it can reuse them without re-rendering or re-uploading.
+5. **Embed inline.** Put each design in the PRD's `## Designs` section as `![caption](assetUrl)` and `save_document`/`save_issue` to update the body. Use the Linear `assetUrl` only — never the original Claude Design link. Hand these `assetUrl`s to the `to-issues` skill so it can reuse them without re-rendering or re-uploading.

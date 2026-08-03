@@ -7,7 +7,7 @@ description: Review the ADRs in a repository against the quality bar the documen
 
 The other documentation skills *write* ADRs. This skill *audits* the ones they left behind.
 
-The bar is fixed by [ADR-FORMAT.md](../grill-with-docs/ADR-FORMAT.md) — read it first. The whole point of an ADR is to record *that* a decision was made and *why*. Not to fill out sections. Not to capture implementation detail. Most good ADRs are a single paragraph. Hold every ADR you review to that standard.
+The bar is fixed by [ADR-FORMAT.md](../../engineering/grill-with-docs/ADR-FORMAT.md) — read it first. The whole point of an ADR is to record *that* a decision was made and *why*. Not to fill out sections. Not to capture implementation detail. Most good ADRs are a single paragraph. Hold every ADR you review to that standard.
 
 ## Process
 
@@ -34,14 +34,14 @@ Hold these as findings; resolve them in the loop or in a final pass, whichever i
 
 For each ADR, in order, run it through three lenses and report what you find **before** moving to the next one. Don't batch.
 
-**Lens 1 — Does it qualify?** All three must hold: hard to reverse, surprising without context, the result of a real trade-off (see [ADR-FORMAT.md](../grill-with-docs/ADR-FORMAT.md)). If one is missing, the entry isn't an architectural decision worth a record — it's a note, a how-to, or the obvious thing. Flag it for deletion and say which criterion fails.
+**Lens 1 — Does it qualify?** All three must hold: hard to reverse, surprising without context, the result of a real trade-off (see [ADR-FORMAT.md](../../engineering/grill-with-docs/ADR-FORMAT.md)). If one is missing, the entry isn't an architectural decision worth a record — it's a note, a how-to, or the obvious thing. Flag it for deletion and say which criterion fails.
 
 **Lens 2 — Does it record the *why*, not the *how*?**
 - Missing rationale: states what was decided but not why. The "why" is the load-bearing half — without it the ADR is just a label. If the reasoning isn't recoverable from the text, ask the user for it.
 - Implementation detail: code snippets, function names, step-by-step setup, anything that belongs in the code or a runbook rather than a decision record. Propose trimming it out.
 - Section bloat: `Considered Options` / `Consequences` / `Status` filled in by reflex when they add nothing (ADR-FORMAT.md makes them optional — most ADRs need none). Propose collapsing back toward the single paragraph.
 
-**Lens 3 — Is it still true?** The decision is a claim about the system. Verify it against the code — grep for the pattern it describes, or spawn an `Explore` sub-agent for a broad claim ("all business logic flows through Operations"). If the code has moved on, the ADR isn't wrong to exist — it's *out of date*. Propose marking it `deprecated`, or writing a new ADR that supersedes it and linking the two. Never silently edit a superseded decision to match today's code; that erases the history the ADR exists to keep.
+**Lens 3 — Is it still true?** The decision is a claim about the system. Verify it against the code — search for the pattern it describes, or spawn a read-only code-exploration sub-agent for a broad claim ("all business logic flows through Operations"). If the code has moved on, the ADR isn't wrong to exist — it's *out of date*. Propose marking it `deprecated`, or writing a new ADR that supersedes it and linking the two. Never silently edit a superseded decision to match today's code; that erases the history the ADR exists to keep.
 
 ### 4. Fix inline, after confirming each
 
@@ -53,7 +53,7 @@ When a lens turns up something, propose the concrete fix and apply it once the u
 - **Out of date** → set `Status: deprecated`, or draft a superseding ADR (next number in that `docs/adr/`) and add the supersede link both ways.
 - **Set-integrity** → fix numbering, repair supersede links, correct status frontmatter.
 
-Stay inside [ADR-FORMAT.md](../grill-with-docs/ADR-FORMAT.md) — never invent new sections or a new format. When in doubt, the smaller ADR is the better one.
+Stay inside [ADR-FORMAT.md](../../engineering/grill-with-docs/ADR-FORMAT.md) — never invent new sections or a new format. When in doubt, the smaller ADR is the better one.
 
 ### 5. Wrap up
 

@@ -1,6 +1,6 @@
 # Sub-agent briefs
 
-Each brief is a self-contained prompt for an `Explore` sub-agent. The agent does not see your conversation — copy the brief verbatim, fill in the `{{...}}` placeholders, and adapt the file-extension hints to the project's language.
+Each brief is a self-contained prompt for a read-only code-exploration sub-agent. Do not assume the agent sees your conversation: copy the brief verbatim, fill in the `{{...}}` placeholders, and adapt the file-extension hints to the project's language.
 
 All four briefs share these output rules:
 

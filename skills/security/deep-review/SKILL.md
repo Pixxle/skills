@@ -1,7 +1,11 @@
 ---
 name: deep-review
-description: Deep technical deep-dive into a codebase (not a diff) that hunts for code-judo moves — dramatic structural simplifications — and verifies every one before reporting. Runs four phases of sub-agents: discovery (map the system), review (find improvements to the thermo-nuclear quality bar), QA (adversarially follow the code paths to confirm each finding is real), and a prioritized terminal report. Use for "deep review", "deep-dive the codebase", "find improvement opportunities", or a verified architectural audit of a service or the whole repo.
-disable-model-invocation: true
+description: >-
+  Deep technical audit of a codebase, not a diff, that hunts for dramatic
+  structural simplifications and verifies every finding before reporting. Runs
+  discovery, review, adversarial QA, and prioritized reporting phases with
+  sub-agents. Use only when the user explicitly requests a deep review,
+  codebase deep-dive, improvement opportunities, or verified architectural audit.
 ---
 
 # Deep Review
@@ -12,11 +16,11 @@ The goal is to find **where the code is a tangled mess** — the load-bearing wr
 
 The deepest failure mode of this skill is **shallow breadth**: module-by-module slices that each look fine in isolation while the actual tangle lives in the seams between them. Guard against it deliberately — see the distress-signal mining and flow targets in Phase 1, and the tangle pass in Phase 2.
 
-Run the four phases in order. Each phase fans out sub-agents. All inter-phase handoff goes through a scratch dir `_deep-review/` at the repo root so the run is inspectable and resumable; the final deliverable is printed to the **terminal**.
+Run the four phases in order. Each phase fans out sub-agents. All inter-phase handoff goes through a scratch dir `_deep-review/` at the repo root so the run is inspectable and resumable; return the final deliverable to the user.
 
 ## Phase 0 — Scope & priors
 
-- If an argument was given (`/deep-review <path|service|"."> `), use it as the review scope. Otherwise, detect whether this is a monorepo and **ask** whether to review one service or the whole repo.
+- If the user provided a path, service, or `.` as an argument, use it as the review scope. Otherwise, detect whether this is a monorepo and **ask** whether to review one service or the whole repo.
 - **Seed with the human's priors — do not review cold.** Before scoping, ask the user what they already know hurts: which module is scary, which recent change was far harder than it should have been, which bug keeps recurring, which file everyone avoids. Capture the answers in `_deep-review/00_priors.md`. Point the deepest agents at these, and at the end of the run treat **"did we surface the known problems?"** as the pass/fail check on the whole review. If the method can't rediscover what a human already knows is broken, the method is still wrong. **A prior that an *interaction* feels brittle ("the way X consumes Y feels fragile") is the single most valuable kind** — it points at a consumer-side seam, which is exactly what distress signals and module-by-module review are blind to. Route any such prior straight to a `seam` target (Phase 1, signal 8) that owns both sides of the edge.
 - **No priors is fine — priors are an accelerant, not a dependency.** If the user is new to the repo or has nothing to offer, record "none" in `00_priors.md` and lean entirely on the Phase 1 distress map as the substitute — that mining exists precisely for the cold-repo case. Helpful pattern: once the distress map lands early in Phase 1, surface its top 3–5 suspects back to the user (*"the repo points at X, Y, Z — want me to weight any before I spend deep-dive budget?"*) to convert a newcomer into having cheap, evidence-based priors. Be aware of the blind spot: distress signals are historical (where change/bugs already happened) and can miss code that is quietly rotten but rarely touched — the Phase 2 tangle pass, which reasons about cost-of-change rather than history, is what covers that gap.
 - Create `_deep-review/` at the repo root (offer `_deep-review_<date>/` if one already exists).
@@ -24,7 +28,7 @@ Run the four phases in order. Each phase fans out sub-agents. All inter-phase ha
 
 ## Phase 1 — Discovery (map the system as it stands)
 
-Fan out `Explore` sub-agents **in a single message** to map the scope. Use the **Discovery brief** in [BRIEFS.md](BRIEFS.md). The job of this phase is threefold: build a real understanding, **mine the repo's own distress signals**, and produce a **worklist**.
+Start read-only code-exploration sub-agents together so they run concurrently and map the scope. Use the **Discovery brief** in [BRIEFS.md](BRIEFS.md). The job of this phase is threefold: build a real understanding, **mine the repo's own distress signals**, and produce a **worklist**.
 
 **Distress-signal mining (do this before partitioning).** Targeting by file size and dependency count finds *big* files, not *hard-to-change* ones. Instead, let the repo tell you where it hurts: git churn (files changed most in the last ~12 months), bug-fix density (`git log --grep=fix -i`), co-change coupling (files that keep changing together — these are your hidden seams), test gaps (production files with no/brittle tests; an oversized test file is itself a smell), and TODO/HACK/FIXME plus "careful"/"don't touch"/"load-bearing" comments. Write this to `_deep-review/00_distress.md`.
 
@@ -55,4 +59,4 @@ QA verifies **two** things, not one: (1) is the finding *true*, and (2) is it th
 
 ## Phase 4 — Terminal report
 
-Read all CONFIRMED and REFRAMED verdicts. Synthesize and **print to the terminal** following [OUTPUT.md](OUTPUT.md). The report **opens with the core tangles** — the 1–3 model-level findings (severity CORE) that explain what makes this codebase hard to change, each with the change-scenario and blast radius that proves it. The judo-move cleanup list comes *after*, clearly subordinate, prioritized by the thermo-nuclear ordering (structural regressions → missed dramatic simplifications → spaghetti → boundary/type → file-size → modularity → legibility), each with location, payoff, confidence, and the QA evidence trail. Report how many candidates were raised, confirmed, rejected, and reframed — silent truncation reads as "covered everything" when it wasn't. Finally, **check the report against `_deep-review/00_priors.md`**: explicitly state which of the human's known problems the review did and did not surface — a known problem the run missed is a finding about the run. Mention that `_deep-review/` holds the full backing detail.
+Read all CONFIRMED and REFRAMED verdicts. Synthesize and return the report to the user following [OUTPUT.md](OUTPUT.md). The report **opens with the core tangles** — the 1–3 model-level findings (severity CORE) that explain what makes this codebase hard to change, each with the change-scenario and blast radius that proves it. The judo-move cleanup list comes *after*, clearly subordinate, prioritized by the thermo-nuclear ordering (structural regressions → missed dramatic simplifications → spaghetti → boundary/type → file-size → modularity → legibility), each with location, payoff, confidence, and the QA evidence trail. Report how many candidates were raised, confirmed, rejected, and reframed — silent truncation reads as "covered everything" when it wasn't. Finally, **check the report against `_deep-review/00_priors.md`**: explicitly state which of the human's known problems the review did and did not surface — a known problem the run missed is a finding about the run. Mention that `_deep-review/` holds the full backing detail.

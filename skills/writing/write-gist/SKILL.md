@@ -1,7 +1,6 @@
 ---
 name: write-gist
 description: Draft a new gist for the vinterfjard.com blog in Dennis's voice — short personal essays (250–450 words) that mix a concrete story with a sharp opinion. Use whenever the user wants to write a gist, blog post, or short essay for the site, asks to "turn this into a gist," wants a draft "in my style," or is brainstorming a post idea. Also trigger when the user is venting about a workplace or tech observation and hints they might want to publish it. The skill produces a markdown file with correct frontmatter, saves it under `gists/` with a kebab-case slug, and matches the existing voice closely enough that the post reads like Dennis wrote it.
-user_invocable: true
 ---
 
 # write-gist
@@ -116,7 +115,7 @@ This document will become a vinterfjard.com gist:
 - No headers, no bullet lists, no tables in the published body.
 - First-person, contractions, real names and numbers, one concrete anecdote.
 - AI-tells to suppress (ceiling 1 each per post): em-dashes, negative parallelism ("not X, but Y"), stacked triplets.
-- Banned vocabulary lives in ~/.claude/skills/write-gist/references/ai-tells.md.
+- Banned vocabulary lives in `references/ai-tells.md`, resolved relative to this skill's directory.
 - Phase: <fragments | shape | beats>
 - Working file: gists/_drafts/<slug>.md
 ```

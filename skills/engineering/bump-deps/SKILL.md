@@ -1,7 +1,6 @@
 ---
 name: bump-deps
-description: Safely bump repository dependencies — discover manifests via parallel sub-agents, baseline build/typecheck/tests, anchor latest versions to the internet (never guess, never downgrade), present a gated plan, apply one bump at a time on a fresh branch, validate after each, and auto-resolve source-only regressions (never modifying tests, hard stop on test-framework breakage). Use when user wants to upgrade packages, runtimes, or Docker base images safely. Triggers include "bump deps", "upgrade dependencies", "safely update packages", "/bump-deps".
-user_invocable: true
+description: Safely bump repository dependencies — discover manifests via parallel sub-agents, baseline build/typecheck/tests, anchor latest versions to the internet (never guess, never downgrade), present a gated plan, apply one bump at a time on a fresh branch, validate after each, and auto-resolve source-only regressions (never modifying tests, hard stop on test-framework breakage). Use when user wants to upgrade packages, runtimes, or Docker base images safely. Triggers include "bump deps", "upgrade dependencies", and "safely update packages".
 ---
 
 # bump-deps
@@ -12,7 +11,7 @@ Safely upgrade a repository's dependencies — packages, language runtimes, and 
 
 ## Invariants (never violate)
 
-- **Never guess versions.** Latest-version info must come from a native package-manager CLI (which queries the official registry) or `WebFetch` of an official registry/release endpoint. Training-data knowledge is not a valid source.
+- **Never guess versions.** Latest-version info must come from a native package-manager CLI (which queries the official registry) or an available web/HTTP tool reading an official registry or release endpoint. Training-data knowledge is not a valid source.
 - **Never downgrade.** If `current > latest stable` (e.g., a pinned pre-release that hasn't been promoted to stable), the dep is held until stable catches up. Applies to packages, runtimes, and Docker tags equally.
 - **Never modify tests to make them pass.** Auto-resolution edits source code only. If a regression can only be fixed by changing a test, defer to the user.
 - **Never silently revert.** Every reverted bump is reported with reason in the final summary.
@@ -60,9 +59,9 @@ Do not fragment too granularly: a sub-agent should reason holistically about sha
 
 ### 1.4 Spawn discovery sub-agents in parallel
 
-- One Agent call per ecosystem project.
+- One sub-agent per ecosystem project.
 - **One dedicated `runtimes-and-images` sub-agent** for: Dockerfiles, `docker-compose*.yml`, `.nvmrc`, `.tool-versions` (asdf/mise), `global.json` SDK pin, `go.mod` toolchain directive, `.python-version`, GitHub Actions runner/setup-action versions in `.github/workflows/*.yml`.
-- All sub-agent calls must go in a **single message with multiple Agent tool uses** so they run concurrently. Coordinator waits for all to complete before aggregating.
+- Start all discovery sub-agents together so they run concurrently. The coordinator waits for all to complete before aggregating.
 
 ### 1.5 Sub-agent contract
 
@@ -77,13 +76,13 @@ It must:
 2. Identify and run the project's **typecheck/lint** if configured (`tsc --noEmit`, `mypy`, `golangci-lint`, `eslint`, `ruff`, etc.).
 3. Identify and run the project's **test command**. Capture the **test-name → outcome** map. Pre-existing failures are recorded and **excluded from the regression set**.
 4. Enumerate **direct and dev** dependencies.
-5. For each dep, fetch `current`, `latest-stable`, `LTS-if-applicable` via **native CLI first**, registry WebFetch as fallback:
+5. For each dep, fetch `current`, `latest-stable`, `LTS-if-applicable` via **native CLI first**, then browse or call the registry API as fallback:
    - .NET: `dotnet list package --outdated --include-transitive` and `dotnet list package --vulnerable`.
    - Node: `npm outdated --json` (or `pnpm outdated --format=json`, `yarn outdated --json`) and `npm audit --json`.
    - Go: `go list -m -u all` and `govulncheck ./...` (or osv-scanner).
    - Python: `pip list --outdated --format=json` (or `poetry show --outdated`) and `pip-audit`.
-   - Docker base images: WebFetch `https://hub.docker.com/v2/repositories/<image>/tags?page_size=100` (or registry API for non-DockerHub).
-   - Runtimes: WebFetch official endpoints — nodejs.org/dist/index.json, dotnet.microsoft.com release notes JSON, go.dev/dl/?mode=json, python.org/api or endoflife.date as a secondary anchor.
+   - Docker base images: read `https://hub.docker.com/v2/repositories/<image>/tags?page_size=100` with an available web/HTTP tool (or use the registry API for non-DockerHub images).
+   - Runtimes: read official endpoints with an available web/HTTP tool — nodejs.org/dist/index.json, dotnet.microsoft.com release notes JSON, go.dev/dl/?mode=json, python.org/api or endoflife.date as a secondary anchor.
 6. Surface **CVEs** alongside each dep. CVE-fixing bumps will jump the order within their risk tier.
 7. For each non-trivial bump (≥ minor, any CVE, any runtime), fetch breaking-changes info per §1.6.
 8. Risk-classify each bump: `low` / `medium` / `high`. Default raise rules in §1.8.
@@ -93,7 +92,7 @@ It must:
 1. **GitHub Releases** for the package's source repo (discovered from registry metadata `homepage` / `repository` / `project_urls`).
 2. **CHANGELOG.md / RELEASES.md / HISTORY.md** in the source repo (raw.githubusercontent.com URL).
 3. **Registry release notes page** (npmjs.com/package/X, nuget.org/packages/X, pkg.go.dev/X, pypi.org/project/X).
-4. **WebSearch** `"<pkg> <new-version> breaking changes"` — fallback only.
+4. **Web search** for `"<pkg> <new-version> breaking changes"` — fallback only.
 
 If none yield content, mark `breaking-changes: unknown — manual review recommended`.
 
@@ -341,8 +340,8 @@ Never push without explicit confirmation.
 
 ## Notes for the running agent
 
-- **Concurrency**: discovery sub-agents always parallel (one message, multiple Agent calls). Resolution sub-agent always single-instance — sequential is part of the safety story.
-- **Native-tool absence**: if `npm` / `dotnet` / `go` / `pip` / `gh` etc. is not installed, the sub-agent must report it explicitly. Do not WebFetch around a missing toolchain — the user needs to know coverage is degraded.
+- **Concurrency**: start discovery sub-agents together so they run in parallel. Keep the resolution sub-agent single-instance — sequential is part of the safety story.
+- **Native-tool absence**: if `npm` / `dotnet` / `go` / `pip` / `gh` etc. is not installed, the sub-agent must report it explicitly. Do not hide a missing toolchain by browsing around it — the user needs to know coverage is degraded.
 - **Trivial patch grouping**: `@types/*` patches and similar low-risk families may be applied as one commit `bump(node): @types/* patches` — only if all members are patch-level and none has a CVE.
 - **Holding deps**: if a project pins a dep above latest stable (e.g. `"react": "19.0.0-rc"` while stable is `18.x`), the row reads `current=19.0.0-rc, latest-stable=18.x.x, action: hold (pre-release ahead)`. Revisit once stable catches up.
 - **Anchored-source column is non-optional.** A bump with a missing anchored-source is a bug in the sub-agent and must be reported, not skipped.

@@ -54,7 +54,7 @@ LOCAL finding (code-judo move — behavior-preserving, local):
 
 ---
 
-## Brief 1 — Discovery (Explore agent, run several in parallel)
+## Brief 1 — Discovery (read-only code-exploration agent, run several in parallel)
 
 ```
 You are mapping part of {{project_name}} at {{repo_root}}, scoped to {{scope}}.
@@ -126,7 +126,7 @@ ORDER targets by distress, NOT alphabetically and NOT by size. A later agent
 will be handed one target at a time. Use absolute paths.
 ```
 
-After the Explore agents return, the orchestrator writes `_deep-review/00_distress.md` (the signal map) and consolidates the partitions into `_deep-review/00_worklist.md` — a numbered list of targets tagged `module`/`flow`/`deep-dive`, deduped, ordered by distress + the Phase 0 priors, each with its file set, hotspots, and (for flows) the path it crosses.
+After the exploration agents return, the orchestrator writes `_deep-review/00_distress.md` (the signal map) and consolidates the partitions into `_deep-review/00_worklist.md` — a numbered list of targets tagged `module`/`flow`/`deep-dive`, deduped, ordered by distress + the Phase 0 priors, each with its file set, hotspots, and (for flows) the path it crosses.
 
 ---
 

@@ -1,17 +1,21 @@
 ---
 name: workshop-findings
-description: Work through review findings you already have, one at a time, deciding the best fix for each before anything gets posted. A grill-me-style deliberation that sits between a review pass and pr-comments: it assumes the findings are real and spends the time on how to solve them, then leaves a clean per-finding decision list for pr-comments to author. Use after a review (thermo-nuclear, /code-review, /security-review, or your own read) when the user wants to "workshop the findings", "work through the review", "talk through each issue", or decide fixes before commenting. Does not hunt for new issues and does not post anything.
-disable-model-invocation: true
+description: >-
+  Work through existing review findings one at a time, deciding the best fix for
+  each before anything gets posted, then leave a clean decision list for
+  pr-comments. Use only when the user explicitly asks to workshop findings, work
+  through a review, talk through each issue, or decide fixes before commenting.
+  Does not hunt for new issues and does not post anything.
 ---
 
 # workshop-findings: decide the fix before you post
 
-The decision layer between a review and `/pr-comments`. A review hands you a pile of
+The decision layer between a review and the `pr-comments` skill. A review hands you a pile of
 findings; this skill walks them with you one at a time and works out the **fix** for each.
 It does not hunt for issues (that's the review) and it does not author or post comments
-(that's `/pr-comments`). It decides substance, then hands off.
+(that's `pr-comments`). It decides substance, then hands off.
 
-Pipeline: a review pass (e.g. `/thermo-nuclear-code-quality-review`) → **`/workshop-findings`** → `/pr-comments`.
+Pipeline: a review pass (for example, `thermo-nuclear-code-quality-review`) → **`workshop-findings`** → `pr-comments`.
 
 ## Stance: fix-focused collaborator
 
@@ -60,7 +64,7 @@ Note these out loud as you go so the final list has no contradictions.
 
 By the end, each finding resolves to one of: **fix it here**, **raise as a question**,
 **defer to a follow-up**, or **drop**. For everything not dropped, capture exactly what
-`/pr-comments` needs to author without re-deriving anything:
+The `pr-comments` skill needs to author without re-deriving anything:
 
 - **Location** — `file:line` so it can be placed inline.
 - **The decided fix** — the substance, concrete enough to become a ` ```suggestion ` block
@@ -73,7 +77,7 @@ By the end, each finding resolves to one of: **fix it here**, **raise as a quest
 ## Handoff
 
 End with a compact per-finding decision list in the conversation, grouped kept / question /
-deferred / dropped. That list *is* the input to `/pr-comments` — it reads it straight from
+deferred / dropped. That list *is* the input to `pr-comments` — it reads it straight from
 context.
 
 Stop at the decision. **Do not pre-write the final comment prose** — voice, placement
