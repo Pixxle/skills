@@ -1,24 +1,28 @@
 ---
 name: writing-shape
-description: Take a markdown file of raw material and shape it into an article through a conversational session — drafting candidate openings, growing the piece paragraph by paragraph, arguing about format (lists, tables, callouts, quotes) at each step. Use when the user has a pile of notes, fragments, or a rough draft and wants help turning it into something publishable.
+description: Shape raw material into an article through a conversation about the opening, order of ideas, and each agreed paragraph or block. Use when the user wants to turn notes or fragments into an article, structure an argument, or revise an existing draft.
 ---
 
 <what-to-do>
 
-The user has passed (or will pass) a markdown file of raw material. Treat it as the input pile — anything from a tidy list of fragments to a wall of unstructured prose to a transcript. The format does not matter. Read it end-to-end before doing anything else.
+The user has passed (or will pass) raw material as text, a working brief, or a markdown file. Treat it as the input pile, whatever its format. Read supplied material end-to-end before shaping it.
 
-Then run a shaping session that produces a separate article document. Do not edit the raw material file — it is read-only to this skill.
+Draft into a separate article document. Raw material files are read-only. In revision mode, the supplied article is the editable output: read it and continue or restructure it in place, preserving user edits and agreed choices. If a path could mean source or output, clarify its role before writing.
 
 If the user did not say where to save the article, ask once and remember the path. The user will be editing the article file during the session; always re-read it before writing so their edits are preserved.
 
 </what-to-do>
+
+## When coordinated by another writing skill
+
+Accept the interview brief, material, current draft, and supplied paths. Reuse established answers and honor inherited voice, length, format, and destination constraints. Keep an agreed angle or opening unless the author wants it changed; vary execution within that angle. Return the working draft path and gaps when the author accepts the structure or changes mode. In the full composition flow, the coordinator then invokes `writing-blog-post` to produce the final article. Do not start another skill yourself.
 
 <supporting-info>
 
 ## The loop
 
 1. **Read the pile.** Read the input file in full. Form a sense of what's in it.
-2. **Draft 2–3 candidate openings.** Each opening should imply a different thesis or angle for the article. Show all of them. Force the user to pick or compose a hybrid. The chosen opening defines what the rest of the article must do.
+2. **Find the opening.** For a new article, show 2–3 candidate openings and let the user pick or combine them. With an agreed angle, vary the entry point rather than replacing the premise. When resuming or revising, keep the opening unless changing it is part of the request.
 3. **Grow paragraph by paragraph.** After the opening lands, ask "given this opening, what does the reader need to hear next?" Pull material from the pile to answer. Argue about whether the next beat is a paragraph, a list, a table, a callout, a quote, a code block. Each format choice should be deliberate and defensible.
 4. **Append to the article file as you go.** Don't batch. Write each agreed paragraph or block immediately so the user can see the article taking shape.
 5. **Loop step 3 until the article is done.** The user decides when it's done.

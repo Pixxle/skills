@@ -1,8 +1,14 @@
 # Writing
 
-Drafting and shaping prose.
+A flow from initial thoughts to a finished article in Dennis's voice.
 
-- [write-gist](write-gist/SKILL.md) — draft a short personal essay for vinterfjard.com in Dennis's voice (250–450 words, concrete story + sharp opinion).
-- [writing-beats](writing-beats/SKILL.md) — shape an article as a journey of beats, choose-your-own-adventure style, writing one beat at a time.
-- [writing-fragments](writing-fragments/SKILL.md) — mine you for fragments — claims, vignettes, sharp sentences — and append them to a document as raw material for a future article.
-- [writing-shape](writing-shape/SKILL.md) — take a file of raw material and shape it into an article conversationally, arguing about format paragraph by paragraph.
+Start with `compose-blog-post` and an unstructured brain dump. The workflow moves
+through an interview, narrative shaping, and final composition. Fragments are
+optional; beats and shape provide different ways to build the working draft.
+
+- [compose-blog-post](compose-blog-post/SKILL.md) — coordinate the complete thought-to-article flow.
+- [writing-interview](writing-interview/SKILL.md) — develop the idea through a collaborative Socratic interview.
+- [writing-fragments](writing-fragments/SKILL.md) — collect concrete examples, observations, and phrases when more material is useful.
+- [writing-beats](writing-beats/SKILL.md) — build the narrative one agreed beat at a time.
+- [writing-shape](writing-shape/SKILL.md) — shape the structure and working draft, or revise an existing draft.
+- [writing-blog-post](writing-blog-post/SKILL.md) — compose and polish the final article in Dennis's voice; apply site conventions for vinterfjard.com posts.

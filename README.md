@@ -62,10 +62,13 @@ Run `scripts/list-skills.sh` to see everything, grouped by bucket.
 - [write-a-skill](skills/productivity/write-a-skill/SKILL.md) — create new agent skills with proper structure.
 
 ### Writing
-- [write-gist](skills/writing/write-gist/SKILL.md) — draft a short personal essay in Dennis's voice.
-- [writing-beats](skills/writing/writing-beats/SKILL.md) — shape an article as a journey of beats.
-- [writing-fragments](skills/writing/writing-fragments/SKILL.md) — mine fragments into raw material for a future article.
-- [writing-shape](skills/writing/writing-shape/SKILL.md) — shape a pile of raw material into an article.
+
+- [compose-blog-post](skills/writing/compose-blog-post/SKILL.md) — coordinate the full flow from thoughts to a finished article.
+- [writing-interview](skills/writing/writing-interview/SKILL.md) — develop an idea through a collaborative Socratic interview.
+- [writing-fragments](skills/writing/writing-fragments/SKILL.md) — gather concrete examples, observations, and phrases before drafting.
+- [writing-beats](skills/writing/writing-beats/SKILL.md) — build a narrative one agreed beat at a time.
+- [writing-shape](skills/writing/writing-shape/SKILL.md) — shape the structure and working draft, or revise an existing draft.
+- [writing-blog-post](skills/writing/writing-blog-post/SKILL.md) — compose the final article in Dennis's voice, with destination-specific output.
 
 ### Security
 - [deep-review](skills/security/deep-review/SKILL.md) — verified architectural deep-dive hunting for code-judo simplifications.

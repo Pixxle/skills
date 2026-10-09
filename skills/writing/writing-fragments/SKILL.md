@@ -1,21 +1,27 @@
 ---
 name: writing-fragments
-description: Grilling session that mines the user for fragments — heterogeneous nuggets of writing (claims, vignettes, sharp sentences, half-thoughts) — and appends them to a single document as raw material for a future article. Use when the user wants to develop ideas before imposing structure, or mentions "fragments", "ideate", or "raw material" for writing.
+description: Collect and expand raw writing material as claims, vignettes, sharp sentences, and half-thoughts in one unstructured document. Use when the user wants to mine fragments, build a richer pile of examples and phrases, or keep exploring material before drafting an article.
 ---
 
 <what-to-do>
 
-Run a grilling session that produces fragments. Interview the user relentlessly about whatever they want to write about. Do not impose phases, outlines, or structure — that is explicitly out of scope.
+Run a probing conversation that produces fragments. Follow what the author notices and ask for scenes, examples, sharper wording, and useful half-thoughts. The goal is a richer supply of writing material. Do not impose an article outline or argument structure.
 
 As fragments emerge from either side of the conversation, append them to a single markdown file. The user will be editing this file during the session; always re-read it before writing so their edits are preserved.
 
 If the user did not pass a path, ask once where to save the document, then remember it for the rest of the session.
 
-Capture fragments from the very first thing the user says, including the initial prompt.
+Capture usable fragments from the very first thing the user says, including the initial prompt. When a caller supplies interview notes, extract usable material without copying the entire working brief or inventing words attributed to the author.
 
 On first write, put a single H1 at the top with a working title (it can change later) and nothing else — no metadata, no TOC, no date.
 
 </what-to-do>
+
+## When coordinated by another writing skill
+
+Accept the interview brief and supplied paths. Reuse settled answers instead of restarting the conceptual interview; gather the material the brief still needs. Honor inherited writing preferences, while keeping the fragments file free of orchestration metadata and article structure.
+
+End when the author has enough material and is ready to draft, or asks to stop or switch modes. Return the fragments path and material gaps to the caller. Do not pick or start the drafting skill yourself. Standalone sessions remain open-ended until the author ends them.
 
 <supporting-info>
 

@@ -1,22 +1,28 @@
 ---
 name: writing-beats
-description: Shape an article as a journey of beats, choose-your-own-adventure style. The user picks a starting beat from the raw material, you write only that beat, then offer options for where to pivot next, beat by beat, until the article reaches a natural end. Use when the user has raw material and wants to assemble it as a narrative rather than an argument.
+description: Compose an article as a narrative, letting the author choose the next beat and writing one agreed beat at a time. Use when the user wants to build a story from raw material, write scene by scene, or continue an article through narrative beats.
 ---
 
 <what-to-do>
 
-The user has passed (or will pass) a markdown file of raw material.
+The user has passed (or will pass) raw material as text, a working brief, or a markdown file. Read supplied material before offering beats. Keep source files separate from the article and preserve them.
 
 If the user did not say where to save the article, ask once and remember the path.
 
 Then run a beat-by-beat journey:
 
-1. Write 2–3 candidate **starting beats**, drawn from the raw material. Each is a different entry point into the article. Show the user the beats before writing it to the article file. The user picks one. Preview what beats that might lead to once written - as if the user is seeing a little way down the path.
+1. For a new article, write 2–3 candidate **starting beats**, drawn from the raw material. Each is a different entry point into the article. Show them before writing to the article file. The user picks one. Preview what beats that might lead to. If an opening or draft already exists, read it and offer next beats from there instead.
 2. Once the user picks a starting beat, write **only that beat** to the article file. A beat may be one sentence or several paragraphs — whatever that beat naturally is. Stop there.
 3. Re-read the article file from disk. Then offer 2–3 candidate **next beats** — different directions the journey could pivot to from where the article now stands.
 4. Loop steps 2–4 until the article reaches a natural end.
 
 </what-to-do>
+
+## When coordinated by another writing skill
+
+Accept the interview brief, material, current draft, and file paths supplied by `compose-blog-post` or another caller. Reuse established answers and honor inherited voice, length, format, and destination constraints. Do not repeat discovery or discard an agreed opening.
+
+Pause for the author's beat choices; the coordinator does not make those choices for them. When the author accepts the narrative and ending or asks to change mode, return the working draft path and remaining gaps to the caller. In the full composition flow, the coordinator then invokes `writing-blog-post` to produce the final article. Do not start another writing skill yourself.
 
 <supporting-info>
 
