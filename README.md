@@ -48,6 +48,7 @@ Run `scripts/list-skills.sh` to see everything, grouped by bucket.
 - [grill-me](skills/productivity/grill-me/SKILL.md) — interview you relentlessly about a plan until shared understanding.
 - [teach](skills/productivity/teach/SKILL.md) — teach a concept using a workspace-local learning record.
 - [write-a-skill](skills/productivity/write-a-skill/SKILL.md) — create new agent skills with proper structure.
+- [write-rfc](skills/productivity/write-rfc/SKILL.md) — document conversation outcomes as a concise RFC in Simplified Technical English, with alternatives and their trade-offs.
 
 ### Writing
 
