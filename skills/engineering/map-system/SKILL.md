@@ -54,7 +54,7 @@ Once all four sub-agents have written their reports, read their outputs and writ
 
 ## What NOT to produce
 
-- A glossary or CONTEXT.md — that's `bootstrap-context`'s job
+- A glossary or CONTEXT.md
 - Refactor recommendations as the primary output — recommendations are secondary; the map is primary
 - A single monolithic file — the value is in the navigable sub-report structure
 - Generic architecture diagrams divorced from this repo's actual file paths
