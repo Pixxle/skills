@@ -42,6 +42,7 @@ Run `scripts/list-skills.sh` to see everything, grouped by bucket.
 - [pr-comments](skills/engineering/pr-comments/SKILL.md) — turn existing findings into concise inline GitHub review comments.
 - [prototype](skills/engineering/prototype/SKILL.md) — build a throwaway prototype to flesh out a design.
 - [thermo-nuclear-code-quality-review](skills/engineering/thermo-nuclear-code-quality-review/SKILL.md) — extremely strict maintainability review.
+- [thermo-nuclear-refactor](skills/engineering/thermo-nuclear-refactor/SKILL.md) — investigate codebase simplifications, draft proposals, and implement accepted refactorings.
 - [workshop-findings](skills/engineering/workshop-findings/SKILL.md) — decide the best fix for each review finding before commenting.
 
 ### Productivity
