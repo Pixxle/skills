@@ -3,8 +3,8 @@
   "skills": [
     "./skills/engineering/bump-deps",
     "./skills/engineering/changelog",
+    "./skills/engineering/create-system-map",
     "./skills/engineering/handoff",
-    "./skills/engineering/map-system",
     "./skills/engineering/pr-comments",
     "./skills/engineering/prototype",
     "./skills/engineering/thermo-nuclear-code-quality-review",

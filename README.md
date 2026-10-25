@@ -37,8 +37,8 @@ Run `scripts/list-skills.sh` to see everything, grouped by bucket.
 ### Engineering
 - [bump-deps](skills/engineering/bump-deps/SKILL.md) — safely upgrade deps one at a time, validating after each.
 - [changelog](skills/engineering/changelog/SKILL.md) — generate a user-facing changelog from a commit range and flag every breaking API change a merged PR introduced.
+- [create-system-map](skills/engineering/create-system-map/SKILL.md) — create a technical onboarding guide to a repository's capabilities, APIs, architecture, and execution flows, using tiered sub-agents and source-backed diagrams.
 - [handoff](skills/engineering/handoff/SKILL.md) — compact the conversation into a handoff doc.
-- [map-system](skills/engineering/map-system/SKILL.md) — produce a deep, evidence-backed map of how a system is built.
 - [pr-comments](skills/engineering/pr-comments/SKILL.md) — turn existing findings into concise inline GitHub review comments.
 - [prototype](skills/engineering/prototype/SKILL.md) — build a throwaway prototype to flesh out a design.
 - [thermo-nuclear-code-quality-review](skills/engineering/thermo-nuclear-code-quality-review/SKILL.md) — extremely strict maintainability review.

@@ -10,7 +10,7 @@ description: >-
 
 # Deep Review
 
-A whole-codebase audit (not a branch diff) that finds high-value improvements and **proves each one is real** before reporting. It applies the quality bar from `thermo-nuclear-code-quality-review` and the fan-out pattern from `map-system`, then adds a QA phase that kills plausible-but-wrong findings.
+A whole-codebase audit (not a branch diff) that finds high-value improvements and **proves each one is real** before reporting. It applies the quality bar from `thermo-nuclear-code-quality-review` and the repository-discovery approach from `create-system-map`, then adds a QA phase that kills plausible-but-wrong findings.
 
 The goal is to find **where the code is a tangled mess** — the load-bearing wrong abstractions that make this codebase hard to change — and only secondarily the **code-judo moves** (behavior-preserving restructurings that make the implementation dramatically simpler). Depth comes from asking *"what would fight me if I had to change this?"*, not *"what can I safely delete?"*. Do not settle for "this could be a bit cleaner," and do not let the run degrade into a list of dead-code and duplication nits — those are real but they are not the point.
 
@@ -24,7 +24,7 @@ Run the four phases in order. Each phase fans out sub-agents. All inter-phase ha
 - **Seed with the human's priors — do not review cold.** Before scoping, ask the user what they already know hurts: which module is scary, which recent change was far harder than it should have been, which bug keeps recurring, which file everyone avoids. Capture the answers in `_deep-review/00_priors.md`. Point the deepest agents at these, and at the end of the run treat **"did we surface the known problems?"** as the pass/fail check on the whole review. If the method can't rediscover what a human already knows is broken, the method is still wrong. **A prior that an *interaction* feels brittle ("the way X consumes Y feels fragile") is the single most valuable kind** — it points at a consumer-side seam, which is exactly what distress signals and module-by-module review are blind to. Route any such prior straight to a `seam` target (Phase 1, signal 8) that owns both sides of the edge.
 - **No priors is fine — priors are an accelerant, not a dependency.** If the user is new to the repo or has nothing to offer, record "none" in `00_priors.md` and lean entirely on the Phase 1 distress map as the substitute — that mining exists precisely for the cold-repo case. Helpful pattern: once the distress map lands early in Phase 1, surface its top 3–5 suspects back to the user (*"the repo points at X, Y, Z — want me to weight any before I spend deep-dive budget?"*) to convert a newcomer into having cheap, evidence-based priors. Be aware of the blind spot: distress signals are historical (where change/bugs already happened) and can miss code that is quietly rotten but rarely touched — the Phase 2 tangle pass, which reasons about cost-of-change rather than history, is what covers that gap.
 - Create `_deep-review/` at the repo root (offer `_deep-review_<date>/` if one already exists).
-- If `_mapping/` already exists from `map-system`, read it for Phase 1 instead of re-mapping — note that you reused it.
+- If `_system-map/` exists from `create-system-map` (or legacy `_mapping/` output), use its relevant reports to seed Phase 1. Check their scope and source snapshot, verify stale claims, and investigate gaps; note what you reused.
 
 ## Phase 1 — Discovery (map the system as it stands)
 
