@@ -21,6 +21,8 @@ Carry the map into the review and continue without pausing for confirmation. The
 
 ## Evaluate structural quality
 
+Every added line must earn its place: it adds complexity and needs a concrete justification in the task's required behavior or verified constraints. Always look first for a solution through deletion, reuse, or changes to existing code. If the requirement can be met without adding code while preserving correctness, clarity, and required coverage, require that approach. Assess additions individually even in a net-negative diff. Judge overall complexity; compressing syntax or removing necessary validation or tests does not count as simplification.
+
 Apply these lenses where relevant:
 
 - **Simplification:** Can a different state model, ownership boundary, or use of existing architecture eliminate substantial complexity? Compare the total concepts and indirection before and after, including any machinery the proposed remedy introduces.
