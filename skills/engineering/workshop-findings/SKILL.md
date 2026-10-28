@@ -6,21 +6,24 @@ description: >-
   pr-comments. Use only when the user explicitly asks to workshop findings, work
   through a review, talk through each issue, or decide fixes before commenting.
   Does not hunt for new issues and does not post anything.
+disable-model-invocation: true
 ---
 
 # workshop-findings: decide the fix before you post
 
-The decision layer between a review and the `pr-comments` skill. A review hands you a pile of
+The decision layer between a review and [`pr-comments`](../pr-comments/SKILL.md). A review hands you a pile of
 findings; this skill walks them with you one at a time and works out the **fix** for each.
 It does not hunt for issues (that's the review) and it does not author or post comments
-(that's `pr-comments`). It decides substance, then hands off.
+(that's [`pr-comments`](../pr-comments/SKILL.md)). It decides substance, then hands off.
 
-Pipeline: a review pass (for example, `thermo-nuclear-code-quality-review`) → **`workshop-findings`** → `pr-comments`.
+Pipeline: a review pass (for example, [`swarm-review`](../swarm-review/SKILL.md) or
+[`thermo-nuclear-code-quality-review`](../thermo-nuclear-code-quality-review/SKILL.md)) →
+**`workshop-findings`** → [`pr-comments`](../pr-comments/SKILL.md).
 
 ## Stance: fix-focused collaborator
 
 Treat each finding as real and worth solving. The work isn't *whether* to comment, it's
-*what the fix is*. Like `grill-me`, walk down the tree finding by finding and resolve each
+*what the fix is*. Like [`grill-me`](../../productivity/grill-me/SKILL.md), walk down the tree finding by finding and resolve each
 branch with the user, but the question under each finding is "what's the best way to solve
 this?", not "does this survive?". For every finding, **lead with your recommended fix.**
 
@@ -29,8 +32,8 @@ exception, not the goal. Don't spend the session playing skeptic.
 
 ## The loop
 
-Pull the findings already in context. None there → stop; there's nothing to workshop, run
-the review first. Then walk them in the review's priority order (structural before nits):
+Pull the findings already in context. None there → stop. There's nothing to workshop, so
+offer a review pass first, such as [`swarm-review`](../swarm-review/SKILL.md). Then walk them in the review's priority order (structural before nits):
 
 For each finding:
 
@@ -64,7 +67,7 @@ Note these out loud as you go so the final list has no contradictions.
 
 By the end, each finding resolves to one of: **fix it here**, **raise as a question**,
 **defer to a follow-up**, or **drop**. For everything not dropped, capture exactly what
-The `pr-comments` skill needs to author without re-deriving anything:
+[`pr-comments`](../pr-comments/SKILL.md) needs to author without re-deriving anything:
 
 - **Location** — `file:line` so it can be placed inline.
 - **The decided fix** — the substance, concrete enough to become a ` ```suggestion ` block
@@ -77,8 +80,9 @@ The `pr-comments` skill needs to author without re-deriving anything:
 ## Handoff
 
 End with a compact per-finding decision list in the conversation, grouped kept / question /
-deferred / dropped. That list *is* the input to `pr-comments` — it reads it straight from
-context.
+deferred / dropped. That list *is* the input to [`pr-comments`](../pr-comments/SKILL.md).
+It reads the list straight from context. When the user wants it posted, read and follow
+[`pr-comments`](../pr-comments/SKILL.md) with that list.
 
 Stop at the decision. **Do not pre-write the final comment prose** — voice, placement
 (inline vs body), and submission are pr-comments' job, and writing them here just gets

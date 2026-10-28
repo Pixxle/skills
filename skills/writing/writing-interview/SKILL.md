@@ -58,7 +58,7 @@ When there is a coherent angle and enough concrete material to begin writing, sh
 
 If the author says "enough" or asks to draft earlier, hand off what exists and name the remaining gaps. An exploratory piece can carry uncertainty forward.
 
-When called by `compose-blog-post`, return the brief and current paths to that coordinator. Do not choose or start the drafting workflow yourself. When invoked alone, finish with the brief and suggest the next stage. If the author wants to continue, read and follow [`compose-blog-post`](../compose-blog-post/SKILL.md) from the shaping stage with this brief.
+When [`compose-blog-post`](../compose-blog-post/SKILL.md) loaded this skill, return the brief and current paths to that coordinator. Do not choose or start the drafting workflow yourself. When the author started this skill alone, finish with the brief and suggest the next stage. If the author wants to continue, read and follow [`compose-blog-post`](../compose-blog-post/SKILL.md) from the shaping stage with this brief.
 
 ## Example
 

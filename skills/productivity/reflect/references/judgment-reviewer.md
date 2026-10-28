@@ -20,15 +20,15 @@ Scan for:
 Route findings only to skills, tools, or connectors this transcript used. A skill counts as used when the transcript shows a read of its `SKILL.md`, a subagent brief naming its path, or a command or connector call matching its documented commands. Speculative routings to skills the parent never opened do not count.
 
 Two finding shapes are valid:
-- The parent invoked the skill and you found a real gap in its body. Route to the skill's relevant section.
-- The skill was visible in the catalog but did not trigger when it would have helped. Tune its description so future agents pick it up. Route as `tune description: <skill path>`. For an explicit-only skill (`disable-model-invocation: true`), route the missed trigger to the caller that should link it (cortex or a sibling skill), not to a description tune.
+- The parent loaded the skill and you found a real gap in its body. Route to the skill's relevant section.
+- The skill did not load when it would have helped. An explicit-only skill (`disable-model-invocation: true`) never fires from its description, so route its missed trigger to the caller that should have linked it (cortex, a playbook, or a sibling skill), not to a description tune. Every skill in this collection is explicit-only. Route as `tune description: <skill path>` only for a skill without that flag, which the model picks from its catalog description.
 
-Drop any skill that was neither invoked nor a missed-trigger candidate.
+Drop any skill that was neither loaded nor a missed-trigger candidate.
 
 List each durable learning. For each:
 - Principle: one sentence describing what generalizes. State the rule, not the label, with no name-dropping.
 - Evidence: the exact moment in the transcript that surfaced it (turn number or short quote).
-- Routing: the most relevant existing skill (its `SKILL.md` path as the transcript shows it), OR `tune description: <skill path>` when the skill should have triggered but didn't, OR `new skill: <kebab-name>` if no existing skill is a real home.
+- Routing: the most relevant existing skill (its `SKILL.md` path as the transcript shows it), OR the caller that should have linked a skill that never loaded (its `SKILL.md` path and step), OR `tune description: <skill path>` for a missed skill the model picks from its description, OR `new skill: <kebab-name>` if no existing skill is a real home.
 
 Skip trivial things (typos, tool retries, mechanical setup) and anything already obvious from the skill the parent followed. Skip implementation details that drift, such as SHAs, current file paths, version numbers, and exact byte counts. Surface only principles and patterns that survive code drift.
 

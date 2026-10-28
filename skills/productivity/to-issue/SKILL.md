@@ -1,6 +1,7 @@
 ---
 name: to-issue
 description: Converts an existing conversation or RFC into a proposed issue split, then drafts issues after the user approves the split. Use when the user wants one or more issues scoped for AI implementation, with clear outcomes and acceptance criteria for human review.
+disable-model-invocation: true
 ---
 
 # To Issue
@@ -8,7 +9,7 @@ description: Converts an existing conversation or RFC into a proposed issue spli
 Turn a conversation or RFC into issues that AI agents can implement and humans can understand.
 Use [template.md](template.md) for each issue body after the split is approved.
 
-Example request: "Use to-issue to turn this RFC into issues."
+Example request: "/to-issue turn this RFC into issues."
 
 ## Establish the source
 

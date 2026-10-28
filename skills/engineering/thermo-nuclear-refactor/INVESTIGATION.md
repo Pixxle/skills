@@ -37,7 +37,7 @@ Treat flat churn or few bug fixes in a young repository as missing historical ev
 
 ## Schedule the work in stages
 
-For whole-codebase or multi-subsystem runs, delegate these stages to read-only sub-agents when available. Use the available worker pool in waves; logical targets can outnumber concurrent workers. For example, with three worker slots, map three cohesive partitions concurrently, then reuse those workers for flow tracing and independent verification. The lead integrates their evidence and owns cross-target questions.
+Delegate these stages to read-only sub-agents when available. Use the available worker pool in waves; logical targets can outnumber concurrent workers. For example, with three worker slots, map three cohesive partitions concurrently, then reuse those workers for flow tracing and independent verification. The lead integrates their evidence and owns cross-target questions.
 
 1. **Discovery:** scouts map assigned partitions and expose seams. They produce facts and a worklist, not a final proposal list.
 2. **Tracing and design:** workers own module, flow, seam, and deep-dive targets. At least one cross-module tracing pass starts from the map and code before seeing ranked candidate remedies, reducing anchoring on early suggestions.

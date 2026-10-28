@@ -1,13 +1,14 @@
 ---
 name: write-rfc
 description: Converts an existing conversation into a concise RFC with explicit decisions, a proposed solution, and alternatives with comparative trade-offs. Use when the user asks to document a discussion, capture conversation outcomes, or turn an existing chat into an RFC in Simplified Technical English.
+disable-model-invocation: true
 ---
 
 # Write RFC
 
 Document the outcomes of an existing conversation. Use [template.md](template.md) for the RFC structure.
 
-Example request: "Use write-rfc to turn this conversation into an RFC."
+Example request: "/write-rfc turn this conversation into an RFC."
 
 ## Establish the source
 

@@ -15,6 +15,11 @@ write_skill() {
   printf -- '---\n%s\n---\n\n# %s\n%s\n' "$frontmatter" "${dir##*/}" "$body" > "$dir/SKILL.md"
 }
 
+write_policy() {
+  mkdir -p "$1/agents"
+  printf 'policy:\n  allow_implicit_invocation: false\n' > "$1/agents/openai.yaml"
+}
+
 build_clean() {
   local fx="$1"
   mkdir -p "$fx/.claude-plugin" "$fx/scripts" "$fx/agents"
@@ -44,7 +49,8 @@ EOF
   write_skill "$fx/skills/engineering/alpha" 'name: alpha
 description: >-
   Do alpha things. Use when the user
-  asks for alpha.' '
+  asks for alpha.
+disable-model-invocation: true' '
 See [beta](../beta/SKILL.md "Beta"), [usage](../beta/SKILL.md#usage), and
 [gamma](<../../productivity/gamma/SKILL.md>). Notes live in
 [references/notes.md](references/notes.md).
@@ -60,17 +66,17 @@ Inline `[code](missing.md)` and fenced links are skipped.
   mkdir -p "$fx/skills/engineering/alpha/references"
   echo 'Back to [alpha](../SKILL.md).' > "$fx/skills/engineering/alpha/references/notes.md"
 
+  write_policy "$fx/skills/engineering/alpha"
+
   write_skill "$fx/skills/engineering/beta" 'name: "beta"
-description: "Do beta things. Use when the user asks for beta."'
+description: "Do beta things. Use when the user asks for beta."
+disable-model-invocation: true'
+  write_policy "$fx/skills/engineering/beta"
 
   write_skill "$fx/skills/productivity/gamma" 'name: gamma
 description: Do gamma things. Use only when the user runs gamma.
 disable-model-invocation: true'
-  mkdir -p "$fx/skills/productivity/gamma/agents"
-  cat > "$fx/skills/productivity/gamma/agents/openai.yaml" <<'EOF'
-policy:
-  allow_implicit_invocation: false
-EOF
+  write_policy "$fx/skills/productivity/gamma"
 
   write_skill "$fx/skills/deprecated/old" 'name: old
 description: Retired.'
@@ -337,10 +343,14 @@ expect_problem "disable-model-invocation without Codex policy" \
   "needs skills/productivity/gamma/agents/openai.yaml" "$fx"
 
 fx="$(new_fixture)"
-mkdir -p "$fx/skills/engineering/alpha/agents"
-printf 'policy:\n  allow_implicit_invocation: false\n' > "$fx/skills/engineering/alpha/agents/openai.yaml"
-expect_problem "Codex policy without disable-model-invocation" \
-  "needs disable-model-invocation: true" "$fx"
+edit "$fx/skills/engineering/beta/SKILL.md" '/^disable-model-invocation: true$/d'
+expect_problem "skill the model can invoke on its own" \
+  "skills/engineering/beta/SKILL.md:1: every skill is explicit-only" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/skills/engineering/beta/SKILL.md" 's/^disable-model-invocation: true$/disable-model-invocation: false/'
+expect_problem "disable-model-invocation set to false" \
+  "disable-model-invocation must be true; every skill is explicit-only" "$fx"
 
 fx="$(new_fixture)"
 printf 'interface:\n  allow_implicit_invocation: false\n' > "$fx/skills/productivity/gamma/agents/openai.yaml"
@@ -350,7 +360,7 @@ expect_problem "Codex policy key outside policy:" \
 fx="$(new_fixture)"
 echo 'Then run `gamma`.' >> "$fx/skills/engineering/beta/SKILL.md"
 expect_problem "explicit-only skill named without a link" \
-  "skills/engineering/beta/SKILL.md:8: names explicit-only skill gamma by bare name" "$fx"
+  "skills/engineering/beta/SKILL.md:9: names explicit-only skill gamma by bare name" "$fx"
 
 fx="$(new_fixture)"
 echo 'Run `/gamma` last, after [gamma](<../../productivity/gamma/SKILL.md>).' >> "$fx/skills/engineering/alpha/SKILL.md"

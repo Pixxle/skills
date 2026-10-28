@@ -45,6 +45,13 @@ install claims the same `~/.claude/skills/<name>` paths, and Codex loads its
 npx skills@latest add Pixxle/skills
 ```
 
+## Usage
+
+Every skill is explicit-only, so the model never starts one on its own. Type
+`/<name>` to start a skill, such as `/cortex` for daily engineering work. When
+cortex or another skill routes to a skill, it reads that skill's linked
+`SKILL.md` and follows it, so each routed step runs the real skill.
+
 ## Skills
 
 Each bucket README lists its skills. Run `scripts/list-skills.sh` to see every
@@ -59,8 +66,9 @@ skill, grouped by bucket.
 ## Checks
 
 `scripts/check-skills.sh` enforces the maintenance rules in `AGENTS.md`. CI runs
-it and `scripts/test-check-skills.sh` on every push and pull request. To run it
-on the staged tree before each commit, enable the hook once per clone.
+it, `scripts/test-check-skills.sh`, and the `node:test` suites of the bundled
+scripts on every push and pull request. To run the checker on the staged tree
+before each commit, enable the hook once per clone.
 
 ```bash
 git config core.hooksPath .githooks
@@ -72,5 +80,5 @@ or `--codex` after a one-runtime install.
 
 ## Credits
 
-Several skills derive from Lauren Tan's pstack, under the MIT License. See
-[NOTICE.md](NOTICE.md).
+Several skills derive from Lauren Tan's pstack and Cursor's thermos plugin, both
+under the MIT License. See [NOTICE.md](NOTICE.md).

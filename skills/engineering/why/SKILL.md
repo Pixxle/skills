@@ -1,11 +1,12 @@
 ---
 name: why
 description: Investigate why code is shaped the way it is. Builds a code anchor from git history and PRs, discovers which connectors the session has, queries each evidence category in parallel (source control and PRs, issue tracker, long-form docs, team chat, observability, error tracking, product analytics), then returns a cited, confidence-tiered answer in chat. Use when the user asks why X works this way, why we picked Y, where a constant, limit, or threshold came from, whether a reason still holds, what motivated a guard, retry, or flag, or wants regression or postmortem history before changing code. Use how for what the code does now.
+disable-model-invocation: true
 ---
 
 # Why
 
-Investigate the motivation behind code. [how](../how/SKILL.md) answers what the code does now. `why` answers which forces gave it this shape.
+Investigate the motivation behind code. [`how`](../how/SKILL.md) answers what the code does now. `why` answers which forces gave it this shape.
 
 `why` is read-only and answers in chat. It writes no files, changes no code, and posts nothing.
 
@@ -44,9 +45,11 @@ Pull the PR body and discussion for every substantive commit. The anchor goes to
 
 ## 3. Discover connectors and spawn investigators
 
-Default to the full parallel investigation when the user asked for why by name, asked for history or a postmortem, or a playbook or sibling skill routed here. The goal is a complete coverage map. Document a null result instead of skipping the search.
+This skill loads only when the user names it or another skill or playbook links it. It never loads on its own.
 
-When this skill loaded on its own from a passing question, search source control and the issue tracker first. Then ask the user before fanning out to team chat, docs, observability, error tracking, or product analytics, since each reads more systems and more personal data than a passing question needs.
+Default to the full parallel investigation when the user asked for why by name, asked for history or a postmortem, or a playbook or sibling skill routed a step whose job is the history or rationale itself. The goal is a complete coverage map. Document a null result instead of skipping the search.
+
+A routed step that needs only a quick check inside other work is a passing question, for example the [`no-comments`](../no-comments/SKILL.md) gate vetting one comment's claim. For a passing question, search source control and the issue tracker first. Then ask the user before fanning out to team chat, docs, observability, error tracking, or product analytics, since each reads more systems and more personal data than a passing question needs.
 
 List the connectors this session exposes, from the tool list and server instructions. Classify each by the evidence it holds, not by vendor.
 
@@ -82,7 +85,7 @@ Spawn one synthesizer on the strongest judgment model, with connector access for
 
 ## 5. Present
 
-Present the synthesizer's output in chat. Light edits for clarity or conversation context are fine. Do not rewrite the confidence language. Apply [unslop](../unslop/SKILL.md) without touching tier labels or hedges.
+Present the synthesizer's output in chat. Light edits for clarity or conversation context are fine. Do not rewrite the confidence language. Read and follow [`unslop`](../unslop/SKILL.md) on it, without touching tier labels or hedges.
 
 ## Output format
 

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Benchmark checklist
 
-Use this when you produce a performance number. That covers a PR's before and after, a regression claim, a perf harness, and a library or config choice. Answer each question with evidence from a run, not a guess about the code. This is the full procedure behind **Explain the number** in [`principles`](../principles/SKILL.md).
+Use this when you produce a performance number. That covers a PR's before and after, a regression claim, a perf harness, and a library or config choice. Answer each question with evidence from a run, not a guess about the code. This is the full procedure behind [`principle-explain-the-number`](../principle-explain-the-number/SKILL.md).
 
 For a quick ballpark the user asked for, one run is enough. Still check questions 4 and 7, and say that it is one run. Skip the rest unless that run looks wrong. A choice between options is never a ballpark.
 
@@ -35,4 +35,5 @@ For a quick ballpark the user asked for, one run is enough. Still check question
 
 ## Other perf material
 
-The [Perf issue](../cortex/playbooks/perf-issue.md) playbook plans from a baseline. Vet that baseline here before it plans, and every number after that.
+- The [Perf issue](../cortex/playbooks/perf-issue.md) playbook plans from a baseline. Vet that baseline here before it plans, and every number after that.
+- Vet the [Hillclimb](../cortex/playbooks/hillclimb.md) playbook's harness before it is frozen. The frozen harness then prints error and work counts, so each keep-or-revert checks questions 4 and 7 for free.

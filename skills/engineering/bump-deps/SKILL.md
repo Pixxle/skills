@@ -1,6 +1,7 @@
 ---
 name: bump-deps
 description: Safely bump repository dependencies — discover manifests via parallel sub-agents, baseline build/typecheck/tests, anchor latest versions to the internet (never guess, never downgrade), present a gated plan, apply one bump at a time on a fresh branch, validate after each, and auto-resolve source-only regressions (never modifying tests, hard stop on test-framework breakage). Use when user wants to upgrade packages, runtimes, or Docker base images safely. Triggers include "bump deps", "upgrade dependencies", and "safely update packages".
+disable-model-invocation: true
 ---
 
 # bump-deps
@@ -327,7 +328,7 @@ Ask:
 > **Push branch and open a PR with this summary as the body?**
 
 - On `yes`:
-  - Run the gates from [Opening a PR](../cortex/playbooks/opening-a-pr.md) first: [`no-comments`](../no-comments/SKILL.md) on the branch diff and [`unslop`](../unslop/SKILL.md) on commit messages and the PR body.
+  - Run the gates from [Opening a PR](../cortex/playbooks/opening-a-pr.md) first. Read and follow [`no-comments`](../no-comments/SKILL.md) on the branch diff and [`unslop`](../unslop/SKILL.md) on commit messages and the PR body.
   - `git push -u origin <branch>`.
   - `gh pr create --title "bump-deps: <YYYY-MM-DD>" --body <summary + test-plan>`.
   - PR body includes the §7.1 summary plus a `## Test plan` section listing the exact test commands rerun in §5b.

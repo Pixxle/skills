@@ -1,6 +1,7 @@
 ---
 name: compose-blog-post
 description: Coordinate the full flow from an author's initial thoughts through a Socratic interview and narrative shaping to a finished article in their voice. Use when the user wants to write, develop, or finish a blog post or article, from a brain dump through an interview, fragments, shaping or revising a draft, to a final polish in Dennis's voice or a vinterfjard.com post. Resumes at whichever stage the material is in.
+disable-model-invocation: true
 ---
 
 # Compose Blog Post
@@ -17,9 +18,9 @@ Load only skills needed for the current stage. If a linked file is missing, name
 
 Read [`writing-blog-post`](../writing-blog-post/SKILL.md) in voice-profile mode so its guidance travels with the brief and into shaping. This supplies voice and established destination preferences; it does not start composing the final article early.
 
-For a new idea, start [`writing-interview`](../writing-interview/SKILL.md) immediately with the thoughts already supplied. Do not ask the author to repeat them or choose a drafting method before the idea is understood.
+For a new idea, read and follow [`writing-interview`](../writing-interview/SKILL.md) immediately, starting from the thoughts already supplied. Do not ask the author to repeat them or choose a drafting method before the idea is understood.
 
-Resume a supplied brief or existing session at its current stage. If the author explicitly wants to skip the interview or already supplies a developed premise and material, honor that and load the appropriate writing skill. Keep any visible gaps in the handoff.
+Resume a supplied brief or existing session at its current stage. If the author explicitly wants to skip the interview or already supplies a developed premise and material, honor that and read and follow the matching writing skill through its link below. Keep any visible gaps in the handoff.
 
 Carry the interview brief, the author's corrections, distinctive phrases, voice guidance, writing preferences, current stage, and file paths across every transition. Reuse established answers and paths. Keep tentative interpretations distinguishable from confirmed views.
 

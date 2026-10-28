@@ -34,7 +34,7 @@ Every candidate gets the same brief, so the brief is the contract.
 1. State the artifact each candidate produces.
 2. Write the rubric. Use 3 to 6 concrete, gradeable criteria for success on this task. It is your tool in phase D and the judge's in phase C. Candidates see only the task.
 3. Pick the runners. Default to two. Put them on different model families when the runtime offers them, otherwise on the parent model. Use the strongest judgment model for design and hard code, and a fast model only for mechanical generation. Add runners when the brief spans several design directions. Repeat one model N times when the work is generation-bound rather than judgment-sensitive. If the runtime refuses a model, run that seat on the parent model and say so.
-4. Give each candidate its own git worktree off the current HEAD, or a per-candidate scratch directory when a worktree doesn't fit. No two candidates share a write target, per Separate before serializing shared state in [principles](../principles/SKILL.md).
+4. Give each candidate its own git worktree off the current HEAD, or a per-candidate scratch directory when a worktree doesn't fit. No two candidates share a write target, per [`principle-separate-before-serializing-shared-state`](../principle-separate-before-serializing-shared-state/SKILL.md).
 
 ## B. Fan out
 
@@ -52,17 +52,17 @@ The judge sees the rubric and the candidates by path label, never by model name.
 
 Read every candidate end to end before picking. Score each against the rubric criterion by criterion, not on holistic feel. Compare with the judge. Agreement confirms the pick. Disagreement means one of you is biased or the rubric was ambiguous, so read both rationales before deciding.
 
-Pick the base a future maintainer can extend most easily without breaking invariants. When two tie, prefer the cleaner boundary or the smaller API, per Laziness in [principles](../principles/SKILL.md).
+Pick the base a future maintainer can extend most easily without breaking invariants. When two tie, prefer the cleaner boundary or the smaller API, per [`principle-laziness-protocol`](../principle-laziness-protocol/SKILL.md).
 
 ## E. Graft
 
-Build the synthesis in the caller's working tree, starting from the base. Walk each other candidate once more for what is worth porting. Usually that is one or two things per candidate, not most of it. Fold each graft in by hand so the result stays coherent under one mental model. Don't paste mechanically.
+Build the synthesis in the caller's working tree, starting from the base. Walk each other candidate once more for what is worth porting. Usually that is one or two things per candidate, not most of it. Fold each graft in by hand, per [`principle-redesign-from-first-principles`](../principle-redesign-from-first-principles/SKILL.md), so the result stays coherent under one mental model. Don't paste mechanically.
 
 If the candidates converge on one shape, that is strong agreement. Note it and ship the consensus shape without grafts. If they diverge wildly, phase A was under-specified. Reframe and re-run rather than averaging the divergence.
 
 ## F. Verify
 
-Verify the synthesized artifact like any other output, per Prove it works in [principles](../principles/SKILL.md). If verification finds a problem the arena missed, either phase A was wrong (reframe and re-run) or a candidate caught it and you missed the graft (return to phase E). Don't paper over it.
+Verify the synthesized artifact like any other output, per [`principle-prove-it-works`](../principle-prove-it-works/SKILL.md). If verification finds a problem the arena missed, either phase A was wrong (reframe and re-run) or a candidate caught it and you missed the graft (return to phase E). Don't paper over it.
 
 ## Output
 
@@ -78,7 +78,7 @@ One synthesized artifact and a short synthesis note. The note names:
 
 ## Related
 
-- Design before code that crosses a function boundary belongs to [architect](../architect/SKILL.md), which runs arena in its phase B.
-- Breaking a finished change belongs to [interrogate](../interrogate/SKILL.md), which reuses phases A, B, and F with adversaries.
-- Lens coverage on a diff belongs to [swarm-review](../swarm-review/SKILL.md). It has no base and no graft.
-- A question one run can answer belongs to [prototype](../prototype/SKILL.md).
+- Design before code that crosses a function boundary belongs to [`architect`](../architect/SKILL.md), which reads and follows this skill in its phase B.
+- Breaking a finished change belongs to [`interrogate`](../interrogate/SKILL.md), which reuses phases A, B, and F with adversaries.
+- Lens coverage on a diff belongs to [`swarm-review`](../swarm-review/SKILL.md). It has no base and no graft.
+- A question one run can answer belongs to [`prototype`](../prototype/SKILL.md).

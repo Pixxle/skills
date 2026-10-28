@@ -29,6 +29,8 @@ Create a **throwaway route** following whatever routing convention the project a
 
 Before committing to sub-shape B, sanity-check: is there really no existing page this could be embedded in? An empty route hides design problems that a populated one would expose.
 
+A throwaway route fits when the sketch needs the app's runtime, such as its data, auth, or components. When it needs none of that, build it in an isolated scratch dir instead. Use vanilla HTML, CSS, and JS or the lightest stack that renders the idea, CDN dependencies, and a dev server with hot reload. Use no production framework there. The `?variant=` keys and the floating switcher stay the same, with the URL search param read directly.
+
 In both sub-shapes the floating bottom bar is identical.
 
 ## Process
@@ -99,8 +101,8 @@ Surface the URL (and the `?variant=` keys). The user will flip through whenever 
 
 Once a variant has won, write down which one and why (commit message, ADR, issue, or a `NOTES.md` next to the prototype if running AFK and the user hasn't responded yet). Then:
 
-- **Sub-shape A** — delete the losing variants and the switcher; fold the winner into the existing page.
-- **Sub-shape B** — promote the winning variant to a real route, delete the throwaway route and the switcher.
+- **Sub-shape A.** Delete the losing variants and the switcher. Fold the winner into the existing page.
+- **Sub-shape B.** Promote the winning variant to a real route. Delete the throwaway route or scratch dir, and the switcher.
 
 Don't leave variant components or the switcher lying around. They rot fast and confuse the next reader.
 

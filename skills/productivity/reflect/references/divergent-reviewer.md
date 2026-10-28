@@ -13,7 +13,7 @@ Scan for:
 - Verifications that were skipped, deferred, or self-reported instead of checked against an artifact
 - Cases where the agent solved the local problem and missed the second-order effect (callers, sibling consumers, downstream telemetry)
 - Architectural smells the immediate fix papers over
-- Skills that should have been invoked but weren't, or were invoked too late
+- Skills that should have been loaded but weren't, or were loaded too late
 - Implicit assumptions about scope, side effects, or what the user actually wanted
 
 ## Scope to skills and tools the session actually used
@@ -21,15 +21,15 @@ Scan for:
 Route findings only to skills, tools, or connectors this transcript used. A skill counts as used when the transcript shows a read of its `SKILL.md`, a subagent brief naming its path, or a command or connector call matching its documented commands. Speculative routings to skills the parent never opened do not count.
 
 Two finding shapes are valid:
-- The parent invoked the skill and you found a real gap in its body. Route to the skill's relevant section.
-- The skill was visible in the catalog but did not trigger when it would have helped. Tune its description so future agents pick it up. Route as `tune description: <skill path>`. A skill that should have been invoked but wasn't is this case. For an explicit-only skill (`disable-model-invocation: true`), route the missed trigger to the caller that should link it (cortex or a sibling skill), not to a description tune.
+- The parent loaded the skill and you found a real gap in its body. Route to the skill's relevant section.
+- The skill did not load when it would have helped. A skill that should have been loaded but wasn't is this case. An explicit-only skill (`disable-model-invocation: true`) never fires from its description, so route its missed trigger to the caller that should have linked it (cortex, a playbook, or a sibling skill), not to a description tune. Every skill in this collection is explicit-only. Route as `tune description: <skill path>` only for a skill without that flag, which the model picks from its catalog description.
 
-Drop any skill that was neither invoked nor a missed-trigger candidate.
+Drop any skill that was neither loaded nor a missed-trigger candidate.
 
 List each durable learning. For each:
 - Principle: one sentence naming the contrarian or second-order observation. Don't restate the obvious learning. Name the one beneath it.
 - Evidence: the exact moment in the transcript (turn number or short quote, including what was said and what wasn't).
-- Routing: the most relevant existing skill (its `SKILL.md` path as the transcript shows it), OR `tune description: <skill path>` when the skill should have triggered but didn't, OR `new skill: <kebab-name>`.
+- Routing: the most relevant existing skill (its `SKILL.md` path as the transcript shows it), OR the caller that should have linked a skill that never loaded (its `SKILL.md` path and step), OR `tune description: <skill path>` for a missed skill the model picks from its description, OR `new skill: <kebab-name>`.
 
 Skip trivial things and anything already obvious from the skill the parent followed. Skip implementation details that drift, such as SHAs, current file paths, version numbers, and exact byte counts. Surface only principles and patterns that survive code drift.
 
