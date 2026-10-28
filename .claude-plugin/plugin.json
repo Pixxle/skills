@@ -1,13 +1,22 @@
 {
   "name": "pixxle-skills",
   "skills": [
+    "./skills/engineering/architect",
+    "./skills/engineering/arena",
     "./skills/engineering/babysit",
+    "./skills/engineering/benchmark-checklist",
     "./skills/engineering/bump-deps",
     "./skills/engineering/changelog",
+    "./skills/engineering/correct",
     "./skills/engineering/cortex",
     "./skills/engineering/create-system-map",
+    "./skills/engineering/create-verification-skill",
+    "./skills/engineering/figure-it-out",
     "./skills/engineering/fix-bug",
     "./skills/engineering/handoff",
+    "./skills/engineering/how",
+    "./skills/engineering/interrogate",
+    "./skills/engineering/maintain-verification-skill",
     "./skills/engineering/no-comments",
     "./skills/engineering/pr-comments",
     "./skills/engineering/principles",
@@ -17,12 +26,14 @@
     "./skills/engineering/thermo-nuclear-code-quality-review",
     "./skills/engineering/thermo-nuclear-refactor",
     "./skills/engineering/unslop",
+    "./skills/engineering/why",
     "./skills/engineering/workshop-findings",
+    "./skills/productivity/grill-me",
+    "./skills/productivity/reflect",
+    "./skills/productivity/teach",
     "./skills/productivity/to-issue",
     "./skills/productivity/write-a-skill",
     "./skills/productivity/write-rfc",
-    "./skills/productivity/grill-me",
-    "./skills/productivity/teach",
     "./skills/writing/compose-blog-post",
     "./skills/writing/writing-beats",
     "./skills/writing/writing-blog-post",
@@ -30,5 +41,9 @@
     "./skills/writing/writing-interview",
     "./skills/writing/writing-shape",
     "./skills/misc/caveman"
+  ],
+  "agents": [
+    "./agents/comment-sicko.md",
+    "./agents/cortex-agent.md"
   ]
 }
