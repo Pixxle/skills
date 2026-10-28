@@ -1,6 +1,7 @@
 ---
 name: writing-interview
 description: Develop an author's unstructured thoughts into a clear working idea through a Socratic conversation. Use when the user wants to be interviewed about an article idea, understand what they think before writing, or clarify the premise before collecting fragments or drafting.
+disable-model-invocation: true
 ---
 
 # Writing Interview
@@ -57,7 +58,7 @@ When there is a coherent angle and enough concrete material to begin writing, sh
 
 If the author says "enough" or asks to draft earlier, hand off what exists and name the remaining gaps. An exploratory piece can carry uncertainty forward.
 
-When called by `compose-blog-post`, return the brief and current paths to that coordinator. Do not choose or start the drafting workflow yourself. When invoked alone, finish with the brief and a suggested next writing skill; start it only if the author requests continuation.
+When called by `compose-blog-post`, return the brief and current paths to that coordinator. Do not choose or start the drafting workflow yourself. When invoked alone, finish with the brief and suggest the next stage. If the author wants to continue, read and follow [`compose-blog-post`](../compose-blog-post/SKILL.md) from the shaping stage with this brief.
 
 ## Example
 

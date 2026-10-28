@@ -1,65 +1,76 @@
 # skills
 
 Personal agent skills for Claude Code and Codex, organised into category buckets.
-Both agents discover personal skills one level below their skills directory, so
-`scripts/link-skills.sh` flattens the buckets into symlinks. The same source files
-are used by both agents.
+Claude Code discovers personal skills one level below its skills directory, so
+`scripts/link-skills.sh` flattens the buckets into symlinks. Codex reads the same
+links. The same source files are used by both agents.
 
 ## Install
 
-**Your own machine** (skills load un-namespaced as personal skills in both agents):
+### Your own machine
+
+Claude Code loads the skills un-namespaced. Codex follows each symlink back into
+this repo, finds `.claude-plugin/plugin.json`, and lists the skills as
+`pixxle-skills:<name>`.
 
 ```bash
 git clone https://github.com/Pixxle/skills.git ~/repos/skills
 ~/repos/skills/scripts/link-skills.sh
 ```
 
-To install for only one agent:
+To install for only one agent, pass `--claude` or `--codex`.
 
 ```bash
 scripts/link-skills.sh --claude
 scripts/link-skills.sh --codex
 ```
 
-The destinations default to `~/.claude/skills` and `~/.codex/skills`. Set
-`CLAUDE_SKILLS_DIR`, `CODEX_SKILLS_DIR`, or `CODEX_HOME` to override them.
+The destinations default to `~/.claude/skills` and `~/.codex/skills`. Codex still
+reads `~/.codex/skills`, though its docs now name `~/.agents/skills` as the user
+location. Set `CLAUDE_SKILLS_DIR`, `CODEX_SKILLS_DIR`, or `CODEX_HOME` to override
+them. The script also installs each `agents/<name>.md` as a Claude Code subagent
+and a Codex agent role. Run `scripts/link-skills.sh --help` for the agent
+directory overrides.
 
-**Claude plugin install** (installs as a namespaced plugin from `.claude-plugin/plugin.json`):
+### skills CLI
+
+This copies or links each skill listed in `.claude-plugin/plugin.json` into
+`.claude/skills/` and `.agents/skills/`, or with `-g` into `~/.claude/skills/` and
+`~/.agents/skills/`. It installs plain skill folders, not a plugin, and skips the
+agents. Don't combine it with `link-skills.sh` on the same machine. A global
+install claims the same `~/.claude/skills/<name>` paths, and Codex loads its
+`~/.agents/skills` copies next to the linked ones.
 
 ```bash
 npx skills@latest add Pixxle/skills
 ```
 
-Run `scripts/list-skills.sh` to see everything, grouped by bucket.
-
 ## Skills
 
-### Engineering
-- [bump-deps](skills/engineering/bump-deps/SKILL.md) — safely upgrade deps one at a time, validating after each.
-- [changelog](skills/engineering/changelog/SKILL.md) — generate a user-facing changelog from a commit range and flag every breaking API change a merged PR introduced.
-- [create-system-map](skills/engineering/create-system-map/SKILL.md) — create a technical onboarding guide to a repository's capabilities, APIs, architecture, and execution flows, using tiered sub-agents and source-backed diagrams.
-- [handoff](skills/engineering/handoff/SKILL.md) — compact the conversation into a handoff doc.
-- [pr-comments](skills/engineering/pr-comments/SKILL.md) — turn existing findings into concise inline GitHub review comments.
-- [prototype](skills/engineering/prototype/SKILL.md) — build a throwaway prototype to flesh out a design.
-- [thermo-nuclear-code-quality-review](skills/engineering/thermo-nuclear-code-quality-review/SKILL.md) — extremely strict maintainability review.
-- [thermo-nuclear-refactor](skills/engineering/thermo-nuclear-refactor/SKILL.md) — map and trace codebase simplifications with sub-agents, independently verify proposals, report coverage, and implement accepted refactorings.
-- [workshop-findings](skills/engineering/workshop-findings/SKILL.md) — decide the best fix for each review finding before commenting.
+Each bucket README lists its skills. Run `scripts/list-skills.sh` to see every
+skill, grouped by bucket.
 
-### Productivity
-- [grill-me](skills/productivity/grill-me/SKILL.md) — interview you relentlessly about a plan until shared understanding.
-- [teach](skills/productivity/teach/SKILL.md) — teach a concept using a workspace-local learning record.
-- [to-issue](skills/productivity/to-issue/SKILL.md) — turn a conversation or RFC into an approved issue split and clear issue drafts for AI implementation.
-- [write-a-skill](skills/productivity/write-a-skill/SKILL.md) — create new agent skills with proper structure.
-- [write-rfc](skills/productivity/write-rfc/SKILL.md) — document conversation outcomes as a concise RFC in Simplified Technical English, with alternatives and their trade-offs.
+- [Engineering](skills/engineering/README.md) for daily code work.
+- [Productivity](skills/productivity/README.md) for daily non-code workflow tools.
+- [Writing](skills/writing/README.md) for drafting and shaping prose.
+- [Security](skills/security/README.md) for audit, review, and pen-test skills.
+- [Misc](skills/misc/README.md) for skills kept around but rarely used.
 
-### Writing
+## Checks
 
-- [compose-blog-post](skills/writing/compose-blog-post/SKILL.md) — coordinate the full flow from thoughts to a finished article.
-- [writing-interview](skills/writing/writing-interview/SKILL.md) — develop an idea through a collaborative Socratic interview.
-- [writing-fragments](skills/writing/writing-fragments/SKILL.md) — gather concrete examples, observations, and phrases before drafting.
-- [writing-beats](skills/writing/writing-beats/SKILL.md) — build a narrative one agreed beat at a time.
-- [writing-shape](skills/writing/writing-shape/SKILL.md) — shape the structure and working draft, or revise an existing draft.
-- [writing-blog-post](skills/writing/writing-blog-post/SKILL.md) — compose the final article in Dennis's voice, with destination-specific output.
+`scripts/check-skills.sh` enforces the maintenance rules in `AGENTS.md`. CI runs
+it and `scripts/test-check-skills.sh` on every push and pull request. To run it
+on the staged tree before each commit, enable the hook once per clone.
 
-### Misc
-- [caveman](skills/misc/caveman/SKILL.md) — ultra-compressed communication mode.
+```bash
+git config core.hooksPath .githooks
+```
+
+`scripts/check-skills.sh --installed` also checks this machine's skill links and
+agent installs for missing, dangling, stale, or shadowing entries. Add `--claude`
+or `--codex` after a one-runtime install.
+
+## Credits
+
+Several skills derive from Lauren Tan's pstack, under the MIT License. See
+[NOTICE.md](NOTICE.md).

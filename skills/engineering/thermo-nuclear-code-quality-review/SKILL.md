@@ -1,6 +1,6 @@
 ---
 name: thermo-nuclear-code-quality-review
-description: Review a change for structural maintainability and major simplification opportunities when the user explicitly requests a thermo-nuclear, deep code-quality, or unusually strict maintainability audit.
+description: Review a change for structural maintainability and major simplification opportunities. Use only when the user names thermo-nuclear or asks for an unusually strict, maintainability-only audit. A general or thorough PR review is swarm-review.
 ---
 
 # Thermo-Nuclear Code Quality Review

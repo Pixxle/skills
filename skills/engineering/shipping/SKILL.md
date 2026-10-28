@@ -9,33 +9,41 @@ description: >-
   not own CI babysitting or human review posting.
 ---
 
-# shipping: land only what was independently verified
+# Shipping
 
 You own what lands. Verify each PR independently, land only the contiguous
 verified run from the root, then keep your hands off the stack.
 
 [`babysit`](../babysit/SKILL.md) ends at merge-ready. This skill starts there (or
-when the user explicitly asks to land / ship / merge). [`pr-comments`](../pr-comments/SKILL.md)
-owns human review comment voice; do not turn that skill into CI or merge ownership.
+when the user explicitly asks to land, ship, or merge). [`pr-comments`](../pr-comments/SKILL.md)
+owns human review comment voice. Do not turn that skill into CI or merge ownership.
 
 ## 1. Resolve the forge, then verify independently
 
-Pick one forge path (same rules as babysit: prefer the repo's active forge CLI,
-record fallbacks, never require Graphite) and keep it for view / merge / retarget.
+Pick one forge path and keep it for view, merge, and retarget. The rules match
+babysit. Prefer the repo's active forge CLI, record fallbacks, and never require
+Graphite.
 
 **Independent non-author verify before land.** For each PR about to land, spawn a
-verifier that did **not** author the code. The verifier runs the change the way a
+verifier that did **not** author the code, on a different model family than the
+author when the runtime offers one. The verifier runs the change the way a
 user would on the matching surface (UI, CLI, API, or the repo's usual smoke path),
 parent against head, and posts one of:
 
-- `PASS` — good to land
-- `PASS+NOTES` — landable; notes are non-blocking
-- `FAIL` — do not land
+- `PASS` means good to land.
+- `PASS+NOTES` means landable, with non-blocking notes.
+- `FAIL` means do not land.
+
+When the repo has a project verify skill (`.agents/skills/verify-*/`, linked at
+`.claude/skills/verify-*`), the verifier drives parent and head through it and
+names the feature-map entries it covered in the verdict. When a recipe fails
+against an app that works, the recipe is stale. Repair it with
+[`maintain-verification-skill`](../maintain-verification-skill/SKILL.md).
 
 Only a verdict from a non-author agent counts. Green CI and an approving bot
-review are not verdicts — neither exercises the change as a user would. When
-`fix-bug` is available and the change is a defect fix, prefer same-surface
-verify consistent with that skill's bar.
+review are not verdicts, because neither exercises the change as a user would.
+When the change is a defect fix, hold the verify to the same-surface bar of
+[`fix-bug`](../fix-bug/SKILL.md).
 
 ## 2. Land only the contiguous verified run from the bottom
 
@@ -43,7 +51,7 @@ Walk up from the lowest unmerged PR. Stop at the first without `PASS` or
 `PASS+NOTES`. Everything below that is the **run**; the top of the run is the
 **ceiling**. A verified PR above an unverified one waits. A PR whose branch
 neither holds nor needs the unverified code may retarget onto trunk and land on
-its own — after a **fresh** verdict, because the old one ran with different code
+its own after a **fresh** verdict, because the old one ran with different code
 beneath it.
 
 ## 3. Re-check that verdicts still describe the code
@@ -58,7 +66,7 @@ the current head before trusting an older verdict.
   embedded commit SHA). Report each kind of noise with its files.
 - The product change itself still needs fresh checks and review when it drifted.
 - A lane with no build output (for example a long-lived dev server) cannot show
-  this — re-verify.
+  this. Re-verify.
 
 ## 4. Land bottom-up, one PR at a time
 
@@ -71,8 +79,8 @@ After the merge command:
    success when a merge queue only **queued** the PR. Auto-merge armed is not a
    merge. A landed PR reads merged with **trunk** as its base, not its parent's
    branch.
-2. Arm merge-when-ready / auto-merge only when the verdict covers the **current**
-   head — it will land whatever head becomes ready.
+2. Arm merge-when-ready or auto-merge only when the verdict covers the
+   **current** head. It will land whatever head becomes ready.
 3. After a parent lands, retarget the next PR whose base was the merged branch to
    trunk, move its patch onto the merge result, and push with
    `--force-with-lease`. Step 3's patch-id rule decides whether the verdict
@@ -84,51 +92,38 @@ The retarget/restack in step 4 is the only intentional branch or base change
 during landing. A base that moves to trunk when its parent merges is expected,
 not damage to repair. If a merge stalls, find out why before changing anything.
 
-Watch the run with the forge's check/watch capabilities until the ceiling reads
-merged (or the queue reports complete). Do not reopen a full `babysit` drive
-loop unless new failures need triage — then hand those back to babysit.
+Watch the run with the forge's check and watch capabilities until the ceiling
+reads merged (or the queue reports complete). Do not reopen a full `babysit`
+drive loop unless new failures need triage. Then hand those back to babysit.
 
 ## 6. Stop at the ceiling
 
-Extending the run needs new verdicts — a new pass through step 1.
+Extending the run needs new verdicts, which means a new pass through step 1.
 
-## Opening / merge hygiene (complements pr-comments)
+## Opening PRs that will be shipped
 
-Use this when opening PRs that will later be babysat and shipped. Keep it short;
-do not steal review-comment ownership from `pr-comments`.
+Open PRs through cortex's [Opening a PR](../cortex/playbooks/opening-a-pr.md).
+It owns branches, commits, titles, the body, the forge, and the
+[`no-comments`](../no-comments/SKILL.md) and [`unslop`](../unslop/SKILL.md)
+gates. Landing adds these rules.
 
-- **Worktree / branch:** Prefer a clean worktree off trunk. Dirty unrelated work →
-  patch out, fresh branch, re-apply.
-- **Commits:** Small, ordered, landable. Amend when the fix belongs in a
-  just-made commit; new commit when separable.
-- **Titles:** Conventional Commits `type(scope): subject`, imperative, no
-  trailing period.
-- **Body (one-minute briefing):** `## Why`, `## What changed`, `## Scope`,
-  optional `## Tradeoffs`, `## Blast Radius`, `## Verification`. Drop empty
-  sections. Evidence that proves a claim (screenshots, recordings) attaches
-  after the sections; long SHA recitals go in a linked artifact.
-- **Forge:** Same resolve-once rule as babysit. When the run provides a built-in
-  PR tool, create/edit/retarget through it so tracking stays correct; use the
-  forge CLI for everything the tool does not cover.
-- **Ready, not draft:** Open PRs ready for review unless the user asks for draft.
-- **Stacks:** Prefer several narrow PRs to one large one. Root targets trunk;
-  each child bases on its parent's tip. As parents merge, move children onto
-  trunk per step 4.
-- **Babysit is opt-in:** Opening a PR does not start babysit. Post the URL and
+- **Stack bases.** Root targets trunk. Each child bases on its parent's tip. As
+  parents merge, move children onto trunk per step 4.
+- **Babysit is opt-in.** Opening a PR does not start babysit. Post the URL and
   keep building unless the user (or an assigned stack owner brief) asks for a
   babysit after the stack exists.
-- **Sibling skills:** Use `changelog` when cutting release notes after land;
-  `bump-deps` keeps its own opt-in push/PR gate; human review findings go through
-  `workshop-findings` → `pr-comments`.
+- **Sibling skills.** Use `changelog` when cutting release notes after land.
+  `bump-deps` keeps its own opt-in push and PR gate. Human review findings go
+  through `workshop-findings` → `pr-comments`.
 
-## Optional: keep a verified queue moving
+## Keep a verified queue moving (optional)
 
 Only when the user asks for unattended queue help **and** the stack is already
 verified. Stay thin:
 
-1. Do not invent new product work. Land the contiguous verified run (steps 1–6).
-2. After each land, re-check the next ceiling candidate's verdict vs patch-id;
-   re-verify if drifted.
+1. Do not invent new product work. Land the contiguous verified run (steps 1 to 6).
+2. After each land, re-check the next ceiling candidate's verdict against its
+   patch-id. Re-verify if it drifted.
 3. Stop at the first `FAIL`, missing verdict, conflict, or human-approval wait.
    Surface the blocker; do not auto-extend scope.
 4. Never merge without a surviving non-author verdict on the current head.
@@ -138,5 +133,5 @@ policy beyond step 4, or multi-repo queues are out of scope for this skill.
 
 ## Reply shape
 
-Report: the verified run and its ceiling; each PR's verdict and who produced it;
-what landed and how you confirmed merge; what the next gap needs.
+Report the verified run and its ceiling, each PR's verdict and who produced it,
+what landed and how you confirmed the merge, and what the next gap needs.
