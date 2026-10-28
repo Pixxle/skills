@@ -1,15 +1,15 @@
 ---
 name: principles
-description: Shared portable engineering principles, autonomy pause lines, and the session-gates package index. Use when starting multi-step code work, opening a PR, acting under autonomy, or when a future engineering meta-router needs the shared gates package.
+description: Shared portable engineering principles, autonomy pause lines, and the session-gates package index. Use when starting multi-step code work, opening a PR, acting under autonomy, or when cortex (or another eng orchestrator) needs the shared gates package.
 ---
 
 # Principles
 
 Lean session-wide defaults for code work. Not a code-quality review rubric — that stays with `thermo-nuclear-code-quality-review`. Not blog anti-slop — that stays with writing `ai-tells` and `caveman`.
 
-## Package (for a future meta-router)
+## Package (for cortex)
 
-This skill is the index. Load it, then route to siblings by trigger. Do not build the meta-router here.
+This skill is the index. Load it, then route to siblings by trigger. Playbook selection lives in [`cortex`](../cortex/SKILL.md), not here.
 
 | Gate | Skill | Fires when |
 | --- | --- | --- |
@@ -18,7 +18,7 @@ This skill is the index. Load it, then route to siblings by trigger. Do not buil
 | Pre-PR comment hygiene | `no-comments` | Before review / before asking for a PR review |
 | Pause, pickup, decision trail | `handoff` | Session stop, resume, long or unattended runs |
 
-A future engineering meta-router should reference this package by name (`principles` + the three siblings) at session start and at Opening-a-PR. It should not fork thermo, writing `ai-tells`, or `caveman`.
+`cortex` references this package by name (`principles` + the three siblings) at session start and at Opening-a-PR. Do not fork thermo, writing `ai-tells`, or `caveman` into the gates.
 
 ## Principles
 
