@@ -1,0 +1,6 @@
+#!/bin/sh
+repo="$(git rev-parse --show-toplevel)" || exit 1
+staged_tree="$(mktemp -d "${TMPDIR:-/tmp}/pre-commit.XXXXXX")" || exit 1
+trap 'rm -rf "$staged_tree"' EXIT
+git checkout-index -a --prefix="$staged_tree/" || exit 1
+SKILLS_REPO="$staged_tree" "$repo/scripts/check-skills.sh"

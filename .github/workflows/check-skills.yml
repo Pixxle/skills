@@ -1,0 +1,19 @@
+name: check-skills
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the collection
+        run: scripts/check-skills.sh
+      - name: Test the checker
+        if: ${{ !cancelled() }}
+        run: scripts/test-check-skills.sh
