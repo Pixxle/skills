@@ -24,7 +24,6 @@
     "./skills/writing/writing-fragments",
     "./skills/writing/writing-interview",
     "./skills/writing/writing-shape",
-    "./skills/security/deep-review",
     "./skills/misc/caveman"
   ]
 }
