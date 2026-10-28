@@ -1,6 +1,7 @@
 ---
 name: writing-blog-post
 description: Compose and polish a finished article or blog post in Dennis's voice from a developed brief, shaped narrative, or working draft. Use when the user wants the final article written in their style, asks to finish a shaped draft, or requests a vinterfjard.com post with the site's output conventions.
+disable-model-invocation: true
 ---
 
 # Writing Blog Post

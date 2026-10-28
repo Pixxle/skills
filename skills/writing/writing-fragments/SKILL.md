@@ -1,6 +1,7 @@
 ---
 name: writing-fragments
 description: Collect and expand raw writing material as claims, vignettes, sharp sentences, and half-thoughts in one unstructured document. Use when the user wants to mine fragments, build a richer pile of examples and phrases, or keep exploring material before drafting an article.
+disable-model-invocation: true
 ---
 
 <what-to-do>

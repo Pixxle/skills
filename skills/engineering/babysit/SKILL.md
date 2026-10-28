@@ -70,6 +70,10 @@ returns. Watcher output drives wakeups; do not invent a second sleep loop.
 4. **Order: conflicts → review threads → CI.** Batch every known fix into one
    push wave. A conflict is reported, not resolved here — name the branch that
    needs the rebase and stop. Name any trunk drift the owner's rebase must sweep.
+   Each push wave and any new PR passes the gates in
+   [Opening a PR](../cortex/playbooks/opening-a-pr.md), which runs
+   [`no-comments`](../no-comments/SKILL.md) on the fix diff and
+   [`unslop`](../unslop/SKILL.md) on commit and PR prose.
 5. **Babysitting never merges.** Owner approval is a wait, not a fix target. Only
    an explicit request to merge, land, ship, or merge-when-ready routes to
    `shipping`.

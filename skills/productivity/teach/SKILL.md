@@ -1,6 +1,6 @@
 ---
 name: teach
-description: Teach the user a new skill or concept within this workspace. Use only when the user explicitly asks to learn or be taught a topic.
+description: Run a multi-session learning program on a general topic (a language, framework, domain, or hobby), keeping a mission, lessons, and learning records in the current directory. Use only when the user explicitly asks to learn a topic over time. For how code in this repo works, use how.
 ---
 
 The user has asked you to teach them something. This is a stateful request - they intend to learn the topic over multiple sessions.

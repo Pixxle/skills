@@ -1,6 +1,7 @@
 ---
 name: principles
 description: Shared portable engineering principles, autonomy pause lines, and the session-gates package index. Use when starting multi-step code work, opening a PR, acting under autonomy, or when cortex (or another eng orchestrator) needs the shared gates package.
+disable-model-invocation: true
 ---
 
 # Principles

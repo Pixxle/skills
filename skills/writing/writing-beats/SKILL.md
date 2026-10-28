@@ -1,6 +1,7 @@
 ---
 name: writing-beats
 description: Compose an article as a narrative, letting the author choose the next beat and writing one agreed beat at a time. Use when the user wants to build a story from raw material, write scene by scene, or continue an article through narrative beats.
+disable-model-invocation: true
 ---
 
 <what-to-do>
@@ -22,7 +23,7 @@ Then run a beat-by-beat journey:
 
 Accept the interview brief, material, current draft, and file paths supplied by `compose-blog-post` or another caller. Reuse established answers and honor inherited voice, length, format, and destination constraints. Do not repeat discovery or discard an agreed opening.
 
-Pause for the author's beat choices; the coordinator does not make those choices for them. When the author accepts the narrative and ending or asks to change mode, return the working draft path and remaining gaps to the caller. In the full composition flow, the coordinator then invokes `writing-blog-post` to produce the final article. Do not start another writing skill yourself.
+Pause for the author's beat choices; the coordinator does not make those choices for them. When the author accepts the narrative and ending or asks to change mode, return the working draft path and remaining gaps to the caller. In the full composition flow, the coordinator then runs [`writing-blog-post`](../writing-blog-post/SKILL.md) to produce the final article. Do not start another writing skill yourself.
 
 <supporting-info>
 

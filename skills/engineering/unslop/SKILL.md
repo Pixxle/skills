@@ -1,6 +1,7 @@
 ---
 name: unslop
 description: Strip AI tells and filler from any prose surface. Use for replies, PR titles and bodies, commit messages, docs, RFCs, and other session writing — not as a substitute for writing ai-tells on blog drafts or caveman for token-compressed chat.
+disable-model-invocation: true
 ---
 
 # Unslop
@@ -13,7 +14,7 @@ Any prose you produce in the session: chat replies, PR titles/descriptions, comm
 
 **Niche owners (link, don't fork):**
 
-- Long-form / blog drafts → writing `ai-tells` under `writing-blog-post/references/ai-tells.md` (deeper post-specific rules)
+- Long-form / blog drafts → [`ai-tells`](../../writing/writing-blog-post/references/ai-tells.md) in [`writing-blog-post`](../../writing/writing-blog-post/SKILL.md) (deeper post-specific rules)
 - Ultra-compressed chat mode → `caveman`
 - Structural code review voice → `thermo-nuclear-code-quality-review` (not a prose skill)
 

@@ -10,9 +10,9 @@ description: >-
 
 # Fix bug
 
-Own the defect end to end. Be scientific: every shipped line traces to runtime
-evidence. A change that "might help" is a hypothesis, not a fix — it does not
-ship. When evidence refutes a hypothesis, revert what it motivated. Ship the
+Own the defect end to end. Be scientific. Every shipped line traces to runtime
+evidence. A change that "might help" is a hypothesis, not a fix, and it does
+not ship. When evidence refutes a hypothesis, revert what it motivated. Ship the
 smallest change the evidence justifies, nothing more.
 
 This skill is the defect loop only. It is not a meta-router into other playbooks.
@@ -24,24 +24,35 @@ skipped step with a one-line reason.
 
 ### 1. Reproduce on the same surface
 
-Reproduce the failure yourself on the surface the user (or report) hits —
-browser, CLI, API, test runner, IDE — even if a protocol suggests asking them
-to repro. Drive that surface as far as it goes.
+Reproduce the failure yourself on the surface the user (or report) hits, such
+as a browser, CLI, API, test runner, or IDE, even if a protocol suggests asking
+them to repro. Drive that surface as far as it goes. When the repo has a
+project verify skill (`.agents/skills/verify-*/`, linked at
+`.claude/skills/verify-*`), drive this repro and the step 5 re-run through its
+Launch, Doctor, and Drive recipes, and cite the feature-map entry you used.
+When a recipe fails against an app that works, the recipe is stale. Repair it
+with [`maintain-verification-skill`](../maintain-verification-skill/SKILL.md).
 
 Ask the user only with a stated, specific reason the surface cannot reach the
 target, and only after you have driven it. If it will not reproduce directly,
 synthesize the trigger, tighten conditions, or add instrumentation until it
 fires. Capture failing output, logs, or screenshots you can paste later.
 
+When the defect is a slowdown, the repro is a benchmark. Vet it with
+[`benchmark-checklist`](../benchmark-checklist/SKILL.md) before and after the
+fix.
+
 Wrong-surface or "couldn't repro, shipping anyway" is not a start.
 
 ### 2. Binary-search with live evidence
 
-Form candidate hypotheses, then rule them out until one survives. Each pass,
-take the split that cuts the most remaining problem space, gather **runtime**
-evidence (run it, log it, instrument it, watch the process), and eliminate.
+Form candidate hypotheses, then rule them out until one survives. Seed them
+with [`how`](../how/SKILL.md) over the affected subsystem and
+[`why`](../why/SKILL.md) for regression history. Each pass, take the split
+that cuts the most remaining problem space, gather **runtime** evidence (run
+it, log it, instrument it, watch the process), and eliminate.
 
-Do not guess from source alone when program state is unclear — instrument and
+Do not guess from source alone when program state is unclear. Instrument and
 read the running system. Confirm the surviving **mechanism** with runtime
 evidence before writing a fix.
 
@@ -58,24 +69,24 @@ requires. No belt-and-suspenders, no unrelated cleanup, no speculative
 hardening in the same diff.
 
 When implementation is large or parallelizable, spawn sub-agents with a
-specific scope and review their diffs yourself — do not pass through their
-summaries as the verdict.
+specific scope and review their diffs yourself. Do not pass their summaries
+through as the verdict.
 
 ### 4. Failing-then-passing history
 
 Stage commits so a failing repro (or cheap local failing test) lands **before**
 the fix in git history. Prefer a focused failing test when the path is cheap
 and local. Skip a new test when it would be expensive, integration-heavy, or
-unclear — but still keep the live same-surface repro as the proof sequence
+unclear, but still keep the live same-surface repro as the proof sequence
 (failing capture, then passing capture).
 
-Unit tests alone show branch behavior; they do not prove bug absence on the
+Unit tests alone show branch behavior. They do not prove bug absence on the
 real surface.
 
 ### 5. Verify on the same surface
 
 Re-run the **original** repro on the **same** surface from step 1. It must
-pass. "Inconclusive," flaky, or a different surface is not a pass — flag it and
+pass. "Inconclusive," flaky, or a different surface is not a pass. Flag it and
 continue until the original path is green.
 
 ## Asking the human
@@ -83,13 +94,13 @@ continue until the original path is green.
 Classify before asking.
 
 - **Empirical forks** (behavior, timing, layout, output, whether a change
-  fixed it): settle by running the surface or a cheap throwaway sketch
-  (`prototype` when a sketch is cheaper than debating). Do not ask the user to
-  be your debugger.
+  fixed it). Settle them by running the surface or a cheap throwaway sketch
+  ([`prototype`](../prototype/SKILL.md) when a sketch is cheaper than
+  debating). Do not ask the user to be your debugger.
 - **Product or preference forks** no experiment can settle (desired UX,
-  acceptable tradeoff, which broken behavior to keep): a thin
-  [`grill-me`](../../productivity/grill-me/SKILL.md) pass is enough — one
-  branch at a time, lead with a recommendation. Do not expand into a full
+  acceptable tradeoff, which broken behavior to keep). A thin
+  [`grill-me`](../../productivity/grill-me/SKILL.md) pass is enough. Take one
+  branch at a time and lead with a recommendation. Do not expand into a full
   design interview for an empirical bug.
 
 ## Out of scope
@@ -98,10 +109,16 @@ Classify before asking.
 - Diagnosis without a fix (live profiles, handed traces) → say so and stop at
   the cited mechanism, or hand back once the cause is known.
 - New behavior or features → not this skill.
-- Meta playbook routing → not this skill; invoke `fix-bug` directly for defects.
+- Meta playbook routing → not this skill. Invoke `fix-bug` directly for defects.
+
+## Opening a PR
+
+To open a PR for the fix, follow [Opening a PR](../cortex/playbooks/opening-a-pr.md),
+which runs [`no-comments`](../no-comments/SKILL.md) and
+[`unslop`](../unslop/SKILL.md).
 
 ## Reply
 
-Report: what was broken, root cause (mechanism + evidence), the fix, how you
-verified on the same surface. Paste failing-then-passing repro output
+Report what was broken, the root cause (mechanism and evidence), the fix, and
+how you verified on the same surface. Paste failing-then-passing repro output
 verbatim when you have it. Link the PR when you opened one.

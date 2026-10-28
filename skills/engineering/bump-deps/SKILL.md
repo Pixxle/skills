@@ -327,6 +327,7 @@ Ask:
 > **Push branch and open a PR with this summary as the body?**
 
 - On `yes`:
+  - Run the gates from [Opening a PR](../cortex/playbooks/opening-a-pr.md) first: [`no-comments`](../no-comments/SKILL.md) on the branch diff and [`unslop`](../unslop/SKILL.md) on commit messages and the PR body.
   - `git push -u origin <branch>`.
   - `gh pr create --title "bump-deps: <YYYY-MM-DD>" --body <summary + test-plan>`.
   - PR body includes the §7.1 summary plus a `## Test plan` section listing the exact test commands rerun in §5b.
