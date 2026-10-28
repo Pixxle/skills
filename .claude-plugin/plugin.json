@@ -4,6 +4,7 @@
     "./skills/engineering/bump-deps",
     "./skills/engineering/changelog",
     "./skills/engineering/create-system-map",
+    "./skills/engineering/fix-bug",
     "./skills/engineering/handoff",
     "./skills/engineering/no-comments",
     "./skills/engineering/pr-comments",

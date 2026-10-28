@@ -5,6 +5,7 @@ Daily code work.
 - [bump-deps](bump-deps/SKILL.md) — safely upgrade packages, runtimes, and Docker base images one at a time on a fresh branch, validating after each.
 - [changelog](changelog/SKILL.md) — generate a user-facing changelog from a commit range and flag every breaking API change a merged PR introduced, with before/after and migration steps.
 - [create-system-map](create-system-map/SKILL.md) — explain an unfamiliar repository's capabilities, APIs, construction, data, and end-to-end flows in `_system-map/`, with diagrams and hierarchical sub-agent exploration for large systems.
+- [fix-bug](fix-bug/SKILL.md) — reproduce-first defect loop: same-surface repro, hypothesis binary-search with live evidence, smallest justified fix, failing-then-passing history, same-surface verify.
 - [handoff](handoff/SKILL.md) — persist work across agents and sessions: handoff docs, pause/resume notes, pickup from a prior trail, and append-only decision trails.
 - [no-comments](no-comments/SKILL.md) — pre-PR comment hygiene: strip unjustified comments from the scoped diff, fix accepted root-cause flags, and offer encodings for claimed constraints.
 - [pr-comments](pr-comments/SKILL.md) — turn review findings into concise, inline-first PR comments and submit them as one GitHub review; brevity-first, with a human-owned verdict.
