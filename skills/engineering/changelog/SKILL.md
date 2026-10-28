@@ -8,6 +8,7 @@ description: >-
   release notes, cutting a version, summarising changes since a tag or date, or
   when the user asks what broke, whether an API changed, or to write a changelog.
   Language-agnostic; reasons about whatever public surface the repo exposes.
+disable-model-invocation: true
 ---
 
 # changelog

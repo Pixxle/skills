@@ -6,13 +6,16 @@ description: >-
   the user wants to comment on the PR, post findings, leave inline comments, or
   write PR comments locally. The verdict is human-provided and never inferred.
   Does not hunt for issues itself.
+disable-model-invocation: true
 ---
 
 # pr-comments: post a review well
 
 Turn findings you **already have** into a tight set of PR comments and submit them as one GitHub
-review. This is a posting layer: it does **not** hunt for issues (that's a code-review
-or security-review skill, or your own read) and it does **not** decide the verdict (that's the human's).
+review. This is a posting layer: it does **not** hunt for issues (that's
+[`swarm-review`](../swarm-review/SKILL.md), another review skill, or your own read) and it does
+**not** decide the verdict (that's the human's). When the user wants to settle open fixes
+first, read and follow [`workshop-findings`](../workshop-findings/SKILL.md) before this skill.
 It authors, places, and submits.
 
 ## Three rules that matter most

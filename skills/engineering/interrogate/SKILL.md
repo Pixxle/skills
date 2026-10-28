@@ -9,6 +9,7 @@ description: >-
   "adversarial review", "try to break it", "stress test this code", "prove
   it"), or before shipping a contested or hard-to-reverse change. Not for a
   read-only review of a PR or diff (use swarm-review).
+disable-model-invocation: true
 ---
 
 # Interrogate
@@ -19,9 +20,9 @@ Open a todolist with Frame, Fan out, Verify, and Report.
 
 ## Interrogate or swarm-review
 
-[swarm-review](../swarm-review/SKILL.md) assigns lenses (correctness, security, contracts, tests, maintainability), reads the diff, and ranks findings that cite code, including debt and nits. Interrogate assigns no lenses and accepts no read-only findings. Each adversary attacks the whole intent, and each surviving finding carries a command whose output shows the failure.
+[`swarm-review`](../swarm-review/SKILL.md) assigns lenses (correctness, security, contracts, tests, maintainability), reads the diff, and ranks findings that cite code, including debt and nits. Interrogate assigns no lenses and accepts no read-only findings. Each adversary attacks the whole intent, and each surviving finding carries a command whose output shows the failure.
 
-Use swarm-review for breadth before asking for review. Use interrogate when the question is whether the change actually breaks, or before shipping something contested or expensive to reverse. Chain them when swarm-review returns blocking or should-fix correctness or security findings without a repro. Pass those findings to the adversaries as leads, not limits. A lead survives only if a run proves it.
+For breadth before asking for review, read and follow [`swarm-review`](../swarm-review/SKILL.md) instead. Interrogate fits when the question is whether the change actually breaks, or before shipping something contested or expensive to reverse. Chain them when swarm-review returns blocking or should-fix correctness or security findings without a repro. Pass those findings to the adversaries as leads, not limits. A lead survives only if a run proves it.
 
 ## Frame
 
@@ -29,16 +30,16 @@ The scope is what the user names. Otherwise it is the branch diff from its merge
 
 Restate the intent in your own words. Say what the user is trying to achieve and what problem the change solves, drawing on the user's message, the commits, and the PR description. Keep it to one or two sentences an adversary can test against. Ask the user when the intent is unclear, because a wrong intent produces false findings.
 
-A design or plan with no code behind it gives adversaries little to prove. Settle its open questions with [prototype](../prototype/SKILL.md) first, then interrogate what got built.
+A design or plan with no code behind it gives adversaries little to prove. First settle its open questions by reading and following [`prototype`](../prototype/SKILL.md). Then interrogate what got built.
 
 ## Fan out
 
-Run [arena](../arena/SKILL.md) phase A steps 3 and 4 and phase B, with these changes.
+Read [`arena`](../arena/SKILL.md) and follow its phase A steps 3 and 4 and its phase B, with these changes.
 
 - Adversaries fill the runner seats.
 - Copy the scope's uncommitted changes, including untracked files, into each worktree so every adversary attacks the real tree.
 - Spawn each adversary as a full subagent that can edit files and run commands in its own worktree, not a read-only one.
-- In place of the [arena](../arena/SKILL.md) task and rationale, give each adversary the scope, the intent, and this brief.
+- In place of the [`arena`](../arena/SKILL.md) task and rationale, give each adversary the scope, the intent, and this brief.
 
 > Break this change. Prove each finding with a run against the real code, such as a failing test, a repro script, or command output that shows the wrong behavior. For a design or plan, run a prototype or probe the current tree. Keep repros in your own worktree. Report each finding with a title, the exact command, the output it printed, and the output the intent requires. Leave out anything you did not run. That covers style, naming, structure, and risks that need a future change to matter. No findings is a valid result.
 
@@ -46,7 +47,7 @@ Run [arena](../arena/SKILL.md) phase A steps 3 and 4 and phase B, with these cha
 
 Rerun each finding's command yourself in the adversary's worktree, per [arena phase F](../arena/SKILL.md#f-verify). Keep a finding when the output shows the failure and the failure breaks the intent. Drop the rest. Merge findings that share a root cause.
 
-Skip [arena](../arena/SKILL.md) phases C, D, and E. Adversaries find different failures, so the verdict keeps every verified finding, not one adversary's list.
+Skip [`arena`](../arena/SKILL.md) phases C, D, and E. Adversaries find different failures, so the verdict keeps every verified finding, not one adversary's list.
 
 ## Report
 
@@ -54,4 +55,4 @@ Skip [arena](../arena/SKILL.md) phases C, D, and E. Adversaries find different f
 - **Findings.** For each verified finding, the command, its output, how it breaks the intent, the adversaries that found it, and the worktree that holds the repro. Say "no verified findings" when none survive.
 - **Dropped.** For each adversary, the count of dropped findings and why.
 
-A verified finding is a ready repro for [fix-bug](../fix-bug/SKILL.md). To decide remedies or post them, hand the list to [workshop-findings](../workshop-findings/SKILL.md) or [pr-comments](../pr-comments/SKILL.md).
+A verified finding is a ready repro. When the user asks for the fix, read and follow [`fix-bug`](../fix-bug/SKILL.md) with that finding as its repro. When the user wants to decide remedies, read and follow [`workshop-findings`](../workshop-findings/SKILL.md) with the list. When they want the findings posted, read and follow [`pr-comments`](../pr-comments/SKILL.md).

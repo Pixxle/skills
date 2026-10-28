@@ -18,7 +18,7 @@ Apply each criterion to every finding:
 - Convergence. Findings echoed by 2 or more reviewers carry higher confidence. Singletons must clear a higher bar on the other criteria.
 - Decision-changing. A future agent does something different because of the edit, not just reads more text.
 - Structural mechanism. Route to Backlog when a lint rule, script, metadata flag, or runtime check already enforces the rule or could enforce it cheaply. Skill prose is for things mechanisms cannot enforce.
-- Skill was used. Accept only findings that route to a skill, tool, or connector the parent invoked in the transcript. If the skill wasn't used but should have been, route to `tune description: <skill path>`. For an explicit-only skill (`disable-model-invocation: true`), route the missed trigger to the caller that should link it (cortex or a sibling skill), not to a description tune. If neither, reject as `skill-not-used`.
+- Skill was used. Accept only findings that route to a skill, tool, or connector the parent used in the transcript. If a skill wasn't loaded but should have been, route the missed trigger to the caller that should have linked it (cortex, a playbook, or a sibling skill). An explicit-only skill (`disable-model-invocation: true`) never fires from its description, so it always takes this route, and every skill in this collection is explicit-only. Route to `tune description: <skill path>` only for a skill without that flag, which the model picks from its catalog description. If neither, reject as `skill-not-used`.
 - Already covered. Read the target skill before accepting any body-edit row. If the proposal duplicates clear, well-placed existing guidance, reject as `already-covered`, because the issue is execution, not the skill. If the existing guidance is buried, weak, or easy to skip past, accept the row but reframe the proposal as a wording or placement change that makes it fire, not a duplicate addition.
 
 Drop implementation details that drift:
@@ -40,7 +40,8 @@ Output exactly the format below. No preamble, no narration. One sentence per cel
 | Problem | Proposal | Routing |
 |---|---|---|
 | <failure mode in a skill the parent used> | <change to that skill's body> | <skill path + section> |
-| <skill existed but didn't trigger> | <tune the skill's description so it fires next time> | <tune description: <skill path>> |
+| <skill existed but its caller never linked it> | <add a read-and-follow link at the caller's step> | <caller skill path + step> |
+| <skill the model picks from its description didn't trigger> | <tune the skill's description so it fires next time> | <tune description: <skill path>> |
 | <new pattern, no existing skill is a real home> | <draft a new skill via write-a-skill> | <new skill: <kebab-name>> |
 
 One row per finding. The user approves row by row.

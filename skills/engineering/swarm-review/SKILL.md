@@ -9,6 +9,7 @@ description: >-
   maintainability. To prove findings by running code, use interrogate. For a
   maintainability-only bar, use thermo-nuclear-code-quality-review. Not for
   whole-repo deep audits or posting comments.
+disable-model-invocation: true
 ---
 
 # Swarm review
@@ -28,9 +29,11 @@ This is review, not implementation. Do not apply fixes unless the user asks.
 
 ## Related skills (link, don't duplicate)
 
-| Need | Use instead / next |
+Each row names the skill to read and follow instead of this one, or after it.
+
+| Need | Read and follow instead, or next |
 | --- | --- |
-| Whole-codebase structural audit / tangle hunting | [`thermo-nuclear-refactor`](../thermo-nuclear-refactor/SKILL.md) |
+| Full-scale refactoring of the whole system, with system-wide tangle hunting | [`thermo-nuclear-refactor`](../thermo-nuclear-refactor/SKILL.md) |
 | Single-pass structural maintainability bar on a change | [`thermo-nuclear-code-quality-review`](../thermo-nuclear-code-quality-review/SKILL.md) |
 | Decide fixes on findings you already have | [`workshop-findings`](../workshop-findings/SKILL.md) |
 | Prove a finding by running it, or try to break the change | [`interrogate`](../interrogate/SKILL.md), with unproven findings as leads |
@@ -38,8 +41,11 @@ This is review, not implementation. Do not apply fixes unless the user asks.
 | Map an unfamiliar system | [`create-system-map`](../create-system-map/SKILL.md) |
 
 `swarm-review` **finds** issues on a diff. It does not workshop remedies or post
-comments. When the user wants that end to end, the pipeline is
-`swarm-review` → optional `interrogate` or `workshop-findings` → `pr-comments`.
+comments. When the user wants that end to end, the pipeline is `swarm-review`,
+then optionally [`interrogate`](../interrogate/SKILL.md) or
+[`workshop-findings`](../workshop-findings/SKILL.md), then
+[`pr-comments`](../pr-comments/SKILL.md). Read and follow each linked skill at
+its step.
 
 ## Phases
 
@@ -129,12 +135,13 @@ Return one consolidated in-chat review:
 5. **Handoff.** When a blocking or should-fix finding is `unproven`, or the user
    wants proof, offer [`interrogate`](../interrogate/SKILL.md) with those
    findings as leads. Only a finding a run proves survives there. If the user
-   wants comments posted, point them at `workshop-findings` (optional), then
-   `pr-comments`. Do not infer a GitHub review verdict.
+   wants comments posted, offer [`workshop-findings`](../workshop-findings/SKILL.md)
+   (optional), then [`pr-comments`](../pr-comments/SKILL.md). Read and follow
+   each one the user accepts. Do not infer a GitHub review verdict.
 
-When handing off to `pr-comments`, remember that its severity labels only go
-**down** (`nit:`, `optional:`). Escalation is the human's review event, not a
-`blocking:` prefix on a comment.
+When findings go on to [`pr-comments`](../pr-comments/SKILL.md), remember that
+its severity labels only go **down** (`nit:`, `optional:`). Escalation is the
+human's review event, not a `blocking:` prefix on a comment.
 
 ## Finding schema (workers)
 
@@ -150,8 +157,8 @@ When handing off to `pr-comments`, remember that its severity labels only go
 ## Out of scope
 
 - Implementing the fix list (unless the user explicitly asks after the report)
-- Whole-repo discovery and tangle hunting → `thermo-nuclear-refactor`
+- Whole-system refactoring discovery and tangle hunting → [`thermo-nuclear-refactor`](../thermo-nuclear-refactor/SKILL.md)
 - Proving findings by running them → [`interrogate`](../interrogate/SKILL.md)
-- Posting the GitHub review → `pr-comments`
+- Posting the GitHub review → [`pr-comments`](../pr-comments/SKILL.md)
 - Design bakeoffs and candidate grafting → [`arena`](../arena/SKILL.md). Keep one review report here.
 - General-purpose parallel exploration unrelated to reviewing a change

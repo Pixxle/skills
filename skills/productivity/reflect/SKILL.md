@@ -41,7 +41,7 @@ Spawn one synthesizer on the strongest judgment model. Pass [references/synthesi
 
 ## 4. Structural enforcement check
 
-Move any Accepted row that a lint rule, script, metadata flag, or runtime check would enforce more reliably to Backlog, and route it to [`correct`](../../engineering/correct/SKILL.md). Skill prose is for what mechanisms cannot enforce.
+Move any Accepted row that a lint rule, script, metadata flag, or runtime check would enforce more reliably to Backlog, per [`principle-encode-lessons-in-structure`](../../engineering/principle-encode-lessons-in-structure/SKILL.md). Route it to [`correct`](../../engineering/correct/SKILL.md). Skill prose is for what mechanisms cannot enforce.
 
 ## 5. Apply
 
@@ -56,12 +56,12 @@ Where edits land:
 How each approved row lands:
 
 - A trivial edit (a one-line bullet, a tightened sentence, a stale fact corrected) goes in directly, under the collection rules in [Authoring a skill](../../engineering/cortex/playbooks/authoring-a-skill.md).
-- A substantive edit (a new section or table, more than about 10 lines), a `tune description` row, or a `new skill` row runs through the [Authoring a skill](../../engineering/cortex/playbooks/authoring-a-skill.md) playbook and [`write-a-skill`](../write-a-skill/SKILL.md). A description tune front-loads the trigger words that would have fired it this session. An explicit-only skill (`disable-model-invocation: true`) never fires from its description, so its missed trigger becomes a link from the router or sibling that should have loaded it.
+- For a substantive edit (a new section or table, more than about 10 lines), a `tune description` row, or a `new skill` row, read and follow the [Authoring a skill](../../engineering/cortex/playbooks/authoring-a-skill.md) playbook and [`write-a-skill`](../write-a-skill/SKILL.md). Every skill in this collection is explicit-only (`disable-model-invocation: true`) and never fires from its description. A description tune front-loads the words the user or a router would pick it by. A missed trigger becomes a link from the router or sibling that should have loaded the skill.
 - Offer the [Eval](../../engineering/cortex/playbooks/eval.md) playbook before trusting a substantive edit. A fix written from one bad session tends to overfit it.
 
 Stop before pushing. Opening a PR for the edits needs its own go-ahead.
 
-Backlog items stay in the reply. Filing them anywhere external needs the user's go-ahead, and then [`to-issue`](../to-issue/SKILL.md) drafts them.
+Backlog items stay in the reply. Filing them anywhere external needs the user's go-ahead. Then read and follow [`to-issue`](../to-issue/SKILL.md) to draft them.
 
 ## 6. Summarize
 

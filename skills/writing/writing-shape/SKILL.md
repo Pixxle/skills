@@ -16,7 +16,7 @@ If the user did not say where to save the article, ask once and remember the pat
 
 ## When coordinated by another writing skill
 
-Accept the interview brief, material, current draft, and supplied paths. Reuse established answers and honor inherited voice, length, format, and destination constraints. Keep an agreed angle or opening unless the author wants it changed; vary execution within that angle. Return the working draft path and gaps when the author accepts the structure or changes mode. In the full composition flow, the coordinator then runs [`writing-blog-post`](../writing-blog-post/SKILL.md) to produce the final article. Do not start another skill yourself.
+Accept the interview brief, material, current draft, and supplied paths. Reuse established answers and honor inherited voice, length, format, and destination constraints. Keep an agreed angle or opening unless the author wants it changed; vary execution within that angle. Return the working draft path and gaps when the author accepts the structure or changes mode. In the full composition flow, the coordinator then reads and follows [`writing-blog-post`](../writing-blog-post/SKILL.md) to produce the final article. Do not start another skill yourself.
 
 <supporting-info>
 

@@ -6,14 +6,14 @@ disable-model-invocation: true
 
 # Writing Blog Post
 
-Turn the developed idea and shaped material into a complete article in Dennis's voice. Own final prose, voice, and output. In the full workflow, `compose-blog-post` calls this skill after the interview and shaping stages.
+Turn the developed idea and shaped material into a complete article in Dennis's voice. Own final prose, voice, and output. In the full workflow, [`compose-blog-post`](../compose-blog-post/SKILL.md) loads this skill after the interview and shaping stages.
 
 ## Two uses
 
 - **Voice-profile mode:** when the coordinator loads this skill before shaping, supply the voice guidance below and any established destination constraints. Carry them into the interview brief and shaping handoffs. Do not compose the final article yet.
 - **Final-composition mode:** use the developed brief, shaped narrative, working draft, and settled choices to produce the finished article. This is the final writing stage of the full flow.
 
-When invoked directly with developed material, compose the article without requiring earlier stages. For an explicit "just draft it" request, draft from the available concrete material and then perform the editing pass. If an essential personal example or meaning is missing, ask one focused question rather than inventing it. For a rough idea needing extended development, suggest `compose-blog-post`; do not automatically restart that workflow from inside this skill.
+When the author starts this skill directly with developed material, compose the article without requiring earlier stages. For an explicit "just draft it" request, draft from the available concrete material and then perform the editing pass. If an essential personal example or meaning is missing, ask one focused question rather than inventing it. For a rough idea needing extended development, suggest the full [`compose-blog-post`](../compose-blog-post/SKILL.md) flow, which the author starts by typing /compose-blog-post. Do not restart that workflow from inside this skill.
 
 ## Dennis's voice
 

@@ -21,9 +21,9 @@ Then run a beat-by-beat journey:
 
 ## When coordinated by another writing skill
 
-Accept the interview brief, material, current draft, and file paths supplied by `compose-blog-post` or another caller. Reuse established answers and honor inherited voice, length, format, and destination constraints. Do not repeat discovery or discard an agreed opening.
+Accept the interview brief, material, current draft, and file paths supplied by [`compose-blog-post`](../compose-blog-post/SKILL.md) or another caller. Reuse established answers and honor inherited voice, length, format, and destination constraints. Do not repeat discovery or discard an agreed opening.
 
-Pause for the author's beat choices; the coordinator does not make those choices for them. When the author accepts the narrative and ending or asks to change mode, return the working draft path and remaining gaps to the caller. In the full composition flow, the coordinator then runs [`writing-blog-post`](../writing-blog-post/SKILL.md) to produce the final article. Do not start another writing skill yourself.
+Pause for the author's beat choices; the coordinator does not make those choices for them. When the author accepts the narrative and ending or asks to change mode, return the working draft path and remaining gaps to the caller. In the full composition flow, the coordinator then reads and follows [`writing-blog-post`](../writing-blog-post/SKILL.md) to produce the final article. Do not start another writing skill yourself.
 
 <supporting-info>
 

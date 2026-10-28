@@ -1,0 +1,17 @@
+{
+  "name": "watch-pr",
+  "private": true,
+  "type": "module",
+  "description": "Watch a GitHub pull request, stack, or queued stack and report one machine-readable merge-readiness verdict.",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc --project tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "typescript": "^5.8.0"
+  }
+}

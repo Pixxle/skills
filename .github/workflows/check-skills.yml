@@ -12,8 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
       - name: Check the collection
         run: scripts/check-skills.sh
       - name: Test the checker
         if: ${{ !cancelled() }}
         run: scripts/test-check-skills.sh
+      - name: Test watch-pr
+        if: ${{ !cancelled() }}
+        run: node --test skills/engineering/babysit/scripts/watch-pr/*.test.ts
+      - name: Test the cortex scripts
+        if: ${{ !cancelled() }}
+        run: node --test skills/engineering/cortex/scripts/*.test.mjs

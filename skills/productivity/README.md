@@ -2,6 +2,7 @@
 
 Daily non-code workflow tools.
 
+- [bro](bro/SKILL.md) — restate the last reply in plain words, shorter and without jargon.
 - [grill-me](grill-me/SKILL.md) — interview you relentlessly about a plan or design until you reach shared understanding, resolving each branch of the decision tree.
 - [reflect](reflect/SKILL.md) — mine the active session transcript with three parallel reviewers (judgment, tooling, divergent) and a synthesizer, sort proposals into Accepted, Rejected, and Backlog, and apply only the skill edits you approve.
 - [teach](teach/SKILL.md) — teach a concept using a workspace-local mission, resources, and learning records.

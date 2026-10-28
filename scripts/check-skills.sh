@@ -133,7 +133,7 @@ function check_kind(   name, i, k) {
   }
   if ("disable-model-invocation" in line_of) {
     if (field("disable-model-invocation") != "true")
-      err(line_of["disable-model-invocation"], "disable-model-invocation must be true; delete the key to allow model invocation")
+      err(line_of["disable-model-invocation"], "disable-model-invocation must be true; every skill is explicit-only")
     else
       print line_of["disable-model-invocation"] > meta
   }
@@ -227,14 +227,14 @@ while read -r bucket name; do
   if [ -f "$openai" ]; then
     off_line="$(policy_allow_implicit_invocation_off_line "$openai")"
   fi
-  if [ -n "$dmi_line" ] && [ -z "$off_line" ]; then
+  if [ -z "$dmi_line" ]; then
+    report "$skill_md" 1 "every skill is explicit-only; add disable-model-invocation: true here and policy.allow_implicit_invocation: false in $openai"
+  elif [ -z "$off_line" ]; then
     if [ -f "$openai" ]; then
       report "$openai" 1 "set policy.allow_implicit_invocation: false to match disable-model-invocation: true in $skill_md"
     else
       report "$skill_md" "$dmi_line" "disable-model-invocation: true needs $openai with policy.allow_implicit_invocation: false for Codex parity; add it"
     fi
-  elif [ -z "$dmi_line" ] && [ -n "$off_line" ]; then
-    report "$openai" "$off_line" "allow_implicit_invocation: false needs disable-model-invocation: true in $skill_md for Claude Code parity; add it or drop this line"
   fi
 done < "$tmp/skills"
 

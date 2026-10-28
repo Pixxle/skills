@@ -1,6 +1,7 @@
 ---
 name: create-verification-skill
 description: Generate a committed, project-local verify-<app> skill that launches the app, drives it the way a user does on web, CLI, API, iOS simulator, or Android emulator, captures evidence, and seeds a feature map of what proves each feature works. Use when a repo has no scripted way to prove behavior on the real surface, when the user asks for a verify or control skill for this repo, or when repros and pre-merge checks keep needing hand-rolled click-through scripts.
+disable-model-invocation: true
 ---
 
 # Create a verification skill
@@ -49,7 +50,7 @@ Write `<skill-dir>/SKILL.md`. Its frontmatter holds only `name: verify-<app>` an
   - Mock only where a production boundary already isolates the external system.
   - When the safe path is a dry-run or test mode, observe what it skips (files, network, git refs) instead of trusting its name. Some dry-runs still touch the network or open a browser.
 - **Cleanup.** How to tear down what the run created. Never kill by process name. Kill what you started. Cleanup removes instances and scratch state, never the evidence. Proof artifacts survive teardown in a location the skill names.
-- **Helpers.** Every script the skill ships is executable, and the skill body shows its invocation. A helper the reader has to reverse-engineer is not a helper. When agents keep writing throwaway glue to click through the app, ship a small control CLI instead ([principles](../principles/SKILL.md), build the lever). Give it a few composable commands, `--dry-run` on anything destructive, JSON output, useful `--help`, and errors that say what to do next.
+- **Helpers.** Every script the skill ships is executable, and the skill body shows its invocation. A helper the reader has to reverse-engineer is not a helper. When agents keep writing throwaway glue to click through the app, ship a small control CLI instead, per [`principle-build-the-lever`](../principle-build-the-lever/SKILL.md). Give it a few composable commands, `--dry-run` on anything destructive, JSON output, useful `--help`, and errors that say what to do next.
 
 ## 3. Seed the feature map
 
@@ -69,6 +70,6 @@ A generated skill that was never executed is a draft, not a deliverable. Run its
 
 ## 5. Hand off
 
-Report the canonical path and the symlink, the feature you proved, where its evidence lives, and any unverified stand-in steps. Point the user at [maintain-verification-skill](../maintain-verification-skill/SKILL.md) to keep the map honest as the app changes. Suggest a cadence only if they ask.
+Report the canonical path and the symlink, the feature you proved, where its evidence lives, and any unverified stand-in steps. Point the user at [`maintain-verification-skill`](../maintain-verification-skill/SKILL.md) to keep the map honest as the app changes. Suggest a cadence only if they ask.
 
-From then on, same-surface checks in [fix-bug](../fix-bug/SKILL.md) and [shipping](../shipping/SKILL.md) drive the app through the generated skill.
+From then on, same-surface checks in [`fix-bug`](../fix-bug/SKILL.md) and [`shipping`](../shipping/SKILL.md) drive the app through the generated skill.

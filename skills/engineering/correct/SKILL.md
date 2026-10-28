@@ -20,7 +20,7 @@ Read recent commits, reverts, review comments, agent instruction files, and comm
 
 ## Fix each class at the highest level that works
 
-1. **Eliminate it with architecture.** Give each piece of state one owner and each task one supported way. Hide internals so the wrong import fails. Replace hand-synced lists with one source of truth. Delete old ways and dead code an agent would copy. When the fix is a new boundary, use [`architect`](../architect/SKILL.md).
+1. **Eliminate it with architecture.** Give each piece of state one owner and each task one supported way. Hide internals so the wrong import fails. Replace hand-synced lists with one source of truth. Delete old ways and dead code an agent would copy. When the fix is a new boundary, read and follow [`architect`](../architect/SKILL.md).
 2. **Enforce it with types so the bad state can't be written.** If bad code still compiles, add a lint or CI check whose error names the file, type, or function to use instead. If the pattern is already common, fail only when a change adds more.
 3. **Test the behavior.** Fix or delete any test that still passes when the behavior it checks breaks, or that fails when only the internals change.
 4. **Write docs or agent rules last, only for judgment calls.** Nothing fails when an agent skips them.
@@ -31,7 +31,7 @@ Human review isn't on the list. A reviewer who must catch the same mistake on ev
 
 Fix the most frequent classes now, one commit each. Prove each new check fails on a real past mistake. Replay the offending change in its own git worktree, run the check, and keep the failing output. Run the same command locally and in CI. Exceptions go on the offending line with a reason, an expiry date, and a human's approval.
 
-Ship through cortex's [Opening a PR](../cortex/playbooks/opening-a-pr.md) playbook.
+To ship, read and follow cortex's [Opening a PR](../cortex/playbooks/opening-a-pr.md) playbook.
 
 ## Keep the rule table
 

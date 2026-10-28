@@ -1,6 +1,7 @@
 ---
 name: create-system-map
 description: Creates a thorough technical onboarding map of an unfamiliar repository, explaining its capabilities, APIs, architecture, data, and internal execution flows with source-backed diagrams. Uses mandatory sub-agents and tiered aggregation to cover large systems without overloading one context window. Use when the user asks for a written map of a whole repository or service, such as a system map, architecture overview, API inventory, end-to-end flow documentation, or onboarding docs saved to disk. Not for one question about one subsystem answered in chat (use how).
+disable-model-invocation: true
 ---
 
 # Create System Map

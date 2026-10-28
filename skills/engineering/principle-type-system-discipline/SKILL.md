@@ -1,0 +1,15 @@
+---
+name: principle-type-system-discipline
+description: Make the compiler reject impossible states, mismatched primitives, and unhandled variants. Make illegal states unrepresentable, brand semantic primitives, parse external data at boundaries, exhaust variants, and derive types from authoritative schemas. Use when designing types or a function signature, reviewing a signature, or writing code in any statically typed language.
+disable-model-invocation: true
+---
+
+# Type System Discipline
+
+Make the compiler reject impossible states, mismatched primitives, and unhandled variants. Prefer defining errors and special cases out of existence over proliferating handlers. In TypeScript, these rules become discriminated unions with a literal `kind`, `unknown` for external data, a `never` check in each default arm, and types inferred from a runtime schema rather than asserted with `as`.
+
+- **Make illegal states unrepresentable.** Model variants as a tagged union (a discriminated union, sum type, or enum with data), not a bag of optional fields and booleans that admits combinations the domain forbids. Build the shape so the illegal value cannot be constructed: a non-empty list type where empty is invalid, a start plus a duration instead of two timestamps that can disagree. Keep the simpler type while every operation on it stays total. Strengthen it only where the loose type forces a cast, a non-null assertion, or a "should never happen" throw. [`principle-model-the-domain`](../principle-model-the-domain/SKILL.md) picks the structure. This principle makes the compiler enforce it.
+- **Brand semantic primitives.** `UserId` and `OrderId` are strings underneath but should not be interchangeable. Give each its own type, such as a branded intersection in TypeScript or a newtype elsewhere. Validate once at creation, trust the type downstream. If two arguments share a primitive type but mean different things, brand them.
+- **Handle every variant exhaustively.** Every switch or match over a union covers each case by name. A catch-all default arm still compiles when someone adds a variant, so no call site is forced to decide how to handle it. Where the language does not check exhaustiveness for you, put an assertion in the default arm that only type-checks when no variant is left (`const _exhaustive: never = x;` in TypeScript), so adding a variant breaks the build at every site that must handle it.
+- **External data is untyped until parsed.** RPC payloads, JSON, IPC messages, CLI args, config files, environment variables, database rows. Have a parse function at every boundary that turns unstructured input into the typed model. [`principle-boundary-discipline`](../principle-boundary-discipline/SKILL.md) says where to put validation.
+- **Derive types from authoritative schemas.** When a protocol buffer, OpenAPI spec, GraphQL schema, database migration, design-token file, or another file owns a shape, derive from it instead of hand-rolling a parallel type. See [`principle-encode-lessons-in-structure`](../principle-encode-lessons-in-structure/SKILL.md).

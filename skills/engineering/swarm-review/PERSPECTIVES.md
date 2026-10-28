@@ -47,9 +47,11 @@ decisions, unnecessary indirection, file growth that mixes responsibilities,
 or a missed simplification that the diff itself made obvious.
 
 Ask: *Did this change make the next change harder for a clear reason?* Keep the
-bar evidence-based and tied to the delta. Full thermo-nuclear or whole-repo
-tangle hunts belong in `thermo-nuclear-code-quality-review` /
-`thermo-nuclear-refactor`, not here. No drive-by renames or formatting nits.
+bar evidence-based and tied to the delta. A full thermo-nuclear bar belongs in
+[`thermo-nuclear-code-quality-review`](../thermo-nuclear-code-quality-review/SKILL.md),
+and whole-system tangle hunts belong in
+[`thermo-nuclear-refactor`](../thermo-nuclear-refactor/SKILL.md), not here. No
+drive-by renames or formatting nits.
 
 ## Shrinking the panel
 

@@ -1,19 +1,20 @@
 ---
 name: how
 description: Explain how code works today, in chat, at the level of a senior engineer onboarding onto a subsystem. Stays read-only, fans out 2 to 4 parallel explorers for a large area, then one explainer writes Overview, Key concepts, How it works, Where things live, and Gotchas. Use when the user asks "how does X work", wants a code walkthrough before changing something, asks where something lives, which package or layer owns it, or where new code should go, or needs a runtime-flow mental model. Use why for motivation and history, and create-system-map for a whole-repo onboarding map written to disk.
+disable-model-invocation: true
 ---
 
 # How
 
 Answer "how does X work?" with an explanation a senior engineer could use to start working in the area. Give a working mental model, not annotated source.
 
-`how` stays read-only and answers in chat. It writes no files and changes no code. Run it before editing code you have not traced. An agent that edits without a traced model tends to fix the symptom at the first plausible spot.
+`how` stays read-only and answers in chat. It writes no files and changes no code. Read and follow it before editing code you have not traced. An agent that edits without a traced model tends to fix the symptom at the first plausible spot.
 
 ## Pick the right skill
 
 - "What does it do and where?" → this skill.
-- "Why is it shaped this way?", history, or whether a reason still holds → [why](../why/SKILL.md). When history likely explains the mess, run why first, then how.
-- A whole-repo onboarding map with diagrams written to `_system-map/` → [create-system-map](../create-system-map/SKILL.md). Use how for one question or one subsystem answered in chat.
+- "Why is it shaped this way?", history, or whether a reason still holds → read and follow [`why`](../why/SKILL.md). When history likely explains the mess, do that first, then this skill.
+- A whole-repo onboarding map with diagrams written to `_system-map/` → read and follow [`create-system-map`](../create-system-map/SKILL.md). Use this skill for one question or one subsystem answered in chat.
 
 ## Subagents
 
@@ -38,7 +39,7 @@ After every explorer returns, spawn one explainer from [references/explainer-pro
 
 ## 4. Present
 
-You own the explanation. Spot-check the file and symbol references it leans on hardest. Then present the explainer's output in chat. Light edits for clarity or conversation context are fine. Do not substantially rewrite it. Apply [unslop](../unslop/SKILL.md).
+You own the explanation. Spot-check the file and symbol references it leans on hardest. Then present the explainer's output in chat. Light edits for clarity or conversation context are fine. Do not substantially rewrite it. Read and follow [`unslop`](../unslop/SKILL.md) on the result.
 
 ## Output format
 

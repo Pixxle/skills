@@ -1,6 +1,7 @@
 ---
 name: write-a-skill
 description: Create new agent skills with proper structure, progressive disclosure, and bundled resources. Use when user wants to create, write, or build a new skill.
+disable-model-invocation: true
 ---
 
 # Writing Skills
@@ -15,7 +16,7 @@ description: Create new agent skills with proper structure, progressive disclosu
 
 2. **Draft the skill** - create:
    - SKILL.md with concise instructions
-   - Additional reference files if content exceeds 500 lines
+   - Additional reference files if SKILL.md would exceed 100 lines
    - Utility scripts if deterministic operations needed
 
 3. **Review with user** - present draft and ask:
@@ -29,7 +30,7 @@ description: Create new agent skills with proper structure, progressive disclosu
 skill-name/
 ├── SKILL.md           # Main instructions (required)
 ├── agents/
-│   └── openai.yaml    # Optional Codex UI metadata
+│   └── openai.yaml    # Required: policy.allow_implicit_invocation: false
 ├── references/        # Detailed docs (if needed)
 ├── assets/            # Templates or output resources (if needed)
 └── scripts/           # Utility scripts (if needed)
@@ -42,6 +43,7 @@ skill-name/
 ---
 name: skill-name
 description: Brief description of capability. Use when [specific triggers].
+disable-model-invocation: true
 ---
 
 # Skill Name
@@ -59,11 +61,20 @@ description: Brief description of capability. Use when [specific triggers].
 [Link to separate files: See [REFERENCE.md](REFERENCE.md)]
 ```
 
+Every skill is explicit-only. Pair the frontmatter flag with `agents/openai.yaml`:
+
+```yaml
+policy:
+  allow_implicit_invocation: false
+```
+
+The user starts the skill by typing its name. A router or another skill loads it by reading its `SKILL.md` at a relative link, never by invoking it by name, which the runtime blocks. So in a skill body, write every backticked skill name as the text of a link to that skill's `SKILL.md`, and phrase a routed step as "read and follow" plus that link.
+
 ## Description Requirements
 
-The description is **the only thing your agent sees** when deciding which skill to load. It's surfaced in the system prompt alongside all other installed skills. Your agent reads these descriptions and picks the relevant skill based on the user's request.
+The description is what the user sees when picking a skill by name, and what a router reads when choosing where to send a step. The model never auto-loads an explicit-only skill from its description.
 
-**Goal**: Give your agent just enough info to know:
+**Goal**: Give the reader just enough info to know:
 
 1. What capability this skill provides
 2. When/why to trigger it (specific keywords, contexts, file types)
@@ -87,7 +98,7 @@ Extract text and tables from PDF files, fill forms, merge documents. Use when wo
 Helps with documents.
 ```
 
-The bad example gives your agent no way to distinguish this from other document skills.
+The bad example gives the reader no way to distinguish this from other document skills.
 
 ## When to Add Scripts
 
@@ -112,7 +123,11 @@ Split into separate files when:
 After drafting, verify:
 
 - [ ] Description includes triggers ("Use when...")
-- [ ] Frontmatter contains only `name` and `description`
+- [ ] Folder name equals the frontmatter `name`, in lowercase kebab-case, at most 64 characters
+- [ ] Frontmatter contains `name`, `description`, and `disable-model-invocation: true`
+- [ ] `agents/openai.yaml` sets `policy.allow_implicit_invocation: false`
+- [ ] Every backticked skill name is the text of a link to that skill's `SKILL.md`
+- [ ] A step that loads another skill says to read and follow its linked `SKILL.md`, never to invoke it
 - [ ] SKILL.md under 100 lines
 - [ ] No time-sensitive info
 - [ ] Consistent terminology
