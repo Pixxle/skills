@@ -94,7 +94,7 @@ Classify before asking.
 
 ## Out of scope
 
-- Structural simplification campaigns → `thermo-nuclear-refactor` / deep review.
+- Structural simplification campaigns → `thermo-nuclear-refactor`.
 - Diagnosis without a fix (live profiles, handed traces) → say so and stop at
   the cited mechanism, or hand back once the cause is known.
 - New behavior or features → not this skill.
