@@ -1,6 +1,7 @@
 {
   "name": "pixxle-skills",
   "skills": [
+    "./skills/engineering/babysit",
     "./skills/engineering/bump-deps",
     "./skills/engineering/changelog",
     "./skills/engineering/create-system-map",
@@ -10,6 +11,7 @@
     "./skills/engineering/pr-comments",
     "./skills/engineering/principles",
     "./skills/engineering/prototype",
+    "./skills/engineering/shipping",
     "./skills/engineering/thermo-nuclear-code-quality-review",
     "./skills/engineering/thermo-nuclear-refactor",
     "./skills/engineering/unslop",
