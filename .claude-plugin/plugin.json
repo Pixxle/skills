@@ -12,6 +12,7 @@
     "./skills/engineering/principles",
     "./skills/engineering/prototype",
     "./skills/engineering/shipping",
+    "./skills/engineering/swarm-review",
     "./skills/engineering/thermo-nuclear-code-quality-review",
     "./skills/engineering/thermo-nuclear-refactor",
     "./skills/engineering/unslop",
