@@ -61,8 +61,5 @@ Run `scripts/list-skills.sh` to see everything, grouped by bucket.
 - [writing-shape](skills/writing/writing-shape/SKILL.md) — shape the structure and working draft, or revise an existing draft.
 - [writing-blog-post](skills/writing/writing-blog-post/SKILL.md) — compose the final article in Dennis's voice, with destination-specific output.
 
-### Security
-- [deep-review](skills/security/deep-review/SKILL.md) — verified architectural deep-dive hunting for code-judo simplifications.
-
 ### Misc
 - [caveman](skills/misc/caveman/SKILL.md) — ultra-compressed communication mode.
