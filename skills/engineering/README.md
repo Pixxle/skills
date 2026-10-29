@@ -47,7 +47,7 @@ Daily code work.
 - [principles](principles/SKILL.md) — index of the `principle-*` leaf skills, autonomy pause lines, and the session-gates package that [cortex](cortex/SKILL.md) loads.
 - [prototype](prototype/SKILL.md) — build a throwaway prototype (runnable terminal app or toggleable UI variations) to flesh out a design before committing.
 - [shipping](shipping/SKILL.md) — independently verify then land contiguous merge-ready PRs bottom-up, with forge-aware merge hygiene; on GitHub, watch the run with babysit's queued `watch-pr` until it reports `COMPLETE`.
-- [swarm-review](swarm-review/SKILL.md) — parallel multi-perspective review of a PR or change set: fan out lenses, dedupe/rank findings, hand off to workshop-findings or pr-comments.
+- [swarm](swarm/SKILL.md) — fan out N parallel workers (coverage, races, gauntlets, or multi-lens review), aggregate, and report; hand review findings to workshop-findings or pr-comments.
 - [thermo-nuclear-code-quality-review](thermo-nuclear-code-quality-review/SKILL.md) — an extremely strict, maintainability-only review for abstraction quality, giant files, and spaghetti conditions, run only when asked for by name or for that bar.
 - [thermo-nuclear-refactor](thermo-nuclear-refactor/SKILL.md) — full-scale refactoring of the whole system only: multi-agent discovery, cross-module tracing, and independent verification; show coverage, propose refactorings, and implement only accepted proposals. A focused refactor follows the cortex [Refactor playbook](cortex/playbooks/refactor.md).
 - [unslop](unslop/SKILL.md) — strip AI tells and filler from replies, PR/commit text, docs, and other session prose, by numbered rules other skills cite by id.

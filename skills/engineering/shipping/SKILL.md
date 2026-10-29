@@ -158,43 +158,10 @@ failures need triage. Then read and follow it for those failures alone.
 
 Extending the run needs new verdicts, which means a new pass through step 1.
 
-## Opening PRs that will be shipped
-
-Open PRs by reading and following cortex's
-[Opening a PR](../cortex/playbooks/opening-a-pr.md) playbook. It owns branches,
-commits, titles, the body, the forge, and the
-[`no-comments`](../no-comments/SKILL.md) and [`unslop`](../unslop/SKILL.md)
-gates. Landing adds these rules.
-
-- **Stack bases.** Root targets trunk. Each child bases on its parent's tip. As
-  parents merge, move children onto trunk per step 4.
-- **Babysit is opt-in.** Opening a PR does not start babysit. Post the URL and
-  keep building unless the user (or an assigned stack owner brief) asks for a
-  babysit after the stack exists.
-- **Sibling skills.** To cut release notes after land, read and follow
-  [`changelog`](../changelog/SKILL.md). [`bump-deps`](../bump-deps/SKILL.md)
-  keeps its own opt-in push and PR gate. For human review findings, read and
-  follow [`workshop-findings`](../workshop-findings/SKILL.md), then
-  [`pr-comments`](../pr-comments/SKILL.md).
-
-## Keep a verified queue moving (optional)
-
-Only when the user asks for unattended queue help **and** the stack is already
-verified. Stay thin:
-
-1. Do not invent new product work. Land the contiguous verified run (steps 1 to 6).
-2. After each land, re-check the next ceiling candidate's verdict against its
-   patch-id. Re-verify if it drifted.
-3. Stop at the first `FAIL`, missing verdict, conflict, or human-approval wait.
-   Surface the blocker. Do not auto-extend scope.
-4. Never merge without a surviving non-author verdict on the current head.
-
-This is not a full autopilot orchestrator. Large unattended programs belong to
-cortex's [Autopilot full](../cortex/playbooks/autopilot-full.md) and
-[Autopilot stack](../cortex/playbooks/autopilot-stack.md) playbooks. Restacking
-policy beyond step 4 and multi-repo queues are out of scope for this skill.
-
 ## Reply shape
 
 Report the verified run and its ceiling, each PR's verdict and who produced it,
-what landed and how you confirmed the merge, and what the next gap needs.
+what landed and how you confirmed the merge, and what the next gap needs. Open
+PRs through cortex's [Opening a PR](../cortex/playbooks/opening-a-pr.md). For
+unattended queue landing beyond this skill, use Autopilot full or Autopilot
+stack.

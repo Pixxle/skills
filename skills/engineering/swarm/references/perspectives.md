@@ -1,4 +1,4 @@
-# Swarm review perspectives
+# Swarm perspectives
 
 Each worker owns **one** lens. Stay inside it. Cite the diff and nearby callers,
 tests, or contracts. Prefer a few proven findings over a long nit list.
@@ -48,16 +48,16 @@ or a missed simplification that the diff itself made obvious.
 
 Ask: *Did this change make the next change harder for a clear reason?* Keep the
 bar evidence-based and tied to the delta. A full thermo-nuclear bar belongs in
-[`thermo-nuclear-code-quality-review`](../thermo-nuclear-code-quality-review/SKILL.md),
+[`thermo-nuclear-code-quality-review`](../../thermo-nuclear-code-quality-review/SKILL.md),
 and whole-system tangle hunts belong in
-[`thermo-nuclear-refactor`](../thermo-nuclear-refactor/SKILL.md), not here. No
+[`thermo-nuclear-refactor`](../../thermo-nuclear-refactor/SKILL.md), not here. No
 drive-by renames or formatting nits.
 
 ## Shrinking the panel
 
 | Change shape | Suggested panel |
 | --- | --- |
-| Docs / comments only | `correctness` (facts) — or skip swarm-review |
+| Docs / comments only | `correctness` (facts) — or skip swarm |
 | Pure rename / move | `contracts`, `tests-observability` |
 | Small bugfix | `correctness`, `tests-observability`, maybe `security` |
 | API or schema change | full panel; weight `contracts` |
@@ -65,7 +65,7 @@ drive-by renames or formatting nits.
 
 ## Worker output file
 
-Write only to the assigned `_swarm-review/workers/<perspective>.md`. Start with:
+Write only to the assigned `_swarm/workers/<perspective>.md`. Start with:
 
 ```md
 # <perspective>

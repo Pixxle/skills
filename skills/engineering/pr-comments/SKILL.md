@@ -13,7 +13,7 @@ disable-model-invocation: true
 
 Turn findings you **already have** into a tight set of PR comments and submit them as one GitHub
 review. This is a posting layer: it does **not** hunt for issues (that's
-[`swarm-review`](../swarm-review/SKILL.md), another review skill, or your own read) and it does
+[`swarm`](../swarm/SKILL.md), another review skill, or your own read) and it does
 **not** decide the verdict (that's the human's). When the user wants to settle open fixes
 first, read and follow [`workshop-findings`](../workshop-findings/SKILL.md) before this skill.
 It authors, places, and submits.

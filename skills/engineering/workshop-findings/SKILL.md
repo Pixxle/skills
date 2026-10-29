@@ -16,7 +16,7 @@ findings; this skill walks them with you one at a time and works out the **fix**
 It does not hunt for issues (that's the review) and it does not author or post comments
 (that's [`pr-comments`](../pr-comments/SKILL.md)). It decides substance, then hands off.
 
-Pipeline: a review pass (for example, [`swarm-review`](../swarm-review/SKILL.md) or
+Pipeline: a review pass (for example, [`swarm`](../swarm/SKILL.md) or
 [`thermo-nuclear-code-quality-review`](../thermo-nuclear-code-quality-review/SKILL.md)) →
 **`workshop-findings`** → [`pr-comments`](../pr-comments/SKILL.md).
 
@@ -33,7 +33,7 @@ exception, not the goal. Don't spend the session playing skeptic.
 ## The loop
 
 Pull the findings already in context. None there → stop. There's nothing to workshop, so
-offer a review pass first, such as [`swarm-review`](../swarm-review/SKILL.md). Then walk them in the review's priority order (structural before nits):
+offer a review pass first, such as [`swarm`](../swarm/SKILL.md). Then walk them in the review's priority order (structural before nits):
 
 For each finding:
 

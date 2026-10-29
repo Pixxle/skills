@@ -39,6 +39,8 @@ against that commit when you sync a port with upstream.
 - bro
 - create-verification-skill
 - maintain-verification-skill
+- swarm, adapted from upstream `swarm` (Frame → Fan out → Aggregate → Report),
+  with portable model language and a review panel for multi-lens diff review
 
 ### Derived principle leaves
 
@@ -97,8 +99,8 @@ From `poteto-mode`'s playbooks, in `skills/engineering/cortex/playbooks/`:
 - Visual parity
 - Worktree cleanup
 
-The Map system, Swarm review, Bump deps, Changelog, and Writing playbooks are
-local and not derived from pstack.
+The Map system, Bump deps, Changelog, and Writing playbooks are local and not
+derived from pstack.
 
 ### Derived scripts
 
@@ -114,11 +116,6 @@ local and not derived from pstack.
 
 - comment-sicko
 - cortex-agent, from `poteto-agent`
-
-### Outline only
-
-swarm-review is not a port of upstream `swarm`, which is a different skill. It
-borrows only that skill's Frame, Fan out, Aggregate, and Report outline.
 
 ## thermos
 
