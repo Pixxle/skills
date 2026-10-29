@@ -32,7 +32,7 @@ Route findings only to skills, tools, or connectors this transcript used. A skil
 
 Two finding shapes are valid:
 - The parent loaded the skill and you found a real gap in its body. Route to the skill's relevant section.
-- The skill did not load when it would have helped. An explicit-only skill (`disable-model-invocation: true`) never fires from its description, so route its missed trigger to the caller that should have linked it (cortex, a playbook, or a sibling skill), not to a description tune. Every skill in this collection is explicit-only. Route as `tune description: <skill path>` only for a skill without that flag, which the model picks from its catalog description.
+- The skill did not load when it would have helped. Every skill in this collection is explicit-only, so a missed trigger routes to the caller that should have linked it, not to a description tune. Use `tune description: <skill path>` only for a skill without that flag.
 
 Drop any skill that was neither loaded nor a missed-trigger candidate.
 

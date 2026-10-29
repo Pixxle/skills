@@ -8,7 +8,7 @@ description: >-
   wants a change attacked by running code against it ("interrogate",
   "adversarial review", "try to break it", "stress test this code", "prove
   it"), or before shipping a contested or hard-to-reverse change. Not for a
-  read-only review of a PR or diff (use swarm-review).
+  read-only review of a PR or diff (use swarm).
 disable-model-invocation: true
 ---
 
@@ -18,11 +18,11 @@ Adversaries try to break a change or a design. A finding survives only when a re
 
 Open a todolist with Frame, Fan out, Verify, and Report.
 
-## Interrogate or swarm-review
+## Interrogate or swarm
 
-[`swarm-review`](../swarm-review/SKILL.md) assigns lenses (correctness, security, contracts, tests, maintainability), reads the diff, and ranks findings that cite code, including debt and nits. Interrogate assigns no lenses and accepts no read-only findings. Each adversary attacks the whole intent, and each surviving finding carries a command whose output shows the failure.
+[`swarm`](../swarm/SKILL.md) assigns lenses (correctness, security, contracts, tests, maintainability), reads the diff, and ranks findings that cite code, including debt and nits. Interrogate assigns no lenses and accepts no read-only findings. Each adversary attacks the whole intent, and each surviving finding carries a command whose output shows the failure.
 
-For breadth before asking for review, read and follow [`swarm-review`](../swarm-review/SKILL.md) instead. Interrogate fits when the question is whether the change actually breaks, or before shipping something contested or expensive to reverse. Chain them when swarm-review returns blocking or should-fix correctness or security findings without a repro. Pass those findings to the adversaries as leads, not limits. A lead survives only if a run proves it.
+For breadth before asking for review, read and follow [`swarm`](../swarm/SKILL.md) instead. Interrogate fits when the question is whether the change actually breaks, or before shipping something contested or expensive to reverse. Chain them when swarm returns blocking or should-fix correctness or security findings without a repro. Pass those findings to the adversaries as leads, not limits. A lead survives only if a run proves it.
 
 ## Frame
 

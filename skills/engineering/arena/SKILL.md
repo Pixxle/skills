@@ -80,5 +80,5 @@ One synthesized artifact and a short synthesis note. The note names:
 
 - Design before code that crosses a function boundary belongs to [`architect`](../architect/SKILL.md), which reads and follows this skill in its phase B.
 - Breaking a finished change belongs to [`interrogate`](../interrogate/SKILL.md), which reuses phases A, B, and F with adversaries.
-- Lens coverage on a diff belongs to [`swarm-review`](../swarm-review/SKILL.md). It has no base and no graft.
+- Lens coverage on a diff belongs to [`swarm`](../swarm/SKILL.md). It has no base and no graft.
 - A question one run can answer belongs to [`prototype`](../prototype/SKILL.md).

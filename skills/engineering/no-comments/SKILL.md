@@ -32,7 +32,7 @@ Correctness or safety suppressions (`eslint-disable`, `@ts-ignore`, `@ts-expect-
 
 ## Steps
 
-1. **Review.** Spawn the [`comment-sicko`](../../../agents/comment-sicko.md) agent shipped in this repo's `agents/` and pass it only the scope. Do not restate its rules. Pick its model by the role table in the Subagents section of [`cortex`](../cortex/SKILL.md). A plugin install namespaces the agent, for example `pixxle-skills:comment-sicko`. When that agent type is unavailable, spawn a separate read-only subagent with the scope and the keep list above, verbatim. The reviewer is never the author. If no subagent can be spawned, report this step open instead of reviewing your own diff.
+1. **Review.** Spawn the [`comment-sicko`](../../../agents/comment-sicko.md) agent shipped in this repo's `agents/` and pass it only the scope. Do not restate its rules. Pick its model per [Subagents](../cortex/references/subagents.md). A plugin install namespaces the agent, for example `pixxle-skills:comment-sicko`. When that agent type is unavailable, spawn a separate read-only subagent with the scope and the keep list above, verbatim. The reviewer is never the author. If no subagent can be spawned, report this step open instead of reviewing your own diff.
 2. **Triage.** Inspect the report, and check the working tree for any edit the reviewer made anyway.
    - Reject the report when it edits a file, escapes the scope, kills a keep-list exception, misstates a `MUST KILL` reason, flags kept intentional code as guilty, or keeps a comment by treating an intentional our-code surprise as sacred.
    - Reshape flags on our-code surprises stay actionable. Delete those comments and do not restore them.
