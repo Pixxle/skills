@@ -18,10 +18,13 @@ against that commit when you sync a port with upstream.
 ### Derived skills
 
 - cortex, from `poteto-mode`, with the playbooks and scripts listed below
-- principles, now the index of the principle leaves
+- principles, the lookup in `skills/principles/SKILL.md`, from `poteto-mode`'s
+  Principles index
 - unslop
 - no-comments
-- fix-bug, which folds in the rules of upstream `tdd`
+- tdd
+- swarm, with Cursor tool parameters and model slugs replaced by capability
+  terms
 - babysit, including BUGBOT-TRIAGE.md, from `poteto-mode`'s bugbot-triage
   reference
 - shipping
@@ -40,38 +43,38 @@ against that commit when you sync a port with upstream.
 - create-verification-skill
 - maintain-verification-skill
 
-### Derived principle leaves
+### Derived principles
 
-One leaf skill per upstream `principle-*` skill, under the same name:
+One file per upstream `principle-*` skill, as `skills/principles/<name>.md`:
 
-- principle-attack-the-premise
-- principle-boundary-discipline
-- principle-build-the-lever
-- principle-encode-lessons-in-structure
-- principle-exhaust-the-design-space
-- principle-experience-first
-- principle-explain-the-number
-- principle-fix-root-causes
-- principle-foundational-thinking
-- principle-guard-the-context-window
-- principle-laziness-protocol
-- principle-make-operations-idempotent
-- principle-migrate-callers-then-delete-legacy-apis
-- principle-minimize-reader-load
-- principle-model-the-domain
-- principle-never-block-on-the-human
-- principle-outcome-oriented-execution
-- principle-prove-it-works
-- principle-redesign-from-first-principles
-- principle-separate-before-serializing-shared-state
-- principle-sequence-verifiable-units
-- principle-subtract-before-you-add
-- principle-test-behavior-not-implementation
-- principle-type-system-discipline
+- attack-the-premise
+- boundary-discipline
+- build-the-lever
+- encode-lessons-in-structure
+- exhaust-the-design-space
+- experience-first
+- explain-the-number
+- fix-root-causes
+- foundational-thinking
+- guard-the-context-window
+- laziness-protocol
+- make-operations-idempotent
+- migrate-callers-then-delete-legacy-apis
+- minimize-reader-load
+- model-the-domain
+- never-block-on-the-human
+- outcome-oriented-execution
+- prove-it-works
+- redesign-from-first-principles
+- separate-before-serializing-shared-state
+- sequence-verifiable-units
+- subtract-before-you-add
+- test-behavior-not-implementation
+- type-system-discipline
 
 ### Derived cortex playbooks
 
-From `poteto-mode`'s playbooks, in `skills/engineering/cortex/playbooks/`:
+From `poteto-mode`'s playbooks, in `skills/cortex/playbooks/`:
 
 - Authoring a skill
 - Autonomous run
@@ -89,7 +92,7 @@ From `poteto-mode`'s playbooks, in `skills/engineering/cortex/playbooks/`:
 - Pause safely
 - Perf issue
 - Prototype
-- Refactor, from `refactoring.md`
+- Refactoring
 - Runtime forensics
 - Session pickup
 - Shipping
@@ -97,28 +100,20 @@ From `poteto-mode`'s playbooks, in `skills/engineering/cortex/playbooks/`:
 - Visual parity
 - Worktree cleanup
 
-The Map system, Swarm review, Bump deps, Changelog, and Writing playbooks are
-local and not derived from pstack.
-
 ### Derived scripts
 
-- `skills/engineering/babysit/scripts/watch-pr/`, a Node port of upstream
+- `skills/babysit/scripts/watch-pr/`, a Node port of upstream
   `poteto-mode/scripts/watch-pr` (Bun), with zero dependencies and `node:test`
   suites
-- `skills/engineering/cortex/scripts/check-plan.mjs` and its test, from
+- `skills/cortex/scripts/check-plan.mjs` and its test, from
   `poteto-mode/scripts/check-plan.mjs` and `check-plan.test.ts`
-- `skills/engineering/cortex/scripts/worktree-audit.sh`, from
+- `skills/cortex/scripts/worktree-audit.sh`, from
   `poteto-mode/scripts/worktree-audit.sh`. Its test is local.
 
 ### Derived agent definitions
 
 - comment-sicko
 - cortex-agent, from `poteto-agent`
-
-### Outline only
-
-swarm-review is not a port of upstream `swarm`, which is a different skill. It
-borrows only that skill's Frame, Fan out, Aggregate, and Report outline.
 
 ## thermos
 

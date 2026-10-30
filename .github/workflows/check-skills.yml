@@ -22,7 +22,7 @@ jobs:
         run: scripts/test-check-skills.sh
       - name: Test watch-pr
         if: ${{ !cancelled() }}
-        run: node --test skills/engineering/babysit/scripts/watch-pr/*.test.ts
+        run: node --test skills/babysit/scripts/watch-pr/*.test.ts
       - name: Test the cortex scripts
         if: ${{ !cancelled() }}
-        run: node --test skills/engineering/cortex/scripts/*.test.mjs
+        run: node --test skills/cortex/scripts/*.test.mjs

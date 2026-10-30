@@ -15,23 +15,19 @@ write_skill() {
   printf -- '---\n%s\n---\n\n# %s\n%s\n' "$frontmatter" "${dir##*/}" "$body" > "$dir/SKILL.md"
 }
 
-write_policy() {
-  mkdir -p "$1/agents"
-  printf 'policy:\n  allow_implicit_invocation: false\n' > "$1/agents/openai.yaml"
-}
-
 build_clean() {
   local fx="$1"
-  mkdir -p "$fx/.claude-plugin" "$fx/scripts" "$fx/agents"
+  mkdir -p "$fx/.claude-plugin" "$fx/scripts" "$fx/agents" "$fx/skills/principles"
   : > "$fx/scripts/link-skills.sh"
 
   cat > "$fx/.claude-plugin/plugin.json" <<'EOF'
 {
   "name": "fixture-skills",
   "skills": [
-    "./skills/engineering/alpha",
-    "./skills/engineering/beta",
-    "./skills/productivity/gamma"
+    "./skills/alpha",
+    "./skills/beta",
+    "./skills/gamma",
+    "./skills/principles"
   ],
   "agents": [
     "./agents/helper.md"
@@ -42,18 +38,27 @@ EOF
   cat > "$fx/README.md" <<'EOF'
 # fixture
 
-- [Engineering](skills/engineering/README.md)
-- [Productivity](skills/productivity/README.md)
+## Skills
+
+- [alpha](skills/alpha/SKILL.md) does alpha things.
+- [beta](skills/beta/SKILL.md) does beta things.
+- [gamma](skills/gamma/SKILL.md) does gamma things.
+- [principles](skills/principles/SKILL.md) looks up each principle.
+
+## Checks
+
+See [alpha](skills/alpha/SKILL.md) for the checks.
 EOF
 
-  write_skill "$fx/skills/engineering/alpha" 'name: alpha
+  write_skill "$fx/skills/alpha" 'name: alpha
 description: >-
   Do alpha things. Use when the user
   asks for alpha.
 disable-model-invocation: true' '
 See [beta](../beta/SKILL.md "Beta"), [usage](../beta/SKILL.md#usage), and
-[gamma](<../../productivity/gamma/SKILL.md>). Notes live in
-[references/notes.md](references/notes.md).
+[gamma](<../gamma/SKILL.md>). Notes live in
+[references/notes.md](references/notes.md). Apply
+[First Rule](../principles/first-rule.md).
 
 Inline `[code](missing.md)` and fenced links are skipped.
 
@@ -63,36 +68,38 @@ Inline `[code](missing.md)` and fenced links are skipped.
 
 [Docs](https://example.com), [mail](mailto:a@example.com), [top](#alpha), and
 [Source](SOURCE_URL) are skipped too.'
-  mkdir -p "$fx/skills/engineering/alpha/references"
-  echo 'Back to [alpha](../SKILL.md).' > "$fx/skills/engineering/alpha/references/notes.md"
+  mkdir -p "$fx/skills/alpha/references"
+  echo 'Back to [alpha](../SKILL.md).' > "$fx/skills/alpha/references/notes.md"
 
-  write_policy "$fx/skills/engineering/alpha"
-
-  write_skill "$fx/skills/engineering/beta" 'name: "beta"
+  write_skill "$fx/skills/beta" 'name: "beta"
 description: "Do beta things. Use when the user asks for beta."
 disable-model-invocation: true'
-  write_policy "$fx/skills/engineering/beta"
 
-  write_skill "$fx/skills/productivity/gamma" 'name: gamma
+  write_skill "$fx/skills/gamma" 'name: gamma
 description: Do gamma things. Use only when the user runs gamma.
 disable-model-invocation: true'
-  write_policy "$fx/skills/productivity/gamma"
 
-  write_skill "$fx/skills/deprecated/old" 'name: old
-description: Retired.'
+  cat > "$fx/skills/principles/SKILL.md" <<'EOF'
+---
+name: principles
+description: Look up each principle, when it applies, and its file. Use when a principle may shape a decision.
+disable-model-invocation: true
+---
 
-  cat > "$fx/skills/engineering/README.md" <<'EOF'
-# Engineering
+# Principles
 
-- [alpha](alpha/SKILL.md) does alpha things.
-- [beta](beta/SKILL.md) does beta things.
+Read a principle's file in full before you apply it.
+
+## Core
+
+- [First Rule](first-rule.md): when the first thing happens.
+- [Second Rule](./second-rule.md): when the second thing happens. Pairs with [`alpha`](../alpha/SKILL.md).
 EOF
 
-  cat > "$fx/skills/productivity/README.md" <<'EOF'
-# Productivity
-
-- [gamma](gamma/SKILL.md) does gamma things.
-EOF
+  printf '# First Rule\n\nDo the first thing. See [Second Rule](second-rule.md).\n' \
+    > "$fx/skills/principles/first-rule.md"
+  printf '# Second Rule\n\nDo the second thing. Run [`gamma`](../gamma/SKILL.md).\n' \
+    > "$fx/skills/principles/second-rule.md"
 
   cat > "$fx/agents/helper.md" <<'EOF'
 ---
@@ -100,7 +107,7 @@ name: helper
 description: Fixture agent.
 ---
 
-Helps alpha. See [alpha](../skills/engineering/alpha/SKILL.md).
+Helps alpha. See [alpha](../skills/alpha/SKILL.md) and [principles](../skills/principles/SKILL.md).
 EOF
 }
 
@@ -116,7 +123,7 @@ install_links() {
   mkdir -p "$home/.claude/skills" "$home/.codex/skills" "$home/.agents/skills" \
     "$home/.claude/agents" "$home/.codex/agents"
   add_unrelated_installs "$home"
-  for dir in "$checkout"/skills/engineering/* "$checkout"/skills/productivity/*; do
+  for dir in "$checkout"/skills/*; do
     [ -d "$dir" ] || continue
     ln -s "$dir" "$home/.claude/skills/${dir##*/}"
     ln -s "$dir" "$home/.codex/skills/${dir##*/}"
@@ -260,15 +267,67 @@ else
   fail "install through a symlinked alias stays owned" "link-skills.sh refused the reinstall" "$fx" ""
 fi
 
+# Links into this repo that no longer reach an active skill go; links that
+# point anywhere else stay, even when they dangle.
 fx="$(new_fixture)"
-edit "$fx/skills/engineering/README.md" '/\[beta\]/d'
-expect_problem "skill missing from its bucket README" \
-  "skills/engineering/README.md:3: missing entry for beta" "$fx"
+rm -rf "$fx.home"
+mkdir -p "$fx.home/.claude/skills" "$fx.home/.codex/skills" "$fx.home/other"
+ln -s "$fx/skills/engineering/alpha" "$fx.home/.claude/skills/old-bucket"
+ln -s "$fx/skills/engineering/principle-first-rule" "$fx.home/.codex/skills/principle-first-rule"
+ln -s "$fx/skills/alpha" "$fx.home/.claude/skills/alpha-renamed"
+ln -s "$fx/skills/alpha/references" "$fx.home/.codex/skills/references"
+ln -s "$fx.home/other" "$fx.home/.claude/skills/elsewhere"
+ln -s "$tmp/nowhere/gone" "$fx.home/.codex/skills/gone-elsewhere"
+if run_linker "$fx" "$fx"; then
+  left=""
+  for entry in .claude/skills/old-bucket .codex/skills/principle-first-rule \
+    .claude/skills/alpha-renamed .codex/skills/references; do
+    if [ -L "$fx.home/$entry" ]; then left="$left $entry"; fi
+  done
+  for entry in .claude/skills/elsewhere .codex/skills/gone-elsewhere; do
+    if [ ! -L "$fx.home/$entry" ]; then left="$left lost:$entry"; fi
+  done
+  if [ -z "$left" ]; then
+    pass "link-skills.sh prunes stale links into the repo and keeps the rest"
+  else
+    fail "link-skills.sh prunes stale links into the repo and keeps the rest" "wrong links:$left" "$fx" ""
+  fi
+  rm "$fx.home/.codex/skills/gone-elsewhere"
+  expect_clean "link-skills.sh output after pruning passes --installed" "$fx" --installed
+else
+  fail "link-skills.sh prunes stale links into the repo and keeps the rest" "link-skills.sh failed on the fixture" "$fx" ""
+fi
+
+fx="$(new_fixture)"
+edit "$fx/README.md" '/^- \[alpha\]/d'
+expect_problem "skill missing from the README skills list" \
+  "README.md:7: missing entry for alpha under ## Skills" "$fx"
+insert_after "$fx/README.md" '## Skills' '- [alpha](skills/alpha/SKILL.md) does alpha things.'
+expect_clean "README skills list with the entry restored" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/README.md" 's|^- \[gamma\]|- [Gamma]|'
+expect_problem "README skills entry with the wrong text" \
+  "README.md:7: write the entry as [gamma](skills/gamma/SKILL.md)" "$fx"
+
+fx="$(new_fixture)"
+insert_after "$fx/README.md" '## Skills' '- [delta](skills/delta/SKILL.md) was removed.'
+expect_problem "README skills list links a removed skill" \
+  "links skills/delta, which is not an active skill" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/README.md" 's/^## Skills$/## Catalog/'
+expect_problem "README without a skills section" "README.md:1: no ## Skills section" "$fx"
 
 fx="$(new_fixture)"
 edit "$fx/.claude-plugin/plugin.json" '/beta/d'
 expect_problem "skill missing from plugin.json" \
-  ".claude-plugin/plugin.json:3: missing ./skills/engineering/beta" "$fx"
+  ".claude-plugin/plugin.json:3: missing ./skills/beta" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/.claude-plugin/plugin.json" '/"\.\/skills\/principles"/d'
+expect_problem "principles missing from plugin.json" \
+  ".claude-plugin/plugin.json:3: missing ./skills/principles" "$fx"
 
 fx="$(new_fixture)"
 edit "$fx/.claude-plugin/plugin.json" '/helper/d'
@@ -280,97 +339,141 @@ expect_problem "plugin.json entry for a removed agent" "no agent at ./agents/gho
 
 if python3 -I -c 'import json' > /dev/null 2>&1; then
   fx="$(new_fixture)"
-  edit "$fx/.claude-plugin/plugin.json" 's|"./skills/productivity/gamma"|&,|'
+  edit "$fx/.claude-plugin/plugin.json" 's|"./skills/gamma"|&,|'
   expect_problem "plugin.json with a trailing comma" "not valid JSON" "$fx"
 else
   pass "plugin.json with a trailing comma # skip, no python3"
 fi
 
 fx="$(new_fixture)"
-insert_after "$fx/.claude-plugin/plugin.json" '  "skills": [' '    "./skills/security/deep-review",'
+insert_after "$fx/.claude-plugin/plugin.json" '  "skills": [' '    "./skills/deep-review",'
 expect_problem "plugin.json entry for a removed skill" \
-  "no active skill at ./skills/security/deep-review" "$fx"
+  "no active skill at ./skills/deep-review" "$fx"
 
 fx="$(new_fixture)"
-insert_after "$fx/.claude-plugin/plugin.json" '  "skills": [' '    "./skills/deprecated/old",'
-expect_problem "plugin.json entry for a deprecated skill" \
-  "./skills/deprecated/old is deprecated" "$fx"
+edit "$fx/.claude-plugin/plugin.json" 's|"./skills/alpha"|"./skills/engineering/alpha"|'
+expect_problem "plugin.json entry at an old bucket path" \
+  "no active skill at ./skills/engineering/alpha" "$fx"
 
 fx="$(new_fixture)"
-edit "$fx/skills/engineering/alpha/SKILL.md" 's/^name: alpha$/name: alfa/'
+edit "$fx/skills/alpha/SKILL.md" 's/^name: alpha$/name: alfa/'
 expect_problem "frontmatter name mismatch" \
-  "skills/engineering/alpha/SKILL.md:2: name 'alfa' does not match folder 'alpha'" "$fx"
+  "skills/alpha/SKILL.md:2: name 'alfa' does not match folder 'alpha'" "$fx"
 
 fx="$(new_fixture)"
-insert_after "$fx/skills/engineering/alpha/SKILL.md" 'name: alpha' 'allowed-tools: Read'
+edit "$fx/skills/principles/SKILL.md" 's/^name: principles$/name: principle/'
+expect_problem "principles frontmatter name mismatch" \
+  "skills/principles/SKILL.md:2: name 'principle' does not match folder 'principles'" "$fx"
+
+fx="$(new_fixture)"
+insert_after "$fx/skills/alpha/SKILL.md" 'name: alpha' 'allowed-tools: Read'
 expect_problem "extra frontmatter key" \
   "unsupported frontmatter key 'allowed-tools'" "$fx"
 
 fx="$(new_fixture)"
-edit "$fx/skills/engineering/beta/SKILL.md" 's/^description: .*/description: ""/'
+edit "$fx/skills/beta/SKILL.md" 's/^description: .*/description: ""/'
 expect_problem "empty description" "description is empty" "$fx"
 
 fx="$(new_fixture)"
-mv "$fx/skills/engineering/beta/SKILL.md" "$fx/skills/engineering/beta/tmp.md"
-mv "$fx/skills/engineering/beta/tmp.md" "$fx/skills/engineering/beta/skill.md"
+mv "$fx/skills/beta/SKILL.md" "$fx/skills/beta/tmp.md"
+mv "$fx/skills/beta/tmp.md" "$fx/skills/beta/skill.md"
 expect_problem "lowercase skill.md" "beta/skill.md:1: rename to SKILL.md" "$fx"
 
 fx="$(new_fixture)"
-write_skill "$fx/skills/productivity/alpha" 'name: alpha
-description: Shadow alpha.'
-expect_problem "same skill name in two buckets" "exists in more than one bucket" "$fx"
-
-fx="$(new_fixture)"
-write_skill "$fx/skills/engineering/alpha/templates/nested" 'name: nested
+write_skill "$fx/skills/alpha/templates/nested" 'name: nested
 description: Nested.'
-expect_problem "SKILL.md nested inside a skill" "outside skills/<bucket>/<name>/" "$fx"
+expect_problem "SKILL.md nested inside a skill" \
+  "skills/alpha/templates/nested/SKILL.md:1: SKILL.md outside skills/<name>/" "$fx"
 
 fx="$(new_fixture)"
-edit "$fx/skills/engineering/alpha/SKILL.md" 's|(\.\./beta/SKILL.md "Beta")|(../betta/SKILL.md "Beta")|'
+write_skill "$fx/skills/principles/extra" 'name: extra
+description: Nested.'
+expect_problem "SKILL.md nested inside principles" \
+  "skills/principles/extra/SKILL.md:1: SKILL.md outside skills/<name>/" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/skills/alpha/SKILL.md" 's|(\.\./beta/SKILL.md "Beta")|(../betta/SKILL.md "Beta")|'
 expect_problem "broken sibling link" "broken link '../betta/SKILL.md'" "$fx"
 
 fx="$(new_fixture)"
-echo '- [old](../deprecated/old/SKILL.md) is retired.' >> "$fx/skills/engineering/README.md"
-expect_problem "bucket README links a deprecated skill" "links deprecated skills/deprecated/old/SKILL.md" "$fx"
+edit "$fx/skills/alpha/SKILL.md" 's|principles/first-rule.md|principles/first-rules.md|'
+expect_problem "broken link from a skill to a principle" \
+  "broken link '../principles/first-rules.md'" "$fx"
 
 fx="$(new_fixture)"
-echo '- [old](skills/deprecated/old/SKILL.md)' >> "$fx/README.md"
-expect_problem "root README links a deprecated skill" "README.md:5: links deprecated" "$fx"
+printf '# Third Rule\n\nDo the third thing.\n' > "$fx/skills/principles/third-rule.md"
+expect_problem "principle missing from the lookup" \
+  "skills/principles/SKILL.md:14: missing entry for third-rule.md" "$fx"
+echo '- [Third Rule](third-rule.md): when the third thing happens.' >> "$fx/skills/principles/SKILL.md"
+expect_clean "principle linked from the lookup" "$fx"
 
 fx="$(new_fixture)"
-rm "$fx/skills/productivity/gamma/agents/openai.yaml"
-expect_problem "disable-model-invocation without Codex policy" \
-  "needs skills/productivity/gamma/agents/openai.yaml" "$fx"
+printf '# Third Rule\n\nDo the third thing.\n' > "$fx/skills/principles/third-rule.md"
+printf '\n```text\n- [Third Rule](third-rule.md)\n```\n' >> "$fx/skills/principles/SKILL.md"
+expect_problem "lookup entry inside a code fence does not count" \
+  "missing entry for third-rule.md" "$fx"
 
 fx="$(new_fixture)"
-edit "$fx/skills/engineering/beta/SKILL.md" '/^disable-model-invocation: true$/d'
+echo '- [Gone Rule](gone-rule.md): when nothing happens.' >> "$fx/skills/principles/SKILL.md"
+expect_problem "lookup links a removed principle" \
+  "skills/principles/SKILL.md:15: broken link 'gone-rule.md'" "$fx"
+
+fx="$(new_fixture)"
+cp "$fx/skills/principles/first-rule.md" "$fx/first-rule.md.orig"
+printf -- '---\nname: first-rule\ndescription: First.\n---\n\n' | cat - "$fx/first-rule.md.orig" > "$fx/skills/principles/first-rule.md"
+expect_problem "principle with frontmatter" \
+  "skills/principles/first-rule.md:1: principles carry no frontmatter" "$fx"
+mv "$fx/first-rule.md.orig" "$fx/skills/principles/first-rule.md"
+expect_clean "principle without frontmatter" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/skills/principles/second-rule.md" '1s/^# /## /'
+expect_problem "principle that does not open with its title" \
+  "skills/principles/second-rule.md:1: start the principle with its # Title" "$fx"
+edit "$fx/skills/principles/second-rule.md" '1s/^## /# /'
+expect_clean "principle that opens with its title" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/skills/beta/SKILL.md" '/^disable-model-invocation: true$/d'
 expect_problem "skill the model can invoke on its own" \
-  "skills/engineering/beta/SKILL.md:1: every skill is explicit-only" "$fx"
+  "skills/beta/SKILL.md:1: every skill is explicit-only" "$fx"
 
 fx="$(new_fixture)"
-edit "$fx/skills/engineering/beta/SKILL.md" 's/^disable-model-invocation: true$/disable-model-invocation: false/'
+edit "$fx/skills/principles/SKILL.md" '/^disable-model-invocation: true$/d'
+expect_problem "principles skill the model can invoke on its own" \
+  "skills/principles/SKILL.md:1: every skill is explicit-only" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/skills/beta/SKILL.md" 's/^disable-model-invocation: true$/disable-model-invocation: false/'
 expect_problem "disable-model-invocation set to false" \
   "disable-model-invocation must be true; every skill is explicit-only" "$fx"
 
 fx="$(new_fixture)"
-printf 'interface:\n  allow_implicit_invocation: false\n' > "$fx/skills/productivity/gamma/agents/openai.yaml"
-expect_problem "Codex policy key outside policy:" \
-  "set policy.allow_implicit_invocation: false" "$fx"
-
-fx="$(new_fixture)"
-echo 'Then run `gamma`.' >> "$fx/skills/engineering/beta/SKILL.md"
+echo 'Then run `gamma`.' >> "$fx/skills/beta/SKILL.md"
 expect_problem "explicit-only skill named without a link" \
-  "skills/engineering/beta/SKILL.md:9: names explicit-only skill gamma by bare name" "$fx"
+  "skills/beta/SKILL.md:9: names explicit-only skill gamma by bare name" "$fx"
 
 fx="$(new_fixture)"
-echo 'Run `/gamma` last, after [gamma](<../../productivity/gamma/SKILL.md>).' >> "$fx/skills/engineering/alpha/SKILL.md"
+echo 'Run `/gamma` last, after [gamma](<../gamma/SKILL.md>).' >> "$fx/skills/alpha/SKILL.md"
 expect_problem "explicit-only skill named next to its link" \
   "names explicit-only skill gamma by bare name" "$fx"
 
 fx="$(new_fixture)"
-echo 'Then run [`gamma`](../../productivity/gamma/SKILL.md#usage).' >> "$fx/skills/engineering/beta/SKILL.md"
-echo 'Run `gamma` from here.' >> "$fx/skills/productivity/gamma/SKILL.md"
+echo 'Then run [`gamma`](../gamma/SKILL.md#usage).' >> "$fx/skills/beta/SKILL.md"
+echo 'Run `gamma` from here.' >> "$fx/skills/gamma/SKILL.md"
 expect_clean "explicit-only skill named as link text or in its own folder" "$fx"
+
+fx="$(new_fixture)"
+echo 'Load `principles` first.' >> "$fx/skills/beta/SKILL.md"
+expect_problem "principles named without a link" \
+  "skills/beta/SKILL.md:9: names explicit-only skill principles by bare name" "$fx"
+edit "$fx/skills/beta/SKILL.md" 's|^Load `principles` first\.$|Load [`principles`](../principles/SKILL.md) first.|'
+expect_clean "principles named as link text" "$fx"
+
+fx="$(new_fixture)"
+echo 'Then run `gamma`.' >> "$fx/skills/principles/first-rule.md"
+expect_problem "principle names a skill without a link" \
+  "skills/principles/first-rule.md:4: names explicit-only skill gamma by bare name" "$fx"
 
 fx="$(new_fixture)"
 edit "$fx/agents/helper.md" 's/^name: helper$/name: helpr/'
@@ -397,16 +500,29 @@ expect_problem "agent frontmatter key the Codex role drops" \
   "unsupported agent frontmatter key 'tools'" "$fx"
 
 fx="$(new_fixture)"
-ln -s "$fx/skills/engineering/ghost" "$fx.home/.claude/skills/ghost"
+ln -s "$fx/skills/ghost" "$fx.home/.claude/skills/ghost"
 expect_problem "dangling installed link" "/.claude/skills/ghost:1: dangling link" "$fx" --installed
 
 fx="$(new_fixture)"
-ln -s "$fx/skills/deprecated/old" "$fx.home/.codex/skills/old"
-expect_problem "deprecated skill still installed" "old is not an active skill" "$fx" --installed
+cp -R "$fx/." "$fx.old"
+write_skill "$fx.old/skills/delta" 'name: delta
+description: Removed here.
+disable-model-invocation: true'
+write_skill "$fx.old/skills/engineering/legacy" 'name: legacy
+description: From the bucket layout.'
+ln -s "$fx.old/skills/delta" "$fx.home/.codex/skills/delta"
+ln -s "$fx.old/skills/engineering/legacy" "$fx.home/.claude/skills/legacy"
+expect_problem "removed skill still installed" "delta is not an active skill" "$fx" --installed
+expect_problem "skill from the old bucket layout still installed" \
+  "legacy is not an active skill" "$fx" --installed
 
 fx="$(new_fixture)"
 rm "$fx.home/.claude/skills/beta"
 expect_problem "active skill not installed" "beta is not installed for Claude Code" "$fx" --installed
+
+fx="$(new_fixture)"
+rm "$fx.home/.codex/skills/principles"
+expect_problem "principles not installed" "principles is not installed for Codex" "$fx" --installed
 
 fx="$(new_fixture)"
 mkdir -p "$fx.home/.agents/skills/alpha"
