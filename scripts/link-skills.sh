@@ -25,9 +25,12 @@ Usage: scripts/link-skills.sh [--all | --claude | --codex]
   --claude   Install for Claude Code only
   --codex    Install for Codex only
 
-Skills are symlinked into each agent's skills directory. Each agents/<name>.md
-is symlinked into Claude Code's agents directory and generated as a TOML agent
-role in Codex's agents directory.
+Each skills/<name> folder is symlinked into each agent's skills directory. Each
+agents/<name>.md is symlinked into Claude Code's agents directory and generated
+as a TOML agent role in Codex's agents directory.
+Links into this repo's skills/, principles/, or agents/ that no longer reach an
+active skill or agent under their own name are pruned; links that point anywhere
+else are left alone.
 
 For isolated tests or custom installations, set CLAUDE_SKILLS_DIR,
 CLAUDE_AGENTS_DIR, CODEX_SKILLS_DIR, CODEX_AGENTS_DIR, or CODEX_HOME.
@@ -47,19 +50,18 @@ if [ "$#" -gt 1 ]; then
   exit 2
 fi
 
-# macOS ships an older Bash without mapfile/readarray, so collect paths via a
-# portable read loop. Newlines in skill paths are intentionally unsupported.
+# A skill is skills/<name>/ with a SKILL.md. Newlines in skill paths are
+# intentionally unsupported.
 skill_dirs=()
-while IFS= read -r skillmd; do
-  skill_dirs+=("$(dirname "$skillmd")")
-done < <(
-  find "$skills_repo/skills" -name SKILL.md \
-    -not -path '*/node_modules/*' \
-    -not -path '*/deprecated/*' | sort
-)
+for skill_dir in "$skills_repo"/skills/*/; do
+  skill_dir="${skill_dir%/}"
+  if [ -f "$skill_dir/SKILL.md" ]; then
+    skill_dirs+=("$skill_dir")
+  fi
+done
 
 seen_names=""
-for skill_dir in "${skill_dirs[@]}"; do
+for skill_dir in ${skill_dirs[@]+"${skill_dirs[@]}"}; do
   skill_name="$(basename "$skill_dir")"
   case " $seen_names " in
     *" $skill_name "*)
@@ -129,6 +131,23 @@ for agent_md in ${agent_files[@]+"${agent_files[@]}"}; do
   fi
 done
 
+# Resolve the deepest existing ancestor of a directory path and keep the rest as
+# written, so a dangling target still compares against the repo's physical path.
+physical_path() {
+  local head="$1" tail="" dir
+  while :; do
+    if dir="$(physical_dir "$head" 2>/dev/null)"; then
+      printf '%s%s\n' "${dir%/}" "$tail"
+      return
+    fi
+    case "$head" in
+      ?*/*) tail="/${head##*/}$tail"; head="${head%/*}" ;;
+      /*) tail="$head$tail"; head=/ ;;
+      *) printf '%s\n' "$1"; return ;;
+    esac
+  done
+}
+
 link_target_in_physical_dir() {
   local t dir
   t="$(readlink "$1")"
@@ -136,11 +155,30 @@ link_target_in_physical_dir() {
     /*) ;;
     *) t="$(dirname "$1")/$t" ;;
   esac
-  dir="$(physical_dir "$(dirname "$t")" 2>/dev/null)" || {
-    printf '%s\n' "$t"
-    return
-  }
-  printf '%s/%s\n' "$dir" "$(basename "$t")"
+  dir="$(physical_path "$(dirname "$t")")"
+  printf '%s/%s\n' "${dir%/}" "$(basename "$t")"
+}
+
+# The paths this repo installs from, plus principles/ from an older layout. A
+# link to anything else is never pruned or replaced.
+is_repo_owned() {
+  case "$1:$2" in
+    skills:"$skills_repo"/skills/*) return 0 ;;
+    skills:"$skills_repo"/principles|skills:"$skills_repo"/principles/*) return 0 ;;
+    agents:"$agents_src"/*) return 0 ;;
+  esac
+  return 1
+}
+
+# True when a link's target is one of the sources, under the source's own name.
+links_active_source() {
+  local link="$1" link_target="$2" src
+  shift 2
+  [ "${link##*/}" = "${link_target##*/}" ] || return 1
+  for src in "$@"; do
+    [ "$link_target" = "$src" ] && return 0
+  done
+  return 1
 }
 
 guard_dest() {
@@ -164,24 +202,24 @@ reclaim_dangling_link() {
 }
 
 link_into() {
-  local label="$1" dest="$2" owned_root="$3"
+  local label="$1" dest="$2" kind="$3"
   shift 3
-  local had_conflict=0 link link_target src name target current_target nested_target
+  local had_conflict=0 link link_target src name target current_target nested_target why
 
   guard_dest "$label" "$dest" || return 1
   mkdir -p "$dest"
 
+  # Prune links into this repo that no longer reach an active source under
+  # their own name: old bucket paths, old principle-* skills, deleted skills.
   for link in "$dest"/*; do
     [ -L "$link" ] || continue
     link_target="$(link_target_in_physical_dir "$link")"
-    case "$link_target" in
-      "$owned_root"/*)
-        [ -e "$link" ] || {
-          rm -f "$link"
-          echo "$label: pruned $(basename "$link") (dangling)"
-        }
-        ;;
-    esac
+    is_repo_owned "$kind" "$link_target" || continue
+    links_active_source "$link" "$link_target" "$@" && continue
+    why="not an active ${kind%s}"
+    [ -e "$link" ] || why="dangling"
+    rm -f "$link"
+    echo "$label: pruned $(basename "$link") -> ${link_target#"$skills_repo"/} ($why)"
   done
 
   for src in "$@"; do
@@ -193,25 +231,21 @@ link_into() {
     if [ -e "$target" ] || [ -L "$target" ]; then
       if [ -L "$target" ]; then
         current_target="$(link_target_in_physical_dir "$target")"
-        case "$current_target" in
-          "$owned_root"/*)
-            ln -sfn "$src" "$target"
-            echo "$label: linked $name -> ${src#"$skills_repo"/}"
-            continue
-            ;;
-        esac
+        if is_repo_owned "$kind" "$current_target"; then
+          ln -sfn "$src" "$target"
+          echo "$label: linked $name -> ${src#"$skills_repo"/}"
+          continue
+        fi
 
         # Migrate the old Codex setup, where a Codex link pointed to a Claude
         # link that in turn pointed into this repository.
         if [ -L "$current_target" ]; then
           nested_target="$(link_target_in_physical_dir "$current_target")"
-          case "$nested_target" in
-            "$owned_root"/*)
-              ln -sfn "$src" "$target"
-              echo "$label: linked $name -> ${src#"$skills_repo"/}"
-              continue
-              ;;
-          esac
+          if is_repo_owned "$kind" "$nested_target"; then
+            ln -sfn "$src" "$target"
+            echo "$label: linked $name -> ${src#"$skills_repo"/}"
+            continue
+          fi
         fi
       fi
 
@@ -309,12 +343,12 @@ install_codex_agents() {
 
 status=0
 if [ "$platform" = "all" ] || [ "$platform" = "claude" ]; then
-  link_into "Claude Code" "$claude_dest" "$skills_repo/skills" "${skill_dirs[@]}" || status=1
-  link_into "Claude Code" "$claude_agents_dest" "$agents_src" \
+  link_into "Claude Code" "$claude_dest" skills ${skill_dirs[@]+"${skill_dirs[@]}"} || status=1
+  link_into "Claude Code" "$claude_agents_dest" agents \
     ${agent_files[@]+"${agent_files[@]}"} || status=1
 fi
 if [ "$platform" = "all" ] || [ "$platform" = "codex" ]; then
-  link_into "Codex" "$codex_dest" "$skills_repo/skills" "${skill_dirs[@]}" || status=1
+  link_into "Codex" "$codex_dest" skills ${skill_dirs[@]+"${skill_dirs[@]}"} || status=1
   install_codex_agents "$codex_agents_dest" ${agent_files[@]+"${agent_files[@]}"} || status=1
 fi
 

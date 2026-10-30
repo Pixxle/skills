@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
-# List every skill in the repo, grouped by category bucket.
+# List every skill in the repo: each skills/<name> folder.
 set -euo pipefail
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$REPO/skills"
+cd "$REPO"
 
-for bucket in */; do
-  bucket="${bucket%/}"
-  echo "$bucket:"
-  find "$bucket" -maxdepth 2 -name SKILL.md -not -path '*/node_modules/*' \
-    | sed -E "s|^$bucket/||; s|/SKILL.md$||" | sort | sed 's/^/  /'
-  echo
-done
+{
+  for dir in skills/*/; do
+    if [ -f "${dir}SKILL.md" ]; then
+      basename "$dir"
+    fi
+  done
+} | sort

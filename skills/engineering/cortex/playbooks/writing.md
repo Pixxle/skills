@@ -1,6 +1,0 @@
-### Writing
-
-1. Read and follow [`compose-blog-post`](../../../writing/compose-blog-post/SKILL.md). It owns staged routing into the writing family.
-2. For session prose elsewhere, read and follow [`unslop`](../../unslop/SKILL.md). Long-form AI-tell scrub stays with writing [`ai-tells`](../../../writing/writing-blog-post/references/ai-tells.md). Ultra-compressed chat stays with [`caveman`](../../../misc/caveman/SKILL.md).
-
-**Reply:** stage reached, article path, open gaps.

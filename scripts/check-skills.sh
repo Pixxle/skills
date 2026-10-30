@@ -175,31 +175,19 @@ function check_kind(   d, i) {
 }
 AWK
 
+# Each line is "<dir> <name>": skills/<name> for every folder in skills/.
 : > "$tmp/skills"
 : > "$tmp/explicit"
-for bucket_dir in skills/*/; do
-  [ -d "$bucket_dir" ] || continue
-  bucket="$(basename "$bucket_dir")"
-  [ "$bucket" = deprecated ] && continue
-  echo "$bucket" >> "$tmp/buckets"
-  for skill_dir in "$bucket_dir"*/; do
-    [ -d "$skill_dir" ] || continue
-    echo "$bucket $(basename "$skill_dir")" >> "$tmp/skills"
-  done
+for skill_dir in skills/*/; do
+  [ -d "$skill_dir" ] || continue
+  name="$(basename "$skill_dir")"
+  echo "skills/$name $name" >> "$tmp/skills"
 done
-touch "$tmp/buckets"
-sort -o "$tmp/skills" "$tmp/skills"
+skill_roots=(skills)
+sort -k2,2 -k1,1 -o "$tmp/skills" "$tmp/skills"
 awk '{ print $2 }' "$tmp/skills" > "$tmp/names"
 
-policy_allow_implicit_invocation_off_line() {
-  awk '
-    /^[^ \t#]/ { inpol = ($0 ~ /^policy:[ \t\r]*(#.*)?$/) }
-    inpol && /^[ \t]+allow_implicit_invocation:[ \t]*false[ \t\r]*(#.*)?$/ { print NR; exit }
-  ' "$1"
-}
-
-while read -r bucket name; do
-  dir="skills/$bucket/$name"
+while read -r dir name; do
   skill_md="$dir/SKILL.md"
   if ! has_file "$dir" SKILL.md; then
     variant=""
@@ -211,7 +199,7 @@ while read -r bucket name; do
     if [ -n "$variant" ]; then
       report "$variant" 1 "rename to SKILL.md; agents only load the uppercase name"
     else
-      report "$skill_md" 1 "missing; add SKILL.md with name and description frontmatter, or move $dir to skills/deprecated/"
+      report "$skill_md" 1 "missing; add SKILL.md with name and description frontmatter, or delete $dir"
     fi
     continue
   fi
@@ -220,32 +208,16 @@ while read -r bucket name; do
   awk -v file="$skill_md" -v expect="$name" -v meta="$tmp/meta" \
     "$skill_frontmatter_awk$frontmatter_awk" "$skill_md" >> "$problems"
 
-  dmi_line="$(cat "$tmp/meta")"
-  [ -z "$dmi_line" ] || echo "$bucket $name" >> "$tmp/explicit"
-  openai="$dir/agents/openai.yaml"
-  off_line=""
-  if [ -f "$openai" ]; then
-    off_line="$(policy_allow_implicit_invocation_off_line "$openai")"
-  fi
-  if [ -z "$dmi_line" ]; then
-    report "$skill_md" 1 "every skill is explicit-only; add disable-model-invocation: true here and policy.allow_implicit_invocation: false in $openai"
-  elif [ -z "$off_line" ]; then
-    if [ -f "$openai" ]; then
-      report "$openai" 1 "set policy.allow_implicit_invocation: false to match disable-model-invocation: true in $skill_md"
-    else
-      report "$skill_md" "$dmi_line" "disable-model-invocation: true needs $openai with policy.allow_implicit_invocation: false for Codex parity; add it"
-    fi
+  if [ -s "$tmp/meta" ]; then
+    echo "$dir $name" >> "$tmp/explicit"
+  else
+    report "$skill_md" 1 "every skill is explicit-only; add disable-model-invocation: true"
   fi
 done < "$tmp/skills"
 
-awk -v q="'" 'NR == FNR { count[$2]++; next }
-  count[$2] > 1 {
-    printf "skills/%s/%s/SKILL.md:1: skill name %s%s%s exists in more than one bucket; rename one, since link-skills.sh flattens buckets\n", $1, $2, q, $2, q
-  }' "$tmp/skills" "$tmp/skills" >> "$problems"
-
-find skills -name SKILL.md -not -path '*/node_modules/*' -not -path '*/deprecated/*' |
-  awk -F/ 'NF != 4 {
-    printf "%s:1: SKILL.md outside skills/<bucket>/<name>/; link-skills.sh would install its folder as a skill, so move or rename it\n", $0
+find "${skill_roots[@]}" -name SKILL.md -not -path '*/node_modules/*' |
+  awk -F/ 'NF != 3 {
+    printf "%s:1: SKILL.md outside skills/<name>/; Codex scans an installed skill folder recursively and would load this as another skill, so move or rename it\n", $0
   }' >> "$problems"
 
 : > "$tmp/agents"
@@ -300,9 +272,9 @@ except ValueError as e:
 }
 
 plugin=".claude-plugin/plugin.json"
-awk '{ print "./skills/" $1 "/" $2 }' "$tmp/skills" > "$tmp/expected"
+awk '{ print "./" $1 }' "$tmp/skills" > "$tmp/expected"
 if [ ! -f "$plugin" ]; then
-  report "$plugin" 1 "missing; add it with a skills array listing ./skills/<bucket>/<name> for every active skill"
+  report "$plugin" 1 "missing; add it with a skills array listing ./skills/<name> for every skill"
 else
   check_json_syntax_if_python3_works "$plugin"
 
@@ -320,12 +292,11 @@ else
       seen[v] = 1
       if (v in want) next
       norm = v; sub(/^\.\//, "", norm); sub(/\/+$/, "", norm); norm = "./" norm
-      if (norm ~ /^\.\/skills\/deprecated\//) err(f[2], v " is deprecated; remove it from the skills array")
-      else if (norm in want) { err(f[2], "write " v " as " norm); seen[norm] = 1 }
+      if (norm in want) { err(f[2], "write " v " as " norm); seen[norm] = 1 }
       else err(f[2], "no active skill at " v "; remove the entry or restore the skill")
     }
     END {
-      if (!keyline) { err(1, "no skills array; add one listing ./skills/<bucket>/<name> for every active skill"); exit }
+      if (!keyline) { err(1, "no skills array; add one listing ./skills/<name> for every skill"); exit }
       for (i = 1; i <= n; i++) if (!(order[i] in seen)) err(keyline, "missing " order[i] "; add it to the skills array")
     }
   ' "$tmp/expected" "$tmp/plugin" >> "$problems"
@@ -352,17 +323,33 @@ else
   ' "$tmp/agents" "$tmp/plugin-agents" >> "$problems"
 fi
 
-while read -r bucket; do
-  readme="skills/$bucket/README.md"
-  if ! has_file "skills/$bucket" README.md; then
-    report "$readme" 1 "missing; add a README linking each skill as [name](name/SKILL.md)"
-    continue
-  fi
-  awk -v readme="$readme" -v bucket="$bucket" '
-    function err(line, msg) { printf "%s:%d: %s\n", readme, line, msg }
-    FILENAME == ARGV[1] { if ($1 == bucket) { skill[$2] = 1; order[++n] = $2 }; next }
+# The root README's ## Skills section is the human index: one entry per skill,
+# linked as [name](skills/name/SKILL.md).
+if ! has_file . README.md; then
+  report README.md 1 "missing; add a README whose ## Skills section links each skill as [name](skills/name/SKILL.md)"
+else
+  awk '
+    function err(line, msg) { printf "README.md:%d: %s\n", line, msg }
+    function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t\r]+$/, "", s); return s }
+    FILENAME == ARGV[1] { skill[$1] = $2; order[++n] = $1; next }
     {
-      last = FNR; line = $0
+      s = $0; sub(/^[ \t]*/, "", s)
+      c = substr(s, 1, 1)
+      if ((c == "`" || c == "~") && substr(s, 1, 3) == (c c c)) {
+        k = 1; while (substr(s, k + 1, 1) == c) k++
+        if (fence == "") { fence = c; flen = k }
+        else if (c == fence && k >= flen && trim(substr(s, k + 1)) == "") fence = ""
+        next
+      }
+      if (fence != "") next
+      if ($0 ~ /^##?[ \t]/) {
+        insec = ($0 ~ /^##[ \t]+Skills[ \t\r]*$/)
+        if (insec) found = last = FNR
+        next
+      }
+      if (!insec) next
+      if ($0 ~ /[^ \t\r]/) last = FNR
+      line = $0
       while (match(line, /\]\([^)]*\)/)) {
         target = substr(line, RSTART + 2, RLENGTH - 3)
         before = substr(line, 1, RSTART - 1)
@@ -370,28 +357,30 @@ while read -r bucket; do
         i = length(before); while (i > 0 && substr(before, i, 1) != "[") i--
         text = substr(before, i + 1)
         sub(/^\.\//, "", target)
-        if (target !~ /^[^\/]+\/SKILL\.md$/) continue
+        if (target !~ /^skills\/[^\/]+\/SKILL\.md$/) continue
         dir = target; sub(/\/SKILL\.md$/, "", dir)
-        if (!(dir in skill)) { err(FNR, "links " dir ", which is not an active skill in skills/" bucket "; remove the entry or fix the path"); continue }
+        if (!(dir in skill)) { err(FNR, "links " dir ", which is not an active skill; remove the entry or fix the path"); continue }
         linked[dir] = 1
-        if (text != dir) err(FNR, "write the entry as [" dir "](" dir "/SKILL.md)")
+        if (text != skill[dir]) err(FNR, "write the entry as [" skill[dir] "](" dir "/SKILL.md)")
       }
     }
     END {
+      if (!found) { err(1, "no ## Skills section; add one linking each skill as [name](skills/name/SKILL.md)"); exit }
       for (i = 1; i <= n; i++)
-        if (!(order[i] in linked)) err(last ? last : 1, "missing entry for " order[i] "; add - [" order[i] "](" order[i] "/SKILL.md) with a one-line summary")
+        if (!(order[i] in linked))
+          err(last, "missing entry for " skill[order[i]] " under ## Skills; add - [" skill[order[i]] "](" order[i] "/SKILL.md) with a one-line summary")
     }
-  ' "$tmp/skills" "$readme" >> "$problems"
-done < "$tmp/buckets"
+  ' "$tmp/skills" README.md >> "$problems"
+fi
 
 # Relative links resolve against a listing of the tree, not the file system, so
 # a case mismatch fails here on macOS the same way it fails on Linux.
 find . \( -name .git -o -name node_modules \) -prune -o -print | sed 's|^\./||' > "$tmp/paths"
 {
   find . -maxdepth 1 -type f -name '*.md'
-  find skills -type f -name '*.md' -not -path '*/node_modules/*'
+  find "${skill_roots[@]}" -type f -name '*.md' -not -path '*/node_modules/*'
   if [ -d agents ]; then find agents -type f -name '*.md'; fi
-} | sed 's|^\./||' | awk -F/ '!($1 == "skills" && $2 == "deprecated" && NF > 3)' | sort > "$tmp/md"
+} | sed 's|^\./||' | sort > "$tmp/md"
 
 IFS= read -r -d '' links_awk <<'AWK' || true
 function err(line, msg) { printf "%s:%d: %s\n", FILENAME, line, msg }
@@ -418,16 +407,14 @@ function check(t,   n, parts, i, m, p, norm) {
   norm = m ? out[1] : "."
   for (i = 2; i <= m; i++) norm = norm "/" out[i]
   if (!(norm in have)) { err(FNR, "broken link '" t "'; fix the path or create " norm); return }
-  if (norm ~ /^skills\/deprecated\// && (readme || !deprecated_src))
-    err(FNR, "links deprecated " norm "; link an active skill or drop the link")
+  if (lookup && norm ~ /^skills\/principles\/[^\/]+\.md$/) print norm >> principle_links
 }
 FILENAME == ARGV[1] { have[$0] = 1; next }
 FNR == 1 {
   fence = ""
   dir = FILENAME
   if (!sub(/\/[^\/]*$/, "", dir)) dir = ""
-  readme = (FILENAME == "README.md" || FILENAME ~ /\/README\.md$/)
-  deprecated_src = (FILENAME ~ /^skills\/deprecated\//)
+  lookup = (FILENAME == "skills/principles/SKILL.md")
 }
 {
   line = $0
@@ -449,7 +436,33 @@ FNR == 1 {
   }
 }
 AWK
-tr '\n' '\0' < "$tmp/md" | xargs -0 awk "$links_awk" "$tmp/paths" >> "$problems"
+: > "$tmp/principle-links"
+tr '\n' '\0' < "$tmp/md" |
+  xargs -0 awk -v principle_links="$tmp/principle-links" "$links_awk" "$tmp/paths" >> "$problems"
+
+# A principle is skills/principles/<name>.md: plain Markdown that opens with
+# its # Title, never a skill with frontmatter. The principles/SKILL.md lookup
+# links every one; the link check above already rejects entries with no file.
+if has_file skills/principles SKILL.md; then
+  lookup_end="$(awk 'END { print NR ? NR : 1 }' skills/principles/SKILL.md)"
+fi
+for principle in skills/principles/*.md; do
+  [ -f "$principle" ] || continue
+  case "${principle##*/}" in
+    [Ss][Kk][Ii][Ll][Ll].[Mm][Dd]) continue ;;
+  esac
+  awk -v file="$principle" '
+    NR == 1 {
+      if ($0 ~ /^---[ \t\r]*$/) printf "%s:1: principles carry no frontmatter; delete the --- block and start the file with its # Title\n", file
+      else if ($0 !~ /^# [^ \t\r]/) printf "%s:1: start the principle with its # Title on the first line\n", file
+      exit
+    }
+    END { if (NR == 0) printf "%s:1: empty; start the principle with its # Title on the first line\n", file }
+  ' "$principle" >> "$problems"
+  if [ -n "${lookup_end:-}" ] && ! grep -qxF "$principle" "$tmp/principle-links"; then
+    report skills/principles/SKILL.md "$lookup_end" "missing entry for ${principle##*/}; link it as [Title](${principle##*/}) under its group"
+  fi
+done
 
 IFS= read -r -d '' unlinked_explicit_skill_mention_awk <<'AWK' || true
 function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t\r]+$/, "", s); return s }
@@ -476,7 +489,7 @@ FILENAME == ARGV[1] { names[++nn] = $2; next }
 FNR == 1 {
   fence = ""
   split(FILENAME, fp, "/")
-  own = (fp[1] == "skills") ? fp[3] : ""
+  own = (fp[1] == "skills") ? fp[2] : ""
 }
 {
   s = $0; sub(/^[ \t]*/, "", s)
@@ -508,14 +521,25 @@ resolve_dir() {
   (cd -P "$1" 2>/dev/null && pwd -P) || true
 }
 
+# True for a skill folder in any checkout of this repo: skills/<name>/, or from
+# an older layout, principles/ or skills/<bucket>/<name>/.
 is_skill_dir_in_any_checkout() {
-  local root="${1%/skills/*/*}" rest
-  [ "$root" != "$1" ] || return 1
-  rest="${1#"$root"/skills/}"
-  case "$rest" in
-    */*/*) return 1 ;;
+  local root rest
+  [ -f "$1/SKILL.md" ] || return 1
+  case "$1" in
+    */principles) is_checkout "${1%/principles}" && return 0 ;;
   esac
-  is_checkout "$root"
+  case "$1" in
+    */skills/*)
+      root="${1%/skills/*}"
+      rest="${1#"$root"/skills/}"
+      case "$rest" in
+        */*/*) return 1 ;;
+      esac
+      is_checkout "$root" && return 0
+      ;;
+  esac
+  return 1
 }
 
 is_checkout() {
@@ -534,22 +558,26 @@ resolve_link_once() {
 }
 
 check_install_dir() {
-  local label="$1" dest="$2" bucket name entry resolved
+  local label="$1" dest="$2" dir name entry resolved
   if [ ! -d "$dest" ]; then
     report "$dest" 1 "missing $label skills directory; run scripts/link-skills.sh"
     return
   fi
 
-  while read -r bucket name; do
+  while read -r dir name; do
     entry="$dest/$name"
     if [ -L "$entry" ] && [ ! -e "$entry" ]; then
       report "$entry" 1 "dangling link to $(readlink "$entry"); remove it and run scripts/link-skills.sh"
     elif [ -L "$entry" ]; then
       resolved="$(resolve_dir "$entry")"
       case "$resolved" in
-        */skills/"$bucket"/"$name") [ -f "$resolved/SKILL.md" ] && continue ;;
+        */"$dir")
+          if [ -f "$resolved/SKILL.md" ] && is_checkout "${resolved%/"$dir"}"; then
+            continue
+          fi
+          ;;
       esac
-      report "$entry" 1 "links to ${resolved:-$(readlink "$entry")}, not skills/$bucket/$name in a checkout of this repo; remove it and run scripts/link-skills.sh"
+      report "$entry" 1 "links to ${resolved:-$(readlink "$entry")}, not $dir in a checkout of this repo; remove it and run scripts/link-skills.sh"
     elif [ -e "$entry" ]; then
       report "$entry" 1 "is a copy, not a link into this repo, so it shadows the repo version; remove it and run scripts/link-skills.sh"
     else
