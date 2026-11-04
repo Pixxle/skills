@@ -32,9 +32,10 @@ fallback, and never require Graphite (`gt`).
 
 **Independent non-author verify before land.** For each PR about to land, spawn
 one verifier that did **not** author the code, on a different model family than
-the author when the runtime offers one. The verifier runs the change the way a
-user would on the matching surface (UI, CLI, API, or the repo's usual smoke
-path), parent against head, and posts one of these on that PR:
+the author when the runtime offers one. Run each verifier as a subagent in the
+cloud when the runtime offers it. The verifier runs the change the way a user
+would on the matching surface (UI, CLI, API, or the repo's usual smoke path),
+parent against head, and posts one of these on that PR:
 
 - `PASS` means good to land.
 - `PASS+NOTES` means landable, with non-blocking notes.
@@ -82,24 +83,27 @@ older verdict.
 ## 4. Land bottom-up, one PR at a time
 
 Always merge the run's lowest unmerged PR through the resolved forge (on GitHub,
-`gh pr merge <pr> --squash` when squash is the repo norm). On GitHub, a PR whose
-base is still its parent's branch merges into that branch, not trunk. Some
-forges' plain merge command also merges every PR below the one you name.
+`gh pr merge <pr> --squash` when squash is the repo norm, on Origin,
+`origin pr merge <pr>`). On GitHub, a PR whose base is still its parent's branch
+merges into that branch, not trunk. On Origin, and on some other forges, the
+plain merge command also merges every PR below the one you name.
 
 After the merge command:
 
 1. **Read the PR back** (on GitHub,
-   `gh pr view <pr> --json state,mergedAt,baseRefName`). A merge command can
-   report success when a merge queue only **queued** the PR, and a requested
-   auto-merge is not a merge. A landed PR reads merged with **trunk** as its
-   base, not its parent's branch.
-2. Arm merge-when-ready or auto-merge only on a PR whose verdict covers its
-   **current** head, because it lands whatever head becomes ready.
+   `gh pr view <pr> --json state,mergedAt,baseRefName`, on Origin,
+   `origin pr view <pr>`). A merge command can report success when a merge
+   queue only **queued** the PR, and a requested auto-merge is not a merge. A
+   landed PR reads merged with **trunk** as its base, not its parent's branch.
+2. Arm merge-when-ready or auto-merge (`--auto` on the merge command) only on a
+   PR whose verdict covers its **current** head, because it lands whatever head
+   becomes ready.
 3. After a parent lands, retarget the PR whose base was the merged branch to
-   trunk (on GitHub, `gh pr edit <pr> --base <trunk>`), move its patch onto the
-   merge result, and push with `--force-with-lease`. The verdict covers the
-   patch, not its commits, so step 3's patch-id rule decides whether the verdict
-   survives. Merge it once its checks pass and its verdict survives.
+   trunk (on GitHub, `gh pr edit <pr> --base <trunk>`, on Origin,
+   `origin pr edit <pr> --base <trunk>`), move its patch onto the merge result,
+   and push with `--force-with-lease`. The verdict covers the patch, not its
+   commits, so step 3's patch-id rule decides whether the verdict survives.
+   Merge it once its checks pass and its verdict survives.
 
 ## 5. Leave the stack alone while it lands
 
@@ -149,7 +153,9 @@ second sleep loop. The verdicts are the ones in
   [`babysit`](../babysit/SKILL.md) to triage them.
 
 **Other forges.** Re-read the current PR with the forge's view each time its
-check watch returns, until the ceiling reads merged.
+check watch returns, until the ceiling reads merged. On Origin, re-read with
+`origin pr view <pr> --checks` each time `origin pr checks <pr> --watch`
+returns.
 
 Reopen a full [`babysit`](../babysit/SKILL.md) drive loop only when new
 failures need triage. Then read and follow it for those failures alone.
