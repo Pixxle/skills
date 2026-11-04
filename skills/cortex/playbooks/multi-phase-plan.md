@@ -5,7 +5,7 @@
 1. When the change is one or two files with an obvious approach, skip the plan. Say so and stop.
 2. Settle open questions by prototype before you write. Run [`playbooks/prototype.md`](prototype.md) for each. Keep the branch, the SHA, and the screenshots for Appendix A. Ask the operator only about a product or preference call that no run can settle. Give options (the [Never Block on the Human](../../principles/never-block-on-the-human.md) principle).
 3. Explore in subagents with the [`cortex-agent`](../../../agents/cortex-agent.md) agent type (the [Guard the Context Window](../../principles/guard-the-context-window.md) principle). Each returns file pointers, conventions, test commands, and entry points. No inlined dumps.
-4. Copy the skeleton below into the plan file and fill every placeholder. `<skills dir>` is the real path of the directory that holds the cortex skill. Unless the operator names a path, write the file under the agent store's `docs/`. Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence (the [Sequence Work into Verifiable Units](../../principles/sequence-verifiable-units.md) principle). Name the execution playbook in **How to read this**. Pick [`playbooks/autopilot-full.md`](autopilot-full.md) when the run may merge. Pick [`playbooks/autopilot-stack.md`](autopilot-stack.md) when the operator lands the PRs. A standing program takes [`playbooks/orchestrate.md`](orchestrate.md).
+4. Copy the skeleton below into the plan file and fill every placeholder. `<skills dir>` is the real path of the directory that holds the cortex skill, and `<trunk>` is the repo's trunk branch. Unless the operator names a path, write the file under the agent store's `docs/`. Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence (the [Sequence Work into Verifiable Units](../../principles/sequence-verifiable-units.md) principle). Name the execution playbook in **How to read this**. Pick [`playbooks/autopilot-full.md`](autopilot-full.md) when the run may merge. Pick [`playbooks/autopilot-stack.md`](autopilot-stack.md) when the operator lands the PRs. A standing program takes [`playbooks/orchestrate.md`](orchestrate.md).
 5. Write in plain technical English per [Opening a PR](opening-a-pr.md), then [`unslop`](../../unslop/SKILL.md). The body is one Diátaxis mode, how-to. Appendices hold explanation and reference. Each heading states the task or the finding. No long dashes. No mid-sentence colons.
 6. Run [`check-plan.mjs`](../scripts/check-plan.mjs) as `node <skills dir>/cortex/scripts/check-plan.mjs <plan.md>` and fix every line it prints (the [Encode Lessons in Structure](../../principles/encode-lessons-in-structure.md) principle).
 7. Hand back. Post the plan path and the script's output, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names.
@@ -35,7 +35,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Read these at program start. Re-read them at every tick.
   - [ ] `<skills dir>/cortex/playbooks/<execution playbook>.md`
   - [ ] `<skills dir>/swarm/SKILL.md`
-  - [ ] `git show origin/main:<verify-* skill path>`
+  - [ ] `git show origin/<trunk>:<verify-* skill path>`
   - [ ] `<skills dir>/cortex/playbooks/opening-a-pr.md`
   - [ ] `<skills dir>/<each other leaf skill the program uses>`
 - [ ] On the operator's go, arm the hourly audit tick as a self-paced loop with the tick prompt below. Never leave the cadence to memory.
@@ -46,7 +46,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 
 - [ ] Spawn one owner per PR with the full lifecycle the execution playbook names.
 - [ ] Follow this dependency graph. Start dependent work only after its parent merges, or base it on the parent branch when the execution playbook stacks.
-  - [ ] <PR id> and <PR id> are independent and first. Both branch from `main`.
+  - [ ] <PR id> and <PR id> are independent and first. Both branch from `<trunk>`.
   - [ ] <PR id> after <PR id>.
 - [ ] Hold the file boundaries. <PR id or class> touches only `<glob>`.
 - [ ] Hold the review gate. <PR ids> change an interaction. They wait for the operator's review in chat with screenshots and a video before merge.
