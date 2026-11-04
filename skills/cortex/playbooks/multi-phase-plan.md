@@ -1,18 +1,18 @@
 ### Multi-phase or multi-PR plan
 
-**You own the plan, not the code. The plan is a checklist an owner runs box by box and the operator audits from the evidence.** The plan is the deliverable. Do not implement.
+**You own the plan, not the code. Do not implement. The plan is a checklist an owner runs box by box and the operator audits from the evidence.**
 
-1. When the change is one or two files with an obvious approach, skip the plan. Say so and stop.
-2. Settle open questions by prototype before you write. Run [`playbooks/prototype.md`](prototype.md) for each. Keep the branch, the SHA, and the screenshots for Appendix A. Ask the operator only about a product or preference call that no run can settle. Give options (the [Never Block on the Human](../../principles/never-block-on-the-human.md) principle).
-3. Explore in subagents with the [`cortex-agent`](../../../agents/cortex-agent.md) agent type (the [Guard the Context Window](../../principles/guard-the-context-window.md) principle). Each returns file pointers, conventions, test commands, and entry points. No inlined dumps.
-4. Copy the skeleton below into the plan file and fill every placeholder. `<skills dir>` is the real path of the directory that holds the cortex skill, and `<trunk>` is the repo's trunk branch. Unless the operator names a path, write the file under the agent store's `docs/`. Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence (the [Sequence Work into Verifiable Units](../../principles/sequence-verifiable-units.md) principle). Name the execution playbook in **How to read this**. Pick [`playbooks/autopilot-full.md`](autopilot-full.md) when the run may merge. Pick [`playbooks/autopilot-stack.md`](autopilot-stack.md) when the operator lands the PRs. A standing program takes [`playbooks/orchestrate.md`](orchestrate.md).
-5. Write in plain technical English per [Opening a PR](opening-a-pr.md), then [`unslop`](../../unslop/SKILL.md). The body is one Diátaxis mode, how-to. Appendices hold explanation and reference. Each heading states the task or the finding. No long dashes. No mid-sentence colons.
-6. Run [`check-plan.mjs`](../scripts/check-plan.mjs) as `node <skills dir>/cortex/scripts/check-plan.mjs <plan.md>` and fix every line it prints (the [Encode Lessons in Structure](../../principles/encode-lessons-in-structure.md) principle).
-7. Hand back. Post the plan path and the script's output, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names.
+1. When the change is one or two files with an obvious approach, skip the plan. Say so, name the playbook that fits ([Feature](feature.md), [Bug fix](bug-fix.md), or [Refactoring](refactoring.md)), and stop.
+2. Explore in subagents (the [Guard the Context Window](../../principles/guard-the-context-window.md) principle). Each returns file pointers, conventions, test commands, entry points, and the `verify-*` skill for each surface the change touches.
+3. Settle open questions by prototype. Run [`playbooks/prototype.md`](prototype.md) for each. Keep the branch, the SHA, and the screenshots or observed output for Appendix A.
+4. For each touched surface with no `verify-*` skill, read and follow [`create-verification-skill`](../../create-verification-skill/SKILL.md), then open its PR per [Opening a PR](opening-a-pr.md). It is the one thing this playbook builds. Every live lane reads the skill from trunk, so the operator lands that PR before the go.
+5. Copy the skeleton below into the plan file and fill every placeholder. `<skills dir>` is the real path of the directory that holds the cortex skill, and `<trunk>` is the repo's trunk branch. Write the file to the path the operator names. Without one, write it to `~/.cortex/<repo>/plans/<slug>.md`, outside the repo. Each heading states the task or the finding.
+6. Write one section per PR. One PR is one change with its own evidence (the [Sequence Work into Verifiable Units](../../principles/sequence-verifiable-units.md) principle). Order the PRs toward the end state, with no throwaway compatibility PRs (the [Outcome-Oriented Execution](../../principles/outcome-oriented-execution.md) principle). Plan an intermediate breakage only under Autopilot-stack, where nothing lands until the operator lands the stack, and name each one in Appendix C.
+7. Name the execution playbook in **How to read this**. Pick [`playbooks/autopilot-full.md`](autopilot-full.md) when the run may merge. Pick [`playbooks/autopilot-stack.md`](autopilot-stack.md) when the operator lands the PRs. Pick [`playbooks/orchestrate.md`](orchestrate.md) for a standing program. Under any of them, this plan's full swarm per PR and its stop for the operator's go govern.
+8. Run [`check-plan.mjs`](../scripts/check-plan.mjs) as `node <skills dir>/cortex/scripts/check-plan.mjs <plan.md>` and fix every line it prints.
+9. Hand back with the reply below, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names.
 
-**Verification.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked (the [Prove It Works](../../principles/prove-it-works.md) principle). That sentence is the verification rule. Every verification block opens with it. The live block is mandatory. Ten lanes at the PR head drive the real surface through the repo's `verify-*` skill, per the [`swarm`](../../swarm/SKILL.md) skill, on the swarm workers' model. Each lane is one box with a concrete scenario, the screenshot it saves, and its pass predicate. One lane is the **Regression lane against trunk.** It runs the same load-bearing scenario on trunk and head. If trunk does not have the feature, the lane records that fact and gates the behavior the diff adds plus the end state the user waits for instead of inventing a trunk result. The perf gate is dual-sided. Trunk and head must both produce the named metric. If trunk lacks the feature, also isolate the work the diff adds and set an absolute budget for that work plus the end-to-end state the user waits for. Do not claim a ratio between unlike scenarios. The perf block names the metric, the interleaved probe, the trunk baseline measured first, and the rule with the number that fails. A PR that changes an interaction is review-gated. The operator reviews it in chat with screenshots and a video before merge. A PR that changes no interaction writes `**Review gate.** None. <PR id> is not review-gated.` and no boxes under it.
-
-**Verify skill.** Pick it by surface, from the repo's `verify-*` skills (`.agents/skills/` or `.claude/skills/`). A PR that touches two surfaces gets lanes on both. A surface with no `verify-*` skill is a risk in Appendix C, and its live block still names how each lane drives it.
+**Verify blocks.** Fill `<swarm workers model>` with the worker model that the [`swarm`](../../swarm/SKILL.md) skill's Phase A step 3 picks. Pick each lane's `verify-*` skill by surface. A PR that touches two surfaces gets lanes on both. A PR that changes no interaction writes `**Review gate.** None. <PR id> is not review-gated.` and no boxes under it.
 
 ````markdown
 # <Program> plan
@@ -146,11 +146,11 @@ Each live lane runs on its own cloud VM at the PR head. Drive through the repo's
 
 ## Appendix C. Risks
 
-<Each risk with the PR it lands in and what the owner watches.>
+<Each risk, and each planned intermediate breakage, with the PR it lands in and what the owner watches.>
 
 ## Appendix D. Links and reading list
 
 <Docs to read before editing. Which PRs get `<skills dir>/how/SKILL.md` and `<skills dir>/interrogate/SKILL.md`. The trail per the decision-trail mode of `<skills dir>/handoff/SKILL.md`.>
 ````
 
-**Reply:** the plan path, the PR ids with their dependencies and the review-gated set, what the prototypes proved and what stays unproven, and the check script's output.
+**Reply:** the plan path, the PR ids with their dependencies and the review-gated set, any verify-skill PR the operator lands before the go, what the prototypes proved and what stays unproven, and the check script's output.
