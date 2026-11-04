@@ -36,7 +36,7 @@ A large or cross-cutting effort (a migration across many call sites, an ambitiou
 - **Pause safely.** Suspending in-flight work cleanly so it can be resumed, on an explicit pause, going offline, a runtime restart, or imminent context compaction. The complement to Session pickup.
 - **Multi-phase or multi-PR plan.** Work that spans phases or stacked PRs. File: [`playbooks/multi-phase-plan.md`](playbooks/multi-phase-plan.md).
 - **Worktree and simulator cleanup.** Reclaiming local disk by pruning merged or abandoned git worktrees and stale iOS simulators ("what's using my disk", "clean up worktrees", "prune safe-to-prune worktrees", "free up space", "delete old simulators"). File: [`playbooks/worktree-cleanup.md`](playbooks/worktree-cleanup.md).
-- **Opening a PR.** Invoked at the end of every other playbook.
+- **Opening a PR.** Invoked at the end of every playbook that ships a code change.
 
 ## Non-negotiables
 
