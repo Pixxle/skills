@@ -136,7 +136,11 @@ function buildFixture() {
 	for (const name of ["claude", "codex", "oldchat", "wt-a", "wt-a-r37", "openpr", "squashed"]) mk(name);
 	git(repo, "worktree", "add", "-q", "-b", "spaced", join(wts, "with space"), "main");
 	git(join(wts, "with space"), "commit", "-q", "--allow-empty", "-m", "spaced");
+	git(repo, "worktree", "add", "-q", "-b", "merged-scratch", join(wts, "merged-scratch"), "main");
+	writeFileSync(join(wts, "merged-scratch", "notes.md"), "x\n");
 	git(repo, "worktree", "add", "-q", "--detach", join(wts, "detached"), "main");
+	git(repo, "worktree", "add", "-q", "--detach", join(wts, "detached-ahead"), "main");
+	git(join(wts, "detached-ahead"), "commit", "-q", "--allow-empty", "-m", "detached-ahead");
 	mk("gone");
 	rmSync(join(wts, "gone"), { recursive: true });
 	mk(longName);
@@ -180,7 +184,8 @@ const rowCases = [
 	["merged branch shows MERGED", "merged", "merged", "YES"],
 	["tracked edits hold the worktree", "wip", "bucket", "hold-wip"],
 	["tracked edits are counted", "wip", "dirty", "wip:1"],
-	["untracked scratch needs review", "scratch", "bucket", "review"],
+	["untracked scratch holds the worktree", "scratch", "bucket", "hold-scratch"],
+	["untracked scratch holds a merged worktree", "merged-scratch", "bucket", "hold-scratch"],
 	["untracked scratch is counted", "scratch", "dirty", "scratch:1"],
 	["an unrelated project dir is not scanned", "scratch", "chat", "-"],
 	["a recent Claude Code chat needs verifying", "claude", "bucket", "verify-recent-chat"],
@@ -197,6 +202,9 @@ const rowCases = [
 	["the squash-merged PR state is shown", "squashed", "pr", "#8/merged", noJq],
 	["a path with a space matches", "with space", "bucket", "verify-recent-chat"],
 	["a detached head has no remote", "detached", "remote", "detached"],
+	["a merged detached head is safe", "detached", "bucket", "safe"],
+	["a detached head with unmerged commits needs review", "detached-ahead", "bucket", "review"],
+	["a detached head with unmerged commits shows MERGED no", "detached-ahead", "merged", "no"],
 	["a slug past 200 characters matches its hashed dir", longName, "chat", `${day} claude`],
 	["a deleted worktree dir is missing", "gone", "bucket", "missing"],
 ];
