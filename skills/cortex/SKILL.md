@@ -72,7 +72,9 @@ Read the principle in full for any principle you apply. The index lives in [`pri
 
 **Use the [`cortex-agent`](../../agents/cortex-agent.md) agent type for every subagent you spawn**, unless the playbook or skill names another.
 
-**Fresh subagents by default.** Give new work to a fresh subagent with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item.
+**Fresh subagents by default.** Give new work to a fresh subagent with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item. Orchestrate owners are the exception. Each one is long-lived and holds its branch, so its fix rounds and follow-ups go to it by message.
+
+**Delegated code runs on your fast code model**, unless the playbook or skill names another.
 
 ## Writing the reply
 
