@@ -1,13 +1,11 @@
 ### Investigation
 
-**You own the answer. Plan, route, write.**
+**You own a cited answer.** It is an explanation, a verdict, or a recommendation, never a code change.
 
-Investigation requests are read-only. They produce a cited explanation or a recommendation, not a code change.
+1. Route by question. "How does X work" or "where does X live" → read and follow [`how`](../../how/SKILL.md). "Why is Y built this way" or "does that reason still hold" → read and follow [`why`](../../why/SKILL.md).
+2. "Are we sure about Z" → write Z down as a claim and test it against the code, its history, or a read-only run. Answer yes, no, or unknown first, then give the evidence.
+3. "Should we do X or Y" → ground each option through step 1, then end with a recommendation and a tradeoffs table.
 
-1. Route through the [`how`](../../how/SKILL.md) skill. For motivation questions, also route through the [`why`](../../why/SKILL.md) skill.
-2. Produce the [`how`](../../how/SKILL.md)-shaped output (Overview / Key Concepts / How It Works / Where Things Live / Gotchas), or a recommendation with a tradeoffs table if the request is a decision between alternatives.
-3. Apply the [`unslop`](../../unslop/SKILL.md) skill to the reply.
+If the investigation precedes a code change, finish the answer and hand it back to the user. Then route the change to [Bug fix](bug-fix.md) or [Feature](feature.md), whose grounding steps reuse this answer.
 
-No PR, no babysit, no [`architect`](../../architect/SKILL.md) unless the investigation precedes a code change. If it does, hand back to the user and re-route to [Bug fix](bug-fix.md) or [Feature](feature.md).
-
-**Reply:** the investigation output. For "are we sure?" answers, include your real judgment with reasons. Push back if the premise is wrong (see Autonomy).
+**Reply:** the routed skill's output, the claim verdict, or the recommendation.
