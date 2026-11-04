@@ -71,6 +71,11 @@ Inline `[code](missing.md)` and fenced links are skipped.
   mkdir -p "$fx/skills/alpha/references"
   echo 'Back to [alpha](../SKILL.md).' > "$fx/skills/alpha/references/notes.md"
 
+  mkdir -p "$fx/skills/alpha/playbooks"
+  printf '### Gamma\n\n1. Read and follow [`gamma`](../../gamma/SKILL.md).\n' \
+    > "$fx/skills/alpha/playbooks/gamma.md"
+  printf '### Delta\n\n1. Do the delta thing.\n' > "$fx/skills/alpha/playbooks/delta.md"
+
   write_skill "$fx/skills/beta" 'name: "beta"
 description: "Do beta things. Use when the user asks for beta."
 disable-model-invocation: true'
@@ -474,6 +479,18 @@ fx="$(new_fixture)"
 echo 'Then run `gamma`.' >> "$fx/skills/principles/first-rule.md"
 expect_problem "principle names a skill without a link" \
   "skills/principles/first-rule.md:4: names explicit-only skill gamma by bare name" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/skills/alpha/playbooks/gamma.md" 's|^1\. .*|1. Do the gamma thing here.|'
+expect_problem "playbook that never links its same-name skill" \
+  "skills/alpha/playbooks/gamma.md:1: playbook shares its name with skill gamma" "$fx"
+echo 'See [Gamma](<../../gamma/SKILL.md#usage>).' >> "$fx/skills/alpha/playbooks/gamma.md"
+expect_clean "playbook that links its same-name skill" "$fx"
+
+fx="$(new_fixture)"
+edit "$fx/skills/alpha/playbooks/gamma.md" 's|^1\. .*|1. Run `[gamma](../../gamma/SKILL.md)` by hand.|'
+expect_problem "playbook link to its skill inside a code span does not count" \
+  "playbook shares its name with skill gamma" "$fx"
 
 fx="$(new_fixture)"
 edit "$fx/agents/helper.md" 's/^name: helper$/name: helpr/'

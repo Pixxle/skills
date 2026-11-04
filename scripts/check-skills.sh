@@ -512,6 +512,63 @@ AWK
 { grep -E '^(skills|agents)/' "$tmp/md" || true; } | tr '\n' '\0' |
   xargs -0 awk "$unlinked_explicit_skill_mention_awk" "$tmp/explicit" >> "$problems"
 
+# A playbook named like a skill routes to that skill. Without a link to its
+# SKILL.md the playbook is a private copy that drifts from the skill.
+IFS= read -r -d '' playbook_routes_awk <<'AWK' || true
+function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t\r]+$/, "", s); return s }
+function resolve(t,   n, parts, i, m, norm) {
+  t = trim(t)
+  if (substr(t, 1, 1) == "<") { t = substr(t, 2); sub(/>.*/, "", t) }
+  else sub(/[ \t].*/, "", t)
+  sub(/[#?].*/, "", t)
+  n = split(dir "/" t, parts, "/")
+  m = 0
+  for (i = 1; i <= n; i++) {
+    if (parts[i] == "" || parts[i] == ".") continue
+    if (parts[i] == "..") { if (m) m--; continue }
+    out[++m] = parts[i]
+  }
+  norm = m ? out[1] : ""
+  for (i = 2; i <= m; i++) norm = norm "/" out[i]
+  return norm
+}
+function finish() {
+  if (want != "" && !linked)
+    printf "%s:1: playbook shares its name with skill %s but never links its SKILL.md; route to it with Read and follow [`%s`](%s)\n", file, name, name, rel
+}
+FILENAME == ARGV[1] { skill[$0] = 1; next }
+FNR == 1 {
+  finish()
+  file = FILENAME; fence = ""; linked = 0
+  dir = file; sub(/\/[^\/]*$/, "", dir)
+  name = file; sub(/.*\//, "", name); sub(/\.md$/, "", name)
+  want = (name in skill) ? "skills/" name "/SKILL.md" : ""
+  rel = "../../" name "/SKILL.md"
+}
+want == "" || linked { next }
+{
+  s = $0; sub(/^[ \t]*/, "", s)
+  c = substr(s, 1, 1)
+  if ((c == "`" || c == "~") && substr(s, 1, 3) == (c c c)) {
+    k = 1; while (substr(s, k + 1, 1) == c) k++
+    if (fence == "") { fence = c; flen = k }
+    else if (c == fence && k >= flen && trim(substr(s, k + 1)) == "") fence = ""
+    next
+  }
+  if (fence != "") next
+  line = $0
+  gsub(/``[^`]*``/, "", line)
+  gsub(/`[^`]*`/, "", line)
+  while (match(line, /\]\([^)]*\)/)) {
+    if (resolve(substr(line, RSTART + 2, RLENGTH - 3)) == want) { linked = 1; break }
+    line = substr(line, RSTART + RLENGTH)
+  }
+}
+END { finish() }
+AWK
+{ grep -E '^skills/[^/]+/playbooks/[^/]+\.md$' "$tmp/md" || true; } | tr '\n' '\0' |
+  xargs -0 awk "$playbook_routes_awk" "$tmp/names" >> "$problems"
+
 while read -r name; do
   awk -v file="agents/$name.md" -v expect="$name" \
     "$agent_frontmatter_awk$frontmatter_awk" "agents/$name.md" >> "$problems"
