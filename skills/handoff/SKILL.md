@@ -24,16 +24,7 @@ If the user passed arguments, treat them as a description of what the next sessi
 
 ### 2. Pause safely
 
-**You own a clean stop. Leave a checkpoint a cold-start agent can resume from.** Triggers: an explicit pause, going offline, a runtime restart, or imminent context compaction.
-
-Explicit stops only. On "keep going", "going to bed, keep going", or "don't stop", do not pause. Keep a decision trail instead (mode 4) under the full-autonomy grant in [`cortex`](../cortex/SKILL.md#autonomy).
-
-1. Stop at a safe boundary. Finish the current atomic step or back out of it. Start nothing new, and cancel any nested subagents you own.
-2. Take no irreversible action just to pause. No new PR and no push unless you already had one out.
-3. Make the work durable. Commit uncommitted edits as one clear `wip:` commit on the current branch so nothing is lost. If the tree is broken, say so in the commit body in one line.
-4. Write the **resume note** off-context, using the shared sections below. Capture intent, what you were doing, progress and what's verified, current state, next steps, key files, and gotchas. Prefer a file such as `/tmp/<slug>-resume.md` (or the path the runtime names for off-context notes). For the compaction trigger, always write it to a file. If a decision trail already exists, point at it instead of duplicating it. Do not paste the whole trail into the note.
-
-**Reply:** where you are in the loop, what's on disk versus still only in context (paths, no diff dumps), commits made and whether the tree is clean, and the first action on resume. This is a pause, not a final report.
+Triggers: an explicit pause, going offline, a runtime restart, or imminent context compaction. Read and follow the [Pause safely](../cortex/playbooks/pause-safely.md) playbook. It ships with [`cortex`](../cortex/SKILL.md) but needs no cortex load. It is the single source for the pause procedure and its reply, and it is short enough to load near compaction. Its resume note uses the shared sections below.
 
 ### 3. Session pickup
 
