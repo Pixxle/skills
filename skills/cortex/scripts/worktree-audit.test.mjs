@@ -209,8 +209,6 @@ const rowCases = [
 	["a deleted worktree dir is missing", "gone", "bucket", "missing"],
 ];
 
-const pending = new Set(["untracked scratch holds the worktree", "untracked scratch holds a merged worktree"]);
-
 const passes = [
 	{ label: "with rg", withRg: true, skip: skipAll || (rgPath ? false : "rg not on PATH") },
 	{ label: "grep fallback", withRg: false, skip: skipAll },
@@ -235,7 +233,7 @@ for (const pass of passes) {
 		test("warns when no base was given", () => assert.match(result.stderr, /no -b given; MERGED checks against origin\/main/));
 		test("skips the main worktree", () => assert.equal(rows.filter((r) => r[columns.worktree] === repo).length, 0));
 		for (const [name, worktree, column, expected, skip = false] of rowCases) {
-			test(name, { skip, todo: pending.has(name) }, () => {
+			test(name, { skip }, () => {
 				const actual = cell(worktree, column);
 				if (expected instanceof RegExp) assert.match(actual, expected);
 				else assert.equal(actual, expected);
