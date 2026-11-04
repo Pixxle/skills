@@ -1,14 +1,14 @@
 ### Prototype
 
-**You own the design decision, not the code. The prototype is a throwaway instrument. The real build follows [Feature](feature.md).**
+**You own the decision, not the code.** Read and follow [`prototype`](../../prototype/SKILL.md) to build it. Where the skill asks the user to pick a branch, pick it from the decision. Where the skill hands the prototype to the user, you drive it first.
 
-The one playbook where the [Laziness Protocol](../../principles/laziness-protocol.md)'s "smallest change" and the verification bar invert. Speed over polish, code quality does not matter, no planning. The rigor is in picking the right design cheaply. Propose variations the user didn't ask for, throw an approach away and try another.
+Speed beats polish. Do not cite the [Laziness Protocol](../../principles/laziness-protocol.md) to build one variant. Build alternatives the user did not ask for, and drop an approach when it loses.
 
-1. Scope the decision the prototype exists to make: which layout, which interaction, which density, or for an empirical fork which behavior, timing, or approach. No decision means no prototype. Route to [Feature](feature.md).
-2. Gather references when the design space is open. Search for prior art, summarize a moodboard of themes, palettes, and layouts, let the user pick directions before building. Skip when the direction is set.
-3. Build throwaway in an isolated scratch dir, separate from production source. For a visual decision, vanilla HTML/CSS/JS or the lightest stack that renders the idea, CDN deps, a dev server with hot reload. For a behavioral or timing decision, the smallest script that exercises the question. No production framework, no tests, no abstractions.
-4. When comparing alternatives, build them behind one switcher (buttons or a keypress), each variant labeled. This is the [Exhaust the Design Space](../../principles/exhaust-the-design-space.md) principle made cheap.
-5. Verify on the matching surface. For a visual decision, screenshot each variant via the repo's `verify-*` skill and drive the interaction. For a behavioral or timing decision, observe the thing you are deciding by logging the timing, printing the output, or watching the render. The observation is the test here, not an assertion.
-6. Present alternatives, tradeoffs, and a recommendation. The output is the decision plus the throwaway artifact, not shippable code. Hand the chosen direction to [Feature](feature.md) (or [`architect`](../../architect/SKILL.md) for the shape) for the real build.
+1. Scope the decision the prototype exists to make: which layout, interaction, or density, or for an empirical fork which behavior, timing, or approach. No decision means no prototype. Route to [Feature](feature.md).
+2. Build in a git worktree off trunk, at the location the skill picks inside it. For a behavioral or timing fork, build the smallest script that prints the observation, not a TUI.
+3. When the design space is open, search prior art and let it seed the variants. Do not wait for the user to pick directions.
+4. Observe each variant yourself on the matching surface. For a visual decision, drive the interaction and screenshot each variant, through the repo's `verify-*` skill when the prototype runs inside the app. For a behavioral or timing decision, log the timing or print the output. The observation is the evidence.
+5. When a run settles the fork, pick the winner on the evidence. For a product or preference call, recommend one and leave the variants up for the user to pick. Capture the answer per the skill's **When done**, and commit it with the prototype on the worktree branch.
+6. Entered from a fork inside another playbook, return to that playbook with the branch, the SHA, and the evidence, and act on the result. Otherwise hand the chosen direction to [Feature](feature.md). The prototype itself does not ship.
 
-**Reply:** the variants explored, the evidence (screenshots for a visual decision, the observed output or timing for a behavioral one), tradeoffs, your recommendation, and the scratch path. Say plainly that the prototype is throwaway.
+**Reply:** the variants explored, the evidence (screenshots for a visual decision, the observed output or timing for a behavioral one), tradeoffs, your recommendation, the branch and SHA, and the prototype's path with whether you kept, deleted, or absorbed it. Say plainly which parts are throwaway.
