@@ -115,7 +115,7 @@ Read top to bottom, follow the evidence pointers, spot-check. GitHub renders a c
 
 #### Composing this mode
 
-Other skills and playbooks route their audit trail here instead of inventing one. Link this skill, name the decision-trail mode, and let it own the format. Don't restate the columns. A loop playbook may define its own per-attempt columns, as [Hillclimb](../cortex/playbooks/hillclimb.md) does. This skill still owns the row, `start`-row, and audit rules.
+Other skills and playbooks route their audit trail here instead of inventing one. Link this skill, name the decision-trail mode, and let it own the format. Don't restate the columns. When playbooks nest, the outermost playbook of the run owns the end-of-run audit and the cross-model review, and an inner playbook only logs rows. A loop playbook may define its own per-attempt columns, as [Hillclimb](../cortex/playbooks/hillclimb.md) does. This skill still owns the row, `start`-row, and audit rules.
 
 ## Shared resume / handoff sections
 
