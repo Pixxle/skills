@@ -1,12 +1,12 @@
 ### Authoring or modifying a skill
 
-**You own the skill's voice.**
+**You own the skill's voice.** Ask the user only what the request leaves open, and present the draft in the reply instead of holding it for review.
 
-1. Use the [`write-a-skill`](../../write-a-skill/SKILL.md) skill.
-2. Validate the skill: frontmatter has `name` and `description`, referenced files exist, cross-skill links resolve.
-3. Test cases if structural. Skip if subjective.
+1. Read and follow [`write-a-skill`](../../write-a-skill/SKILL.md).
+2. Run the repo's skill checker, if it has one, and fix every finding.
+3. A substantive change to agent behavior → offer the [Eval](eval.md) playbook before you promote it. A bundled script → run its tests. Skip for a wording-only edit.
 4. Run [Opening a PR](opening-a-pr.md).
 
-When in doubt, delete. Keep only prose that changes a decision. Tell it to do the thing and skip the reason. Explain only when the rule is confusing without one. Match tone to scope. Point at structural sources (types, READMEs, config) per the [Encode Lessons in Structure](../../principles/encode-lessons-in-structure.md) principle. Delegate to other skills by path. Don't restate. A cortex playbook starts at its first step and does not restate its routing entry. A workflow you keep hitting but isn't captured → propose a new skill.
+When in doubt, delete. Keep only prose that changes a decision. Give the instruction without the reason, unless the rule confuses without one. Link other skills, principles, types, READMEs, and config instead of restating them. A cortex playbook starts at its first step and does not restate its routing entry. A rule a script can check belongs in that script, not in prose, per the [Encode Lessons in Structure](../../principles/encode-lessons-in-structure.md) principle.
 
-**Reply:** summary of the skill, key design decisions, validation notes.
+**Reply:** summary of the skill, key design decisions, checker and eval results.
