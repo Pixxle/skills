@@ -20,6 +20,6 @@
 - **Send back work that drifts from scope or grows past what was asked.** Keep only the fixes that block the program, and park the rest as follow-ups in the decision trail.
 - **Check a PR's live state before you report on it,** with `gh pr view` and `gh pr checks` or your forge's equivalents, not the worker's last report. Account for every worker you spawned as done, replaced, or absorbed into another worker's scope.
 - **Stop or replace a worker that stalls or loops.** Judge it by its pushes and PR activity, not its status text. Retry by cause: a smaller scope after a context or memory limit, the same kickoff after a dropped connection, and a different model after a tool error. After two retries, drop the unit and replan around it. When a stopped worker returns late, check its result against the PR's current state, and hand any unique findings to a fresh worker.
-- **Handle the mechanics yourself.** Rebase mechanics, retries, CI flakes, review triage, and "should I keep going" never reach the user. Ask only for what cortex's Always-pause list and fork rule reserve for the user, or for a dead end that survived a replan.
+- **Keep the mechanics from the user.** Rebase mechanics, retries, CI flakes, review triage, and "should I keep going" never reach the user. Ask only for what cortex's Always-pause list and fork rule reserve for the user, or for a dead end that survived a replan.
 
 **Reply:** what landed against the goal, each PR's live state and verdict with its link, what was dropped and why, and the decisions waiting on the user.
