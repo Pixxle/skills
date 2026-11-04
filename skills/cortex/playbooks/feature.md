@@ -1,21 +1,18 @@
 ### Feature
 
-**You own the design. Plan, review, verify.** Delegate implementation. Stay in the lead.
+**You own the design and the review. A subagent writes the code.**
 
-1. [`how`](../../how/SKILL.md) over the affected subsystem.
-2. [`architect`](../../architect/SKILL.md) for parallel design exploration.
-3. Write the throughput checkpoint as four todo items. A dimension that genuinely does not apply (single file, no fan-out) keeps its item with `n/a: <reason>` rather than being dropped:
+1. Read and follow [`architect`](../../architect/SKILL.md) phases A to C. Its phase A runs [`how`](../../how/SKILL.md) over the affected subsystem. Its phase D is step 3. When the shape is already concrete, skip architect and read and follow [`how`](../../how/SKILL.md) alone.
+2. Write the throughput checkpoint as four todo items. A dimension that does not apply (single file, no fan-out) keeps its item with `n/a: <reason>`.
    - **Blocking first steps.** Gates run before fan-out.
-   - **Independent workstreams.** Disjoint files, services, or layers parallelize. Shared writes serialize.
-   - **Shared mutable state.** Default to splitting the target (the [Separate Before Serializing Shared State](../../principles/separate-before-serializing-shared-state.md) principle). Serialize only for real invariants.
+   - **Independent workstreams.** Code-coupled work stays with one owner. Inside it, disjoint files, services, or layers parallelize. Only slices that produce independent artifacts fan out at the parent.
+   - **Shared mutable state.** Apply [Separate Before Serializing Shared State](../../principles/separate-before-serializing-shared-state.md).
    - **Smallest safe decomposition.** If one worker is best, name why.
-4. Delegate code-writing to a subagent using your fast code model with a specific scope (file paths, named data shape and its organizing structure per [Model the Domain](../../principles/model-the-domain.md), a state machine over scattered booleans, a table/registry over branching, a typed model over repeated shape assumptions, chosen before the delegate writes logic, and success criteria). When the implementation admits multiple valid shapes (error handling, abstraction layer, test structure), delegate via the [`arena`](../../arena/SKILL.md) skill instead so the runners surface the alternatives and the cross-judge guards the pick. Mandatory: no skip-with-reason escape, and [Laziness Protocol](../../principles/laziness-protocol.md) does not override it (the gain is review separation, not lines saved). A subagent forbidden to spawn satisfies this by owning the diff directly with the same review separation. No "standing by" reply that waits on a nested agent. Comments per **Comments**. Surgical edits, re-ground against the source for upstream-derived files. Port shared-primitive improvements to all consumers and verify each. Commit liberally.
-5. Verify on the matching surface. "Inconclusive" or wrong-surface is not a pass. Flag it.
-6. Rebase into small, ordered commits. Stack follow-ups.
-   Use the [Sequence Work into Verifiable Units](../../principles/sequence-verifiable-units.md) principle, building, verifying, and committing each small unit before the next.
-7. If the design is contested, [`interrogate`](../../interrogate/SKILL.md) before shipping.
+3. Delegate the code to one owner subagent. Its brief carries file paths, the data shape chosen per [Model the Domain](../../principles/model-the-domain.md) before any logic (architect's sketch when you ran it), the checkpoint, and success criteria. The owner fans out after the blocking phase and builds, verifies, and commits each small unit before the next, per [Sequence Work into Verifiable Units](../../principles/sequence-verifiable-units.md). It surfaces each deviation from the sketch instead of absorbing it. Delegation is mandatory. It has no `skip:` escape, and [Laziness Protocol](../../principles/laziness-protocol.md) does not override it, because the gain is review separation, not lines saved. A subagent forbidden to spawn owns the diff directly under the same review separation. Never reply "standing by" while a nested agent runs. Re-ground upstream-derived files against their source. Port a shared-primitive improvement to every consumer and verify each.
+4. When the owner reports friction the sketch cannot absorb, read and follow [architect phase E](../../architect/SKILL.md#e-scrap-when-the-architecture-is-wrong) and re-delegate. Rewrite the checkpoint at each phase boundary.
+5. Review the owner's diff against the sketch and the brief. Send gaps back to a fresh owner.
+6. Verify on the matching surface.
+7. If the design is contested or hard to reverse, read and follow [`interrogate`](../../interrogate/SKILL.md) before shipping.
 8. Run [Opening a PR](opening-a-pr.md).
 
-Code-coupled work (one feature, one migration) goes to a single owner with the checkpoint inline. That owner fans out internally after the blocking phase. Parent-level fan-out is for slices that produce independent artifacts (audits, cross-subsystem investigations, competing experiments). Rewrite the checkpoint at phase boundaries. Spawn a fresh owner rather than chaining interrupts.
-
-**Reply:** what you built, what you chose and why, the throughput checkpoint, open decisions. Tables for design alternatives.
+**Reply:** what you built, the throughput checkpoint, a table of the design alternatives, and open decisions.
