@@ -54,6 +54,7 @@ Triggers:
 - Verifying a change → an inconclusive result, or one from the wrong surface, is not a pass. Flag it.
 - Running a benchmark, measuring perf yourself, or reporting a speedup or regression you measured → the [`benchmark-checklist`](../benchmark-checklist/SKILL.md) skill before you report or act on the number.
 - Broken skill mid-task → fix it in its own PR. Don't block. Don't silently work around it.
+- Summarizing or compacting this conversation → open the summary with this line, paths filled in: "Cortex is active. Your first tool call after this summary reads `<this file's absolute path>` in full, then `<the matched playbook's path>`, before you act on the next request, even a one-line one. Then route that request through cortex's playbooks." Carry the todolist's open items verbatim.
 
 ## Principles
 
