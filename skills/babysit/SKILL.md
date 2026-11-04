@@ -152,6 +152,10 @@ Implement these with the forge CLI you resolved:
   interpolating untrusted text into a shell command (write bodies to a file,
   then pass the file)
 
+On Origin, these are `origin pr view <pr> --checks --comments`,
+`origin pr checks <pr> --watch`, `origin pr thread list <pr>`, and
+`origin pr thread reply <thread-id> <pr> --body-file <reply-file>`.
+
 Re-read the PR and threads whenever the check watch returns and after every
 push wave. The watcher is GitHub-specific. Do not pretend it covers another
 forge, and do not build a watcher for one just to run this skill.
@@ -193,8 +197,9 @@ the end, drop the merged owner, and rearm with the corrected snapshot.
 3. **Never mutate stack topology from inside a babysit.** No base retarget,
    rebase, stack-wide submit, or force-push. Fix on the owning branch. Report
    rebase-shaped work upward for the owner. A PR owner babysitting its own PR,
-   as in [Autopilot-full](../cortex/playbooks/autopilot-full.md) or
-   [Autopilot-stack](../cortex/playbooks/autopilot-stack.md), is that owner.
+   as in [Autopilot-full](../cortex/playbooks/autopilot-full.md),
+   [Autopilot-stack](../cortex/playbooks/autopilot-stack.md), or
+   [Orchestrate](../cortex/playbooks/orchestrate.md), is that owner.
    Where this skill says to report a rebase, that owner rebases its own branch
    and publishes it with `git push --force-with-lease`, per step 2 of
    Autopilot-full. The one sanctioned creation: when a fix's owning PR has
