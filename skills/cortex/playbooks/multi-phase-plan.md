@@ -5,12 +5,12 @@
 1. When the change is one or two files with an obvious approach, skip the plan. Say so, name the playbook that fits ([Feature](feature.md), [Bug fix](bug-fix.md), or [Refactoring](refactoring.md)), and stop.
 2. Explore in subagents (the [Guard the Context Window](../../principles/guard-the-context-window.md) principle). Each returns file pointers, conventions, test commands, entry points, and the `verify-*` skill for each surface the change touches.
 3. Settle open questions by prototype. Run [`playbooks/prototype.md`](prototype.md) for each. Keep the branch, the SHA, and the screenshots or observed output for Appendix A.
-4. For each touched surface with no `verify-*` skill, read and follow [`create-verification-skill`](../../create-verification-skill/SKILL.md), then open its PR per [Opening a PR](opening-a-pr.md). It is the one thing this playbook builds. Every live lane reads the skill from trunk, so the operator lands that PR before the go.
+4. For each touched surface with no `verify-*` skill, read and follow [`create-verification-skill`](../../create-verification-skill/SKILL.md), then open its PR per [Opening a PR](opening-a-pr.md). It is the one thing this playbook builds. Every live lane reads the skill from trunk, so the operator lands that PR before the go. Under Orchestrate, that PR is the program's first unit, and no live lane runs until it lands.
 5. Copy the skeleton below into the plan file and fill every placeholder. `<skills dir>` is the real path of the directory that holds the cortex skill, and `<trunk>` is the repo's trunk branch. Write the file to the path the operator names. Without one, write it to `~/.cortex/<repo>/plans/<slug>.md`, outside the repo. Each heading states the task or the finding.
 6. Write one section per PR. One PR is one change with its own evidence (the [Sequence Work into Verifiable Units](../../principles/sequence-verifiable-units.md) principle). Order the PRs toward the end state, with no throwaway compatibility PRs (the [Outcome-Oriented Execution](../../principles/outcome-oriented-execution.md) principle). Plan an intermediate breakage only under Autopilot-stack, where nothing lands until the operator lands the stack, and name each one in Appendix C.
-7. Name the execution playbook in **How to read this**. Pick [`playbooks/autopilot-full.md`](autopilot-full.md) when the run may merge. Pick [`playbooks/autopilot-stack.md`](autopilot-stack.md) when the operator lands the PRs. Pick [`playbooks/orchestrate.md`](orchestrate.md) for a standing program. Under any of them, this plan's full swarm per PR and its stop for the operator's go govern. Under Orchestrate, this plan's hourly audit tick runs as Orchestrate's heartbeat.
+7. Name the execution playbook in **How to read this**. Pick [`playbooks/autopilot-full.md`](autopilot-full.md) when the run may merge. Pick [`playbooks/autopilot-stack.md`](autopilot-stack.md) when the operator lands the PRs. Pick [`playbooks/orchestrate.md`](orchestrate.md) for a standing program. Under any of them, this plan's full swarm per PR governs. Under Orchestrate, execution starts at once with no stop for the operator's go, and this plan's hourly audit tick runs as Orchestrate's heartbeat.
 8. Run [`check-plan.mjs`](../scripts/check-plan.mjs) as `node <skills dir>/cortex/scripts/check-plan.mjs <plan.md>` and fix every line it prints.
-9. Hand back with the reply below, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names.
+9. Hand back with the reply below. Under Autopilot-full or Autopilot-stack, stop there, and execution starts on the operator's explicit go. Under Orchestrate, start execution at once.
 
 **Verify blocks.** Fill `<swarm workers model>` with the worker model that the [`swarm`](../../swarm/SKILL.md) skill's Phase A step 3 picks. Pick each lane's `verify-*` skill by surface. A PR that touches two surfaces gets lanes on both. A PR that changes no interaction writes `**Review gate.** None. <PR id> is not review-gated.` and no boxes under it.
 
@@ -31,7 +31,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 
 ### Arm the program
 
-- [ ] State the protocol and this plan to the operator, then stop. Start execution only on the operator's explicit go.
+- [ ] State the protocol and this plan to the operator. Under Autopilot-full or Autopilot-stack, stop, and start execution only on the operator's explicit go. Under Orchestrate, start at once.
 - [ ] Read these at program start. Re-read them at every tick.
   - [ ] `<skills dir>/cortex/playbooks/<execution playbook>.md`
   - [ ] `<skills dir>/swarm/SKILL.md`
@@ -39,7 +39,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
   - [ ] `<skills dir>/cortex/playbooks/opening-a-pr.md`
   - [ ] `<skills dir>/cortex/playbooks/autopilot-full.md`, for the rebase, cadence, and blocking rules this plan cites
   - [ ] `<skills dir>/<each other leaf skill the program uses>`
-- [ ] On the operator's go, arm the hourly audit tick as a self-paced loop with the tick prompt below.
+- [ ] On the operator's go, or at once under Orchestrate, arm the hourly audit tick as a self-paced loop with the tick prompt below.
 - [ ] Use this tick prompt, verbatim. "Re-read `<skills dir>/cortex/playbooks/<execution playbook>.md`. Audit the operation against it and fix drift in this tick. Probe every active lane and judge progress by side effects only. Stand down a stuck lane and dispatch its replacement now. Then post a short status message to the operator in chat only when the audit found a tracked change that no earlier status message reported, such as a PR opened, a code-ready head, a round launched or closed, a verdict, a merge, a stuck agent and the action taken, a blocker added or cleared, or a decision only the operator can make. Name every such change and nothing else. Do not repeat a table, the merged list, or an unchanged blocker. If the audit found none, end the turn with no reply text. Either way, log this tick's row in your decision trail. The row names the items reported, or none."
 - [ ] On the operator's hold or stand-down, send every owner a zero-writes order at once.
 
