@@ -10,9 +10,9 @@ Bundled skills live at `../<name>/SKILL.md` from this file's real path, so put t
 
 ## Playbooks
 
-Open a todolist whose first items are the matched playbook's steps, copied in verbatim, before any task-specific todos. A step you choose not to do stays in the list with a one-line `skip: <reason>`. Match the task to a playbook below and open its full steps at `playbooks/<title>.md`, with the title in kebab case, hyphens kept and other punctuation dropped, unless the entry gives its file. Copy its steps in verbatim.
+Open a todolist whose first items are the matched playbook's steps, copied in verbatim, before any task-specific todos. A step you choose not to do stays in the list with a one-line `skip: <reason>`. Match the task to a playbook below and open its full steps at `playbooks/<title>.md`, with the title in kebab case, hyphens kept and other punctuation dropped, unless the entry gives its file. Copy its steps in verbatim. A playbook starts at its first step and does not restate its routing entry.
 
-A large or cross-cutting effort (a migration across many call sites, an ambitious multi-part change), or work the user steps away from to trust later, routes to the [`figure-it-out`](../figure-it-out/SKILL.md) skill even when a narrower playbook like Feature fits. Use [`figure-it-out`](../figure-it-out/SKILL.md) whenever no bundled playbook fits. It designs a bespoke, rigorous playbook for the task. A standing project-scale program (multi-day, many stacked PRs, a fleet of subagents under one coordinator) routes to **Orchestrate** instead. [`figure-it-out`](../figure-it-out/SKILL.md) designs one bespoke run, orchestrate runs the program.
+A large or cross-cutting effort (a migration across many call sites, an ambitious multi-part change), or work the user steps away from to trust later, routes to the [`figure-it-out`](../figure-it-out/SKILL.md) skill even when a narrower playbook like Feature fits. A task the user says to "run until done" routes to **Autonomous run**, even when they also step away. Use [`figure-it-out`](../figure-it-out/SKILL.md) whenever no bundled playbook fits. It designs a bespoke, rigorous playbook for the task. A standing project-scale program (multi-day, many stacked PRs, a fleet of subagents under one coordinator) routes to **Orchestrate** instead. [`figure-it-out`](../figure-it-out/SKILL.md) designs one bespoke run, orchestrate runs the program.
 
 - **Investigation.** Read-only question: how does X work, why was Y built this way, are we sure about Z, should we do X or Y.
 - **Bug fix.** A reported defect to reproduce, root-cause, and fix with runtime evidence.
@@ -32,11 +32,11 @@ A large or cross-cutting effort (a migration across many call sites, an ambitiou
 - **Orchestrate.** A standing project handed to one coordinator chat: multi-day, many stacked PRs, dozens to hundreds of subagents, minimal human turns ("run this whole project", "own this migration until it lands"). Distinct from Autonomous run, which drives one task to a predicate. Work one agent could finish inside the session's budget routes there, not here, however program-shaped the phrasing sounds.
 - **Autopilot-full.** A queue of independent PRs run to merged with full autonomy. One owner per PR carries build through merge, and the root swarm-verifies each PR before its owner merges ("autopilot this queue", "full autopilot", one-owner-per-PR programs).
 - **Autopilot-stack.** Autopilot-full without the merge. A queue of PRs built and verified with full autonomy, then handed to the operator to land. A PR stacks only on a PR it builds on ("autopilot-stack", "autopilot, don't merge", "stack them, don't ship", "build the stack, I'll land it").
-- **Session pickup.** Resuming or taking over a prior agent's in-flight work from a transcript, cloud-agent URL, or pushed branch.
+- **Session pickup.** Resuming or taking over a prior agent's in-flight work from a resume note, handoff doc, transcript, cloud-agent URL, or pushed branch.
 - **Pause safely.** Suspending in-flight work cleanly so it can be resumed, on an explicit pause, going offline, a runtime restart, or imminent context compaction. The complement to Session pickup.
 - **Multi-phase or multi-PR plan.** Work that spans phases or stacked PRs. File: [`playbooks/multi-phase-plan.md`](playbooks/multi-phase-plan.md).
 - **Worktree and simulator cleanup.** Reclaiming local disk by pruning merged or abandoned git worktrees and stale iOS simulators ("what's using my disk", "clean up worktrees", "prune safe-to-prune worktrees", "free up space", "delete old simulators"). File: [`playbooks/worktree-cleanup.md`](playbooks/worktree-cleanup.md).
-- **Opening a PR.** Invoked at the end of every other playbook.
+- **Opening a PR.** Invoked at the end of every playbook that ships a code change.
 
 ## Non-negotiables
 
@@ -44,13 +44,14 @@ The Principles section below grounds every trigger. In your reply, name each pri
 
 Triggers:
 
-- Your first message on a task → tell the user, in your own words, their goal, the problem they are solving, and, if the task ships a change, the smallest change you expect to meet it. Don't wait for confirmation. If the evidence rules out the change the user asked for, show it and stop. Restate the user's goal in each subagent brief, and open each PR's `## Why` with it. Open each final report with it too, your final reply included, except after a fully specified one-line edit.
+- Your first message on a task → tell the user, in your own words, their goal, the problem they are solving, and, if the task ships a change, the smallest change you expect to meet it. Don't wait for confirmation. If the evidence rules out the change the user asked for, show it and stop. Restate the user's goal in each subagent brief, except an Eval candidate prompt, where it would break blinding. Open each PR's `## Why` with the goal. Open each final report with it too, your final reply included, except after a fully specified one-line edit.
 - About to ask the user about a "which approach", "how should I", or "what should this do" fork → classify it before you ask. If the answer is a fact you could observe by running something (behavior, timing, layout, output, perf, even whether an eval separates), it is not the human's to answer. Sketch it via the Prototype playbook ([`playbooks/prototype.md`](playbooks/prototype.md)) and let the result decide. If the task is a read-only Investigation whose deliverable is a cited answer, stay in it and answer from the evidence rather than building a sketch. Reserve the question for a genuine product or preference call no experiment can settle. Under a full-autonomy grant, decide a call the grant covers, act on it, and report it, with no reply word and no offer. Under the grant, for a call only the operator can make, apply a default, report it with a full explanation, and say in plain words what the operator could tell you to do instead. The operator answers in their own words. Never give a shorthand token to type back. Gates the operator named and the Always-pause list in Autonomy still need the operator.
 - Parallel fan-out → the [`swarm`](../swarm/SKILL.md) skill for coverage matrices, races, gauntlets, and exploration partitions. Use [`arena`](../arena/SKILL.md) for design or code bakeoffs with base selection and grafting.
 - Structural quality in scope for a change under review or refactor → spawn [`thermo-nuclear-code-quality-review`](../thermo-nuclear-code-quality-review/SKILL.md) in parallel with other review or swarm lanes. Whole-system structural discovery → [`thermo-nuclear-refactor`](../thermo-nuclear-refactor/SKILL.md). Do not invent a parallel rubric.
 - Any prose surface, your reply to the user included → the [`unslop`](../unslop/SKILL.md) skill. Write the reply per **Writing the reply**. Agent-facing prose also follows the [`write-a-skill`](../write-a-skill/SKILL.md) skill.
 - Docs, RFCs, readmes, PR descriptions, or commit messages → plain technical English per [Opening a PR](playbooks/opening-a-pr.md).
 - Shipping UI / IDE / CLI → the repo's `verify-*` skill (`.agents/skills/` or `.claude/skills/`). None → [`create-verification-skill`](../create-verification-skill/SKILL.md). Recipe fails on a working app → [`maintain-verification-skill`](../maintain-verification-skill/SKILL.md).
+- Verifying a change → an inconclusive result, or one from the wrong surface, is not a pass. Flag it.
 - Running a benchmark, measuring perf yourself, or reporting a speedup or regression you measured → the [`benchmark-checklist`](../benchmark-checklist/SKILL.md) skill before you report or act on the number.
 - Broken skill mid-task → fix it in its own PR. Don't block. Don't silently work around it.
 
@@ -72,7 +73,9 @@ Read the principle in full for any principle you apply. The index lives in [`pri
 
 **Use the [`cortex-agent`](../../agents/cortex-agent.md) agent type for every subagent you spawn**, unless the playbook or skill names another.
 
-**Fresh subagents by default.** Give new work to a fresh subagent with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item.
+**Fresh subagents by default.** Give new work to a fresh subagent with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item. Orchestrate owners are the exception. Each one is long-lived and holds its branch, so its fix rounds and follow-ups go to it by message.
+
+**Delegated code runs on your fast code model**, unless the playbook or skill names another.
 
 ## Writing the reply
 

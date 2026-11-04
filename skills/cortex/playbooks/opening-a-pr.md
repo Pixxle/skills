@@ -1,6 +1,6 @@
 ### Opening a PR
 
-Invoked at the end of every other playbook.
+Invoked at the end of every playbook that ships a code change.
 
 **Worktree.** Work from a git worktree off main. Subagents inherit it. Multiple subagents on the same branch each get their own worktree, or `git fetch && git reset --hard origin/<branch>` between them. Dirty branch with unrelated work: patch out, fresh worktree, apply. Snarled worktree: reset from main, redo minimally. Open the PR early when CI and bots should run alongside the work (Autopilot and Orchestrate owners do this). Real-surface proof and a verifiable commit sequence must hold before you declare code-ready or ask for review. They do not block the create call.
 
