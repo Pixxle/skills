@@ -24,16 +24,7 @@ If the user passed arguments, treat them as a description of what the next sessi
 
 ### 2. Pause safely
 
-**You own a clean stop. Leave a checkpoint a cold-start agent can resume from.** Triggers: an explicit pause, going offline, a runtime restart, or imminent context compaction.
-
-Explicit stops only. On "keep going", "going to bed, keep going", or "don't stop", do not pause. Keep a decision trail instead (mode 4) under the full-autonomy grant in [`cortex`](../cortex/SKILL.md#autonomy).
-
-1. Stop at a safe boundary. Finish the current atomic step or back out of it. Start nothing new, and cancel any nested subagents you own.
-2. Take no irreversible action just to pause. No new PR and no push unless you already had one out.
-3. Make the work durable. Commit uncommitted edits as one clear `wip:` commit on the current branch so nothing is lost. If the tree is broken, say so in the commit body in one line.
-4. Write the **resume note** off-context, using the shared sections below. Capture intent, what you were doing, progress and what's verified, current state, next steps, key files, and gotchas. Prefer a file such as `/tmp/<slug>-resume.md` (or the path the runtime names for off-context notes). For the compaction trigger, always write it to a file. If a decision trail already exists, point at it instead of duplicating it. Do not paste the whole trail into the note.
-
-**Reply:** where you are in the loop, what's on disk versus still only in context (paths, no diff dumps), commits made and whether the tree is clean, and the first action on resume. This is a pause, not a final report.
+Triggers: an explicit pause, going offline, a runtime restart, or imminent context compaction. Read and follow the [Pause safely](../cortex/playbooks/pause-safely.md) playbook. It ships with [`cortex`](../cortex/SKILL.md) but needs no cortex load. It is the single source for the pause procedure and its reply, and it is short enough to load near compaction. Its resume note uses the shared sections below.
 
 ### 3. Session pickup
 
@@ -42,8 +33,8 @@ Explicit stops only. On "keep going", "going to bed, keep going", or "don't stop
 1. Locate the prior trail: a resume note, a handoff doc, a decision trail, a local transcript, a cloud session URL, or a pushed branch. Claude Code keeps transcripts in `~/.claude/projects/<workspace-slug>/`, where the slug is the absolute workspace path with every character other than letters and digits replaced by `-`. Codex keeps them in `${CODEX_HOME:-~/.codex}/sessions/YYYY/MM/DD/`, so match on the working directory in each file's metadata line. Read only this workspace's transcripts and never glob across unrelated projects. That crosses workspace boundaries and reads private chats from unrelated work. Read the metadata overview and last messages first, then scan back for the decision points. Parse a long transcript in a subagent and keep the reduced timeline in the main thread ([Guard the Context Window](../principles/guard-the-context-window.md)).
 2. Reconstruct operational state: the branch and worktree, what already landed (`git log`, `git diff` against the base), the open todos, the decisions made. The prior trail is authoritative input. Resist the bias to re-derive it.
 3. Diff done versus pending. Compare what shipped against what was planned, and name the resume point. Do not re-run the prior repro or redo completed work. A "let me verify from scratch" pass treats the trail as untrustworthy when it is authoritative. Re-verify from scratch only a claim that lacks evidence.
-4. Pick the verdict: continue the execution, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run. Hand the remaining work to its owner. Read and follow the skill or playbook that owns it. Under [`cortex`](../cortex/SKILL.md), that is the matching playbook. Pickup ends here. The routed owner runs the rest.
-5. Verify the inherited claims against the original goal on the real artifact ([Prove It Works](../principles/prove-it-works.md)). A passing prior self-report is not the proof.
+4. Verify the inherited claims against the original goal on the real artifact ([Prove It Works](../principles/prove-it-works.md)). A passing prior self-report is not the proof.
+5. Pick the verdict: continue the execution, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run. Hand the remaining work to its owner. Read and follow the skill or playbook that owns it. Under [`cortex`](../cortex/SKILL.md), that is the matching playbook. Pickup ends here. The routed owner runs the rest.
 
 **Reply:** where the prior agent stopped, what you inherited versus redid (ideally nothing redone), the verdict, the resume point, and the outcome.
 
@@ -124,7 +115,7 @@ Read top to bottom, follow the evidence pointers, spot-check. GitHub renders a c
 
 #### Composing this mode
 
-Other skills and playbooks route their audit trail here instead of inventing one. Link this skill, name the decision-trail mode, and let it own the format. Don't restate the columns. A loop playbook may define its own per-attempt columns, as [Hillclimb](../cortex/playbooks/hillclimb.md) does. This skill still owns the row, `start`-row, and audit rules.
+Other skills and playbooks route their audit trail here instead of inventing one. Link this skill, name the decision-trail mode, and let it own the format. Don't restate the columns. When playbooks nest, the outermost playbook of the run owns the end-of-run audit and the cross-model review, and an inner playbook only logs rows. A loop playbook may define its own per-attempt columns, as [Hillclimb](../cortex/playbooks/hillclimb.md) does. This skill still owns the row, `start`-row, and audit rules.
 
 ## Shared resume / handoff sections
 
