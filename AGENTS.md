@@ -17,6 +17,7 @@ Claude Code loads the linked skills un-namespaced. Codex follows each symlink ba
 - A principle is `skills/principles/<name>.md`, with a `# Title` first line and no frontmatter. `skills/principles/SKILL.md` links every principle file. Link a principle with its title as the link text, and never call it a skill.
 - `disable-model-invocation: true` makes every skill explicit-only in Claude Code: the user starts it by name. Codex reads no such flag, and no skill ships `agents/openai.yaml`, so Codex can invoke a skill implicitly. A router or another skill loads a skill by link, so a routed step runs the real skill, not a freestyled copy.
 - In skills and agents, a backticked skill name is always the text of a link to its `SKILL.md`. A router links each skill it routes to.
+- A cortex playbook that shares its name with a skill, such as `playbooks/babysit.md` and `skills/babysit/`, routes to that skill. It links the skill's `SKILL.md` and says to read and follow it.
 - To load a skill from another skill, open its `SKILL.md` with a file read at the relative link. Never invoke it as a skill or by bare name. Claude Code blocks that call and tells the model not to reproduce the skill another way.
 - From a skill, link a skill as `../<name>/SKILL.md`, a principle as `../principles/<name>.md`, and an agent as `../../agents/<name>.md`. A cortex playbook adds one `../`. Inside `principles/`, link a principle as `<name>.md`. Resolve bundled resources from the skill directory. Installed skills are symlinks, so resolve a link from the skill directory's real path. Trimming `..` from the installed path lands outside the repo. Never hard-code `~/.claude/skills` or `~/.codex/skills`.
 - Describe tool use by capability ("spawn subagents in parallel"), never by a runtime tool name or a model slug.
@@ -46,6 +47,7 @@ Claude Code loads the linked skills un-namespaced. Codex follows each symlink ba
 | Principle file shape, and the lookup links each one | `check-skills.sh` |
 | Skills reached by link, not bare name | `check-skills.sh` for backticked names outside a link to the skill's `SKILL.md`, review for other prose |
 | Relative links resolve and stay in the repo | `check-skills.sh` |
+| A playbook links its same-name skill's `SKILL.md` | `check-skills.sh` for the link, review for "read and follow" |
 | Capability terms, no runtime tool names or model slugs | Review only |
 | `plugin.json` is valid JSON | `check-skills.sh`, where `python3` runs |
 | `plugin.json` skills array equals the skill set | `check-skills.sh` |
