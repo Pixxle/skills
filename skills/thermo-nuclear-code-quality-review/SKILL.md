@@ -1,6 +1,6 @@
 ---
 name: thermo-nuclear-code-quality-review
-description: Review a change for structural maintainability and major simplification opportunities. Use only when the user names thermo-nuclear or asks for an unusually strict, maintainability-only audit. For a general or thorough PR review, use swarm.
+description: Review a change for structural maintainability and major simplification opportunities. Use when structural quality is in scope for a change under review or a refactor, as a lane beside swarm or other review lanes, or when the user names thermo-nuclear. It reviews structure only, so a general or thorough PR review still uses swarm.
 disable-model-invocation: true
 ---
 
