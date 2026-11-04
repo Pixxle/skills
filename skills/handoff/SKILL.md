@@ -36,7 +36,7 @@ Triggers: an explicit pause, going offline, a runtime restart, or imminent conte
 4. Verify the inherited claims against the original goal on the real artifact ([Prove It Works](../principles/prove-it-works.md)). A passing prior self-report is not the proof.
 5. Pick the verdict: continue the execution, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run. Hand the remaining work to its owner. Read and follow the skill or playbook that owns it. Under [`cortex`](../cortex/SKILL.md), that is the matching playbook. Pickup ends here. The routed owner runs the rest.
 
-**Reply:** where the prior agent stopped, what you inherited versus redid (ideally nothing redone), the verdict, the resume point, and the outcome.
+**Reply:** where the prior agent stopped, what you inherited versus redid, the verdict, and the resume point.
 
 ### 4. Decision trail
 
