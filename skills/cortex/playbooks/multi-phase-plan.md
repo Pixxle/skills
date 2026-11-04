@@ -37,14 +37,15 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
   - [ ] `<skills dir>/swarm/SKILL.md`
   - [ ] `git show origin/<trunk>:<verify-* skill path>`
   - [ ] `<skills dir>/cortex/playbooks/opening-a-pr.md`
+  - [ ] `<skills dir>/cortex/playbooks/autopilot-full.md`, for the rebase, cadence, and blocking rules this plan cites
   - [ ] `<skills dir>/<each other leaf skill the program uses>`
-- [ ] On the operator's go, arm the hourly audit tick as a self-paced loop with the tick prompt below. Never leave the cadence to memory.
-- [ ] Use this tick prompt, verbatim. "Re-read the execution playbook. Audit the operation against it and fix drift in this tick. Probe every active lane and judge progress by side effects only. Stand down a stuck lane and dispatch its replacement now. Then post a short status message to the operator in chat only when the audit found a tracked change that no earlier status message reported, such as a PR opened, a code-ready head, a round launched or closed, a verdict, a merge, a stuck agent and the action taken, a blocker added or cleared, or a decision only the operator can make. Name every such change and nothing else. Do not repeat a table, the merged list, or an unchanged blocker. If the audit found none, end the turn with no reply text. Either way, log this tick's row in your decision trail. The row names the items reported, or none."
+- [ ] On the operator's go, arm the hourly audit tick as a self-paced loop with the tick prompt below.
+- [ ] Use this tick prompt, verbatim. "Re-read `<skills dir>/cortex/playbooks/<execution playbook>.md`. Audit the operation against it and fix drift in this tick. Probe every active lane and judge progress by side effects only. Stand down a stuck lane and dispatch its replacement now. Then post a short status message to the operator in chat only when the audit found a tracked change that no earlier status message reported, such as a PR opened, a code-ready head, a round launched or closed, a verdict, a merge, a stuck agent and the action taken, a blocker added or cleared, or a decision only the operator can make. Name every such change and nothing else. Do not repeat a table, the merged list, or an unchanged blocker. If the audit found none, end the turn with no reply text. Either way, log this tick's row in your decision trail. The row names the items reported, or none."
 - [ ] On the operator's hold or stand-down, send every owner a zero-writes order at once.
 
 ### Spawn owners
 
-- [ ] Spawn one owner per PR with the full lifecycle the execution playbook names.
+- [ ] Spawn one owner per PR with the full lifecycle the execution playbook names. Every owner brief names this plan's path, `<plan path>`.
 - [ ] Follow this dependency graph. Start dependent work only after its parent merges, or base it on the parent branch when the execution playbook stacks.
   - [ ] <PR id> and <PR id> are independent and first. Both branch from `<trunk>`.
   - [ ] <PR id> after <PR id>.
@@ -53,18 +54,18 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 
 ### PR mechanics, for every PR
 
-- [ ] Resolve the forge once per **Forge** in `<skills dir>/cortex/playbooks/opening-a-pr.md`.
-- [ ] Open the PR ready, never draft, per **Opening a PR**. Use the run's built-in PR tool when it has one, else `origin pr create --status open --base <base-branch>` or `gh pr create --base <base-branch>` according to the resolved forge. A stack child targets its parent branch.
+- [ ] Resolve the forge once per **Forge**, step 4 of `<skills dir>/cortex/playbooks/opening-a-pr.md`.
+- [ ] Open the PR ready, never draft, per **Create ready**, step 8 of Opening a PR. A stack child targets its parent branch.
 - [ ] Run the repo's lint and typecheck once before the PR-facing push. Push with hooks on.
 - [ ] Slop-strip the diff per **Opening a PR** before each commit, and follow `<skills dir>/no-comments/SKILL.md` before review.
 - [ ] Triage every Bugbot and security-reviewer comment per `<skills dir>/babysit/BUGBOT-TRIAGE.md`.
-- [ ] Rebase onto current trunk before the code-ready report and babysit. Keep that merge base in fix rounds. Rebase again only at merge prep, on a `git merge-tree` conflict with trunk, on a CI failure that comes from a change on trunk, or when a known concurrent change to the same files lands.
+- [ ] Rebase when Autopilot-full step 2 says, as Autopilot-stack step 2 amends it when the plan stacks. That is before the code-ready report, then only on its named triggers.
 
 ### Verdict and merge, for every PR
 
-- [ ] A full swarm runs once, at the code-ready head. Another full swarm runs only for new behavior, a redesign, or a large new diff. A rebase, a merge-conflict resolution, or a minor fix gets a single verifier at the new head, and a wording-only change gets none. Run each full swarm per `<skills dir>/swarm/SKILL.md`. One gates lane. The ten live lanes from the PR's **Verify, live** block. The perf lane from its **Verify, perf** block. Two or more audit lanes, each with its own focus, that read the diff and the receipts and distrust the PR body. The root audits the receipts in the merge-ready report before the verdict.
-- [ ] Judge every finding by the execution playbook's blocking rule. The verdict is clean when none blocks. A failure on trunk behavior in a lane marked `Regression lane against trunk.` is recorded against trunk and does not block the PR. A new head gets a fresh verdict, except for results that stay valid under the patch-id rule in `playbooks/shipping.md`.
-- [ ] <The merge or handoff rule from the execution playbook, with the patch-id rule from `playbooks/shipping.md`.>
+- [ ] Run each full swarm per `<skills dir>/swarm/SKILL.md`, at the cadence in Autopilot-full step 4. It has one gates lane, the ten live lanes from the PR's **Verify, live** block, the perf lane from its **Verify, perf** block, and two or more audit lanes, each with its own focus, that read the diff and the receipts and distrust the PR body. The root audits the receipts in the owner's merge-ready report before the verdict.
+- [ ] Judge every finding by the blocking rule in Autopilot-full step 4. A failure on trunk behavior in a lane marked `Regression lane against trunk.` is recorded against trunk and does not block the PR. A new head gets a fresh verdict, except for results that stay valid under the patch-id rule in step 3 of `<skills dir>/shipping/SKILL.md`.
+- [ ] <The merge or handoff rule from the execution playbook, with that patch-id rule.>
 
 ### Boot recipe, for every live lane
 
@@ -127,7 +128,7 @@ Each live lane runs on its own cloud VM at the PR head. Drive through the repo's
 
 - [ ] Root's clean verdict at the exact head SHA.
 - [ ] Bugbot triage done.
-- [ ] Rebased onto current trunk after the verdict, patch-id unchanged.
+- [ ] Rebased onto its base branch after the verdict, patch-id unchanged.
 - [ ] <The owner squash-merges its own PR, or the root appends it to the base-branch stack and the operator lands it bottom-up.>
 
 ## Close the program
