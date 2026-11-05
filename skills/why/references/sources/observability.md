@@ -2,16 +2,6 @@
 
 Datadog, Grafana, New Relic, or similar. Holds the runtime record of what happened in production, as opposed to what was planned.
 
-## What it holds
-
-- **Metrics.** A metric's existence shows someone thought the number worth watching.
-- **Monitors and alerts.** Conditions the team decided were worth waking someone for.
-- **Dashboards.** Curated views of what the team considers important.
-- **Traces and spans.** Request-level data for slow paths, timeouts, and retries.
-- **Logs.** Error conditions that motivated defensive code.
-- **Incidents.** Formal records with timelines and linked postmortems.
-- **Notebooks.** Exploratory analyses with hypotheses.
-
 ## How to search it
 
 Start broad, then narrow. Time-bound every query, typically about 30 days on each side of the change.
@@ -22,6 +12,7 @@ Start broad, then narrow. Time-bound every query, typically about 30 days on eac
 4. **Logs.** Search by symbol, error string, or feature name, scoped by service. Prefer pattern or aggregate views over raw dumps.
 5. **Traces.** Aggregate failure and latency stats for the endpoint, then inspect individual spans.
 6. **Incidents.** For defensive code, search incidents near the date it was added. A timeline entry like "added defensive check for X" is near-direct evidence.
+7. **Notebooks.** Exploratory analyses near the change often state the hypothesis.
 
 ## What good evidence looks like
 

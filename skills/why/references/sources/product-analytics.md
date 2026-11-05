@@ -1,6 +1,6 @@
 # Product analytics
 
-Amplitude, Mixpanel, a SQL warehouse, or similar. Holds the product and data reality behind the code. Observability shows what the system did. Analytics shows what users did, which experiments ran, and where a threshold may have come from. Strongest for flag-gated code, experiment-driven ships, data migrations, and "where did this number come from".
+Amplitude, Mixpanel, a SQL warehouse, or similar. Observability shows what the system did. Analytics shows what users did, which experiments ran, and where a threshold may have come from. Strongest for flag-gated code, experiment-driven ships, data migrations, and "where did this number come from".
 
 ## How to search it
 

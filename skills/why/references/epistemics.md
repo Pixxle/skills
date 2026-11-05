@@ -1,6 +1,6 @@
 # Epistemics
 
-How to reason about confidence when evidence is historical, fragmentary, and sometimes contradictory, and how to report it without flattening it into false certainty. Code shows what it does, not why it exists. The why lives in commits, PRs, tickets, docs, and conversations. All of them are incomplete, biased, and sometimes missing. A confident-sounding guess misleads the user.
+Code shows what it does, not why it exists. The why lives in commits, PRs, tickets, docs, and conversations, and all of them are incomplete, biased, and sometimes missing.
 
 ## Confidence tiers
 
@@ -10,7 +10,7 @@ Every claim sits in exactly one tier. The tier sets its section and its phrasing
 
 An explicit, written statement answers the question. An author said why. "The code does X, so the author wanted X" does not count.
 
-Examples. A PR description says "fixes pagination for users with more than 1000 items". A ticket says "Acme requested this in their security review". A code comment says "clamp to 100 because the upstream API rejects larger values". A design doc says "we chose A over B because we need persistence across restarts". A chat message from the author says "switching approach since the old one was flaky in tests".
+Examples. A PR description says "fixes pagination for users with more than 1000 items". A code comment says "clamp to 100 because the upstream API rejects larger values".
 
 Phrasing is confident, present tense, and cited. "This exists because X."
 
@@ -32,7 +32,7 @@ A plausible hypothesis on thin evidence, where other explanations fit equally we
 
 ### 5. Unknown
 
-You looked and could not find out. This is a valid and important outcome. Say exactly what you searched. "We searched the issue tracker for A and B, read the 6 PRs touching this file since 2023, and searched the repo for the threshold literal. None gave a rationale."
+You looked and could not find out. Name each gap with the question, the sources searched, the queries used, and what came back. "We searched the issue tracker for A and B, read the 6 PRs touching this file since 2023, and searched the repo for the threshold literal. None gave a rationale."
 
 ## Phrasing
 
@@ -40,7 +40,7 @@ You looked and could not find out. This is a valid and important outcome. Say ex
 
 **Hedges** mark interpretation. Use them freely in the inference section. They include "appears to", "seems to", "likely", "suggests", "is consistent with", "one reading is", "plausibly", "may have been", and "the evidence points toward".
 
-**Avoid** "obviously", "clearly", "of course", dismissive "just", and "I think" or "I believe". If it were obvious, the user would not be asking. Write "the evidence suggests" instead of a personal opinion.
+**Avoid** "obviously", "clearly", "of course", dismissive "just", and "I think" or "I believe". Write "the evidence suggests" instead of a personal opinion.
 
 ## Avoid rationalization
 
@@ -56,7 +56,7 @@ Show both items with citations. Don't pick the one that fits a tidier story. A t
 
 ## When evidence is missing
 
-An honest "we don't know" is one of the most useful outputs. It tells the user the answer is not in the obvious places, that they need to ask a person, or that the question is not worth more time. Filling a gap with a confident guess harms the user, because they will act on it. Name each gap with the question, the sources searched, the queries used, and what came back.
+An honest "we don't know" is one of the most useful outputs. Filling a gap with a confident guess harms the user, because they will act on it.
 
 ## Before finalizing
 

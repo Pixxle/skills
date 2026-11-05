@@ -1,26 +1,21 @@
 # Source control and PRs
 
-Always available through git and `gh`. The most trustworthy category because it is tied directly to the code.
+Always available through git and `gh`.
 
 ## What it holds
 
-- Commit messages, dates, authors, and diffs
-- PR descriptions, review comments, and discussion threads
 - Inline comments, TODOs, FIXMEs, and deprecation notes
 - ADRs, CHANGELOG entries, and release notes kept in the repo
 - Tests, whose names and assertions often encode the edge case that motivated a change
 - Files changed in the same commits (co-change signal)
-- Ticket IDs in commit messages and PR bodies
 
 ## How to search it
 
-Expand the seed commit list.
+Expand the seed commit list from the code anchor.
 
 ```bash
-git log --follow --oneline -- <file>          # history through renames
 git log -S '<exact_string_from_code>' -- <file>  # commits adding or removing this text
 git log -G '<regex>' -- <file>                # same, by pattern
-git blame -L <start>,<end> <file>             # last touch per line
 git show <hash>                               # one commit in full
 git log <old>..<new> -p -- <file>             # changes between two points
 gh pr view <number> --comments                # PR body and discussion

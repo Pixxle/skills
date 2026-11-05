@@ -1,18 +1,10 @@
 # Long-form docs
 
-Confluence, Notion, Google Docs, or similar. Where the why is often written out before it becomes code. A significant feature usually has a doc.
-
-## What it holds
-
-- PRDs, technical specs, RFCs, and ADRs
-- Design review and meeting notes
-- Postmortems
-- Runbooks that explain defensive code
-- Team pages and strategy documents that set priorities
+Confluence, Notion, Google Docs, or similar. A significant feature usually has a doc.
 
 ## How to search it
 
-1. **Search by keyword.** Feature name, key symbols, error strings, user-visible terms, and the PR author's name. In Confluence, CQL such as `text ~ "<term>"` with a date bound narrows fast.
+1. **Search by keyword.** Feature name, key symbols, error strings, user-visible terms, and the PR author's name. Include runbooks, which explain defensive code, and team or strategy pages, which set priorities. In Confluence, CQL such as `text ~ "<term>"` with a date bound narrows fast.
 2. **Read full pages**, not previews. Rationale is often buried mid-document.
 3. **Follow child pages and backlinks.** Alternatives considered and appendices often live in sub-pages.
 4. **Check meeting notes** from the weeks around the ship date.
@@ -31,7 +23,6 @@ Confluence, Notion, Google Docs, or similar. Where the why is often written out 
 - **Boilerplate.** Generic "why" sections are not answers.
 - **Several drafts.** Find the finalized or most recently updated version. Check dates.
 - **Unlinked docs.** The best doc may be linked from nowhere. Broad searches help.
-- **Access limits.** A page you cannot open is a gap.
 
 ## What to return
 
