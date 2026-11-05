@@ -21,6 +21,7 @@
     "./skills/principles",
     "./skills/prototype",
     "./skills/reflect",
+    "./skills/routing-audit",
     "./skills/shipping",
     "./skills/swarm",
     "./skills/tdd",

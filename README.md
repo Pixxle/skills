@@ -78,6 +78,7 @@ Run `scripts/list-skills.sh` to list every skill.
 - [principles](skills/principles/SKILL.md): lookup of each engineering principle, when it applies, and its file; cortex loads it.
 - [prototype](skills/prototype/SKILL.md): build a throwaway prototype (runnable terminal app or toggleable UI variations) to flesh out a design before committing.
 - [reflect](skills/reflect/SKILL.md): mine the active session transcript with three parallel reviewers (judgment, tooling, divergent) and a synthesizer, sort proposals into Accepted, Rejected, and Backlog, and apply only the skill edits you approve.
+- [routing-audit](skills/routing-audit/SKILL.md): grade a finished cortex session against the route its skills required, step by step as followed, only read, substituted, or skipped, and recommend skill changes that make the route hard to skip.
 - [shipping](skills/shipping/SKILL.md): independently verify then land contiguous merge-ready PRs bottom-up, with forge-aware merge hygiene; on GitHub, watch the run with babysit's queued `watch-pr` until it reports `COMPLETE`.
 - [swarm](skills/swarm/SKILL.md): fan out N parallel workers (coverage slices, races, gauntlets, or exploration), drain them, and return one report.
 - [tdd](skills/tdd/SKILL.md): fix a bug with a cheap local test path by writing a focused regression test that fails before the fix and passes after it; use a closer executable check when a test is impractical.
