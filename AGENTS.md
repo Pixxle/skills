@@ -32,7 +32,7 @@ Claude Code loads the linked skills un-namespaced. Codex follows each symlink ba
 
 - `scripts/check-skills.sh` checks the repo against these rules and prints each problem as `file:line: message`. `--installed` also checks this machine's skill links and agent installs. Add `--claude` or `--codex` to check one runtime after a one-runtime install. Keep `--installed` out of CI.
 - `scripts/test-check-skills.sh` proves the checker catches each rule it claims, on fixtures in a temp dir.
-- CI (`.github/workflows/check-skills.yml`) runs both scripts, plus the `node:test` suites in `skills/babysit/scripts/watch-pr/` and `skills/cortex/scripts/`, on every push and pull request.
+- CI (`.github/workflows/check-skills.yml`) runs both scripts, plus the `node:test` suites in `skills/babysit/scripts/watch-pr/`, `skills/cortex/scripts/`, and `skills/routing-audit/scripts/`, on every push and pull request.
 - The pre-commit hook runs `check-skills.sh` on the staged tree, so a skill folder left out of `git add` fails the commit. Enable it once per clone with `git config core.hooksPath .githooks`.
 
 ## Rule to enforcer

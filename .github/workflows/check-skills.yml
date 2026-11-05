@@ -26,3 +26,6 @@ jobs:
       - name: Test the cortex scripts
         if: ${{ !cancelled() }}
         run: node --test skills/cortex/scripts/*.test.mjs
+      - name: Test the routing-audit trace
+        if: ${{ !cancelled() }}
+        run: node --test skills/routing-audit/scripts/*.test.mjs
