@@ -1,6 +1,6 @@
 # Incident and postmortem context
 
-Append this to an investigator's brief when the target looks defensive. Run these queries inside your own category only.
+Run these queries inside your own category only.
 
 - **Source control.** Commits like "fix for incident", "add defensive check", or a revert followed by "re-apply with ...".
 - **Issue tracker.** Tickets labeled incident, sev, postmortem action item, or reliability, near the date the target was added.

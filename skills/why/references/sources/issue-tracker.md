@@ -2,14 +2,6 @@
 
 Jira, Linear, GitHub Issues, or similar. This is where the product or business context usually lives, the "a customer asked" or "this is for the Q3 compliance push" layer.
 
-## What it holds
-
-- Issues describing features, bugs, and their motivation
-- Parent and child relationships (epic or initiative down to tasks)
-- Comments with clarifications, scope changes, and decisions
-- Labels such as compliance, customer-request, perf, incident-followup
-- Attached specs or PRDs, linked PRs, milestones, and due dates
-
 ## How to search it
 
 1. **Start with linked tickets.** Fetch every ticket ID from the code anchor (patterns like `ENG-1234`). Read the full issue with comments and history.
@@ -31,8 +23,6 @@ Jira, Linear, GitHub Issues, or similar. This is where the product or business c
 - **Boilerplate.** Template "why" sections filled with "improve user experience" are not answers.
 - **Stale plans.** Check dates against the code's ship date.
 - **Duplicate chains.** Follow "duplicate of" links back to the canonical ticket.
-- **Access limits.** An issue you cannot open is a gap, not a null result.
-- **Customer data.** Tickets often name customers and users. Cite the ticket ID. Don't copy personal details.
 
 ## What to return
 
