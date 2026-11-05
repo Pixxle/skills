@@ -14,7 +14,7 @@ Open a todolist whose first items are the matched playbook's steps, copied in ve
 
 A large or cross-cutting effort (a migration across many call sites, an ambitious multi-part change), or work the user steps away from to trust later, routes to the [`figure-it-out`](../figure-it-out/SKILL.md) skill even when a narrower playbook like Feature fits, unless the user says to "run until done", which routes to **Autonomous run**. Use [`figure-it-out`](../figure-it-out/SKILL.md) whenever no bundled playbook fits. It designs a bespoke, rigorous playbook for the task. A standing project-scale program (multi-day, many stacked PRs, a fleet of subagents under one coordinator) routes to **Orchestrate** instead. [`figure-it-out`](../figure-it-out/SKILL.md) designs one bespoke run, orchestrate runs the program.
 
-- **Investigation.** Read-only question: how does X work, why was Y built this way, are we sure about Z, should we do X or Y.
+- **Investigation.** Read-only question: how does X work, why was Y built this way, are we sure about Z, should we do X or Y, what is the recommended way to solve this ticket when no change is asked for.
 - **Bug fix.** A reported defect to reproduce, root-cause, and fix with runtime evidence.
 - **Perf issue.** A measured slowness to trace and improve against a baseline.
 - **Hillclimb.** Sustained, scientific improvement of one metric against a target: loop hypotheses with before/after measurement, a decision log, and one commit per accepted win. Distinct from Perf issue, which is a one-off fix.

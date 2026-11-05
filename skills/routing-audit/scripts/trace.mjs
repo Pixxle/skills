@@ -10,16 +10,18 @@ const safeJson = (s) => { try { return JSON.parse(s) } catch { return null } }
 
 export function fingerprints(skillsDir) {
   const files = []
-  const walk = (d) => {
+  const walk = (d, root, prefix) => {
     for (const n of readdirSync(d)) {
       const p = join(d, n)
-      if (statSync(p).isDirectory()) { if (n !== 'scripts' && n !== 'node_modules') walk(p) }
-      else if (n.endsWith('.md')) files.push(p)
+      if (statSync(p).isDirectory()) { if (n !== 'scripts' && n !== 'node_modules') walk(p, root, prefix) }
+      else if (n.endsWith('.md')) files.push({ path: p, name: prefix + relative(root, p) })
     }
   }
-  walk(skillsDir)
+  walk(skillsDir, skillsDir, '')
+  const agentsDir = join(skillsDir, '..', 'agents')
+  if (existsSync(agentsDir)) walk(agentsDir, agentsDir, 'agents/')
   const bodies = files.map(f => {
-    const body = readFileSync(f, 'utf8').replace(/^---\n[\s\S]*?\n---\n/, '')
+    const body = readFileSync(f.path, 'utf8').replace(/^---\n[\s\S]*?\n---\n/, '')
     return body.split('\n').map(norm).filter(l => l.length >= 40 && !l.startsWith('#') && !l.startsWith('|') && !l.startsWith('```')).map(l => l.slice(0, 120))
   })
   const seen = new Map()
@@ -27,7 +29,7 @@ export function fingerprints(skillsDir) {
   const out = []
   files.forEach((f, i) => {
     const unique = bodies[i].filter(l => seen.get(l) === 1)
-    if (unique.length) out.push({ file: relative(skillsDir, f), head: unique[0], tail: unique[unique.length - 1] })
+    if (unique.length) out.push({ file: f.name, head: unique[0], tail: unique[unique.length - 1] })
   })
   return out
 }
@@ -49,24 +51,27 @@ function summarize(input) {
 const PLAN_TOOLS = /^(TodoWrite|mcp__ccd_turn__update_plan|update_plan)$/
 const SPAWN_TOOLS = /^(Agent|Task|spawn_agent|Workflow)$/
 
-function call(name, input) {
+function call(name, input, id) {
   const i = typeof input === 'string' ? safeJson(input) ?? input : input
   const raw = typeof i === 'string' ? i : JSON.stringify(i ?? {})
   if (PLAN_TOOLS.test(name)) {
     const items = (i?.items ?? i?.todos ?? []).map(t => t.content ?? t.step ?? '').filter(Boolean)
-    return { kind: 'plan', name, items, change: items.length ? null : norm(raw).slice(0, 140), raw }
+    return { kind: 'plan', name, items, change: items.length ? null : norm(raw).slice(0, 140), raw, id }
   }
-  if (SPAWN_TOOLS.test(name)) return { kind: 'spawn', name, type: i?.subagent_type ?? i?.agent_type ?? '', summary: summarize(i), raw }
-  return { kind: 'call', name, summary: summarize(i), raw }
+  if (SPAWN_TOOLS.test(name)) return { kind: 'spawn', name, type: i?.subagent_type ?? i?.agent_type ?? '', summary: summarize(i), raw, id }
+  return { kind: 'call', name, summary: summarize(i), raw, id }
 }
 
 export function parse(lines) {
   const events = []
   let turn = 0
   let agentActed = true
+  const byId = new Map()
   const push = (ev, ts) => {
     if (ev.kind === 'user') { if (agentActed) turn++; agentActed = false }
     else if (ev.kind !== 'result') agentActed = true
+    if (ev.callId !== undefined) { const c = byId.get(ev.callId); if (c !== undefined) ev.callIdx = c }
+    if (ev.id !== undefined) byId.set(ev.id, events.length)
     events.push({ ...ev, ts: ts ?? '', turn })
   }
   for (const line of lines) {
@@ -79,16 +84,16 @@ export function parse(lines) {
       if (e.type === 'user' && typeof content === 'string') { push({ kind: 'user', text: content }, ts); continue }
       for (const b of Array.isArray(content) ? content : []) {
         if (e.type === 'user' && b.type === 'text') push({ kind: 'user', text: b.text }, ts)
-        if (e.type === 'user' && b.type === 'tool_result') push({ kind: 'result', text: textOf(b.content) }, ts)
+        if (e.type === 'user' && b.type === 'tool_result') push({ kind: 'result', text: textOf(b.content), callId: b.tool_use_id }, ts)
         if (e.type === 'assistant' && b.type === 'text' && b.text.trim()) push({ kind: 'say', text: b.text }, ts)
-        if (e.type === 'assistant' && b.type === 'tool_use') push(call(b.name, b.input), ts)
+        if (e.type === 'assistant' && b.type === 'tool_use') push(call(b.name, b.input, b.id), ts)
       }
     } else if (e.type === 'response_item') {
       const p = e.payload ?? {}
       if (p.type === 'message' && p.role === 'user') push({ kind: 'user', text: textOf(p.content) }, ts)
       if (p.type === 'message' && p.role === 'assistant') push({ kind: 'say', text: textOf(p.content) }, ts)
-      if (p.type === 'function_call' || p.type === 'custom_tool_call') push(call(p.name, p.arguments ?? p.input), ts)
-      if (p.type === 'function_call_output' || p.type === 'custom_tool_call_output') push({ kind: 'result', text: textOf(p.output) }, ts)
+      if (p.type === 'function_call' || p.type === 'custom_tool_call') push(call(p.name, p.arguments ?? p.input, p.call_id), ts)
+      if (p.type === 'function_call_output' || p.type === 'custom_tool_call_output') push({ kind: 'result', text: textOf(p.output), callId: p.call_id }, ts)
     }
   }
   return events
@@ -125,7 +130,7 @@ export function render({ events, loads }, { full = false, from = 0, to = Infinit
     if (ev.kind === 'call' && full) out.push(`${i} CALL ${ev.name} ${cut(ev.raw, 0)}`)
     if (ev.kind === 'spawn') out.push(`${i} SPAWN ${ev.name}${ev.type ? ` type=${ev.type}` : ''} ${full ? cut(ev.raw, 0) : ev.summary}`)
     if (ev.kind === 'plan') out.push(ev.items.length ? `${i} PLAN ${ev.items.map((s, n) => `[${n + 1}] ${norm(s)}`).join(' ')}` : `${i} PLAN-UPDATE ${ev.change}`)
-    if (ev.loads) out.push(`${i} LOADED ${ev.loads.join(', ')}`)
+    if (ev.loads) out.push(`${i} LOADED ${ev.loads.join(', ')}${ev.callIdx !== undefined ? `, from call ${ev.callIdx}` : ''}`)
   })
   out.push('', '## Skill files loaded', '')
   const shown = [...loads].filter(([, v]) => turn === null || events[v.first].turn === turn)

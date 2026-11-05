@@ -16,11 +16,11 @@ Take the session the user names: a transcript path, a session id, or a workspace
 
 ## 2. Pin the skills to the session
 
-The skills may have changed since the run. Take the audited turn's first timestamp, which is UTC. In the skills repo, `TZ=UTC git reflog --date=iso-local` lists each checkout in UTC. Installed skills follow the checkout, so pin the SHA HEAD pointed at then. Use `git rev-list -1 --before=<ts> <branch>` only when the reflog no longer reaches that far, and say so. Extract it with `git archive <commit> skills agents | tar -x -C <scratch>/pinned`. Use that tree for every later step.
+The skills may have changed since the run. Take the audited turn's first timestamp, which is UTC. In the skills repo, `TZ=UTC git reflog --date=iso-local` lists each checkout in UTC. Installed skills follow the checkout, so pin the SHA HEAD pointed at then. Use `git rev-list -1 --before=<ts> <branch>`, with `origin/<branch>` in a fresh clone, only when the reflog no longer reaches that far, and say so. Extract it with `git archive <commit> skills agents | tar -x -C <scratch>/pinned`. Use that tree for every later step.
 
 ## 3. Trace the transcript
 
-Run `node scripts/trace.mjs <transcript> --skills <scratch>/pinned/skills` from this skill's directory. It numbers each event and groups them into turns. It lists user messages, the agent's replies, plans, spawns, and each skill file whose content a tool returned, plus each subagent and the turn it started in. `--full --from N --to M` adds tool calls and full inputs, such as a brief or a workflow script, in a range. `--subagent <label>` prints one subagent. A file counts as read only from its content in tool output, never from a path in a command. `partial, top only` or `partial, end only` means one of its two fingerprints matched. Check that event's command with `--full` before you call the file read.
+Run `node scripts/trace.mjs <transcript> --skills <scratch>/pinned/skills` from this skill's directory. It numbers each event and groups them into turns. It lists user messages, the agent's replies, plans, spawns, and each skill or agent file whose content a tool returned, plus each subagent and the turn it started in. `--full --from N --to M` adds tool calls and full inputs, such as a brief or a workflow script, in a range. `--subagent <label>` prints one subagent. A file counts as read only from its content in tool output, never from a path in a command. `partial, top only` or `partial, end only` means one of its two fingerprints matched. Each LOADED line names the call that returned it. Check that call with `--full` before you call the file read.
 
 ## 4. Build the intended flow
 
