@@ -32,7 +32,7 @@ Describe the evidence accurately, including the parts that don't fit a tidy stor
 
 **Ticket IDs from commits or PR bodies:** {TICKET_IDS}
 
-**Chat threads and docs linked from commits, PRs, or tickets:** {LINKED_ITEMS}. Open each one in your category first.
+**Chat threads and docs linked from commits, PRs, or tickets:** {LINKED_ITEMS}. Open each one in your category first. Leave a private channel or direct message for the user, and list it under Gaps.
 
 ## Your category
 

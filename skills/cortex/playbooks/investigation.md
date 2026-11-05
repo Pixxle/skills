@@ -10,4 +10,4 @@
 
 If the investigation precedes a code change, finish the answer and hand it back to the user. Then route the change to [Bug fix](bug-fix.md) or [Feature](feature.md), whose grounding steps reuse this answer.
 
-**Reply:** the routed skill's output, the claim verdict, or the recommendation with its tradeoffs table the options that skipped the history read, and for each why read, its Sources consulted or held-back categories.
+**Reply:** the routed skill's output, the claim verdict, or the recommendation with its tradeoffs table, the options that skipped the history read, and for each why read, its Sources consulted or held-back categories.

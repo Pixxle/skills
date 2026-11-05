@@ -116,3 +116,21 @@ test('--full shows the whole tool input', () => {
   const out = render(trace(parse([tool('Agent', { description: 'lane', prompt: brief })]), []), { full: true })
   assert.match(out, /END/)
 })
+
+test('a load names the call that produced it, even when calls run in parallel', () => {
+  const ev = parse([
+    cc('assistant', [{ type: 'tool_use', id: 'a', name: 'Bash', input: { command: 'cat why/SKILL.md' } }, { type: 'tool_use', id: 'b', name: 'Bash', input: { command: 'grep x' } }]),
+    cc('user', [{ type: 'tool_result', tool_use_id: 'b', content: 'nothing' }, { type: 'tool_result', tool_use_id: 'a', content: `${WHY_HEAD}\n${WHY_TAIL}` }]),
+  ])
+  assert.match(render(trace(ev, fingerprints(skillsDir()))), /3 LOADED why\/SKILL.md \(full\), from call 0/)
+})
+
+test('agent files beside the skills dir are fingerprinted', () => {
+  const root = mkdtempSync(join(tmpdir(), 'repo-'))
+  mkdirSync(join(root, 'skills', 'why'), { recursive: true })
+  writeFileSync(join(root, 'skills', 'why', 'SKILL.md'), `---\nname: why\n---\n\n${WHY_HEAD}\n`)
+  mkdirSync(join(root, 'agents'))
+  writeFileSync(join(root, 'agents', 'cortex-agent.md'), '---\nname: cortex-agent\n---\n\nYou are a delegate of a cortex run and own only the task in your brief.\n')
+  const r = trace(parse([result('You are a delegate of a cortex run and own only the task in your brief.')]), fingerprints(join(root, 'skills')))
+  assert.equal(r.loads.get('agents/cortex-agent.md').depth, 'full')
+})
